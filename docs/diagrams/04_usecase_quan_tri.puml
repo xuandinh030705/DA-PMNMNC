@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+
+actor "Quản Trị Viên (Admin)" as Admin
+
+rectangle "Phân Hệ Quản Trị Viên (Admin)" {
+    usecase "Xem Dashboard tổng thể sàn" as UC_AdminDashboard
+    usecase "Phê duyệt sự kiện (Publish)" as UC_Approve
+    usecase "Từ chối sự kiện (Về Draft)" as UC_Reject
+    usecase "Hủy bỏ sự kiện (Cancel)" as UC_CancelEvent
+    usecase "Quản lý Danh mục (CRUD)" as UC_Categories
+    usecase "Quản lý Địa điểm (CRUD)" as UC_Venues
+    usecase "Xem danh sách người dùng" as UC_ListUsers
+    usecase "Khóa / Mở khóa tài khoản" as UC_ToggleUser
+    usecase "Đổi vai trò người dùng" as UC_ChangeRole
+    usecase "Giám sát toàn bộ đơn hàng" as UC_AllOrders
+}
+
+Admin --> UC_AdminDashboard
+Admin --> UC_Approve
+Admin --> UC_Reject
+Admin --> UC_CancelEvent
+Admin --> UC_Categories
+Admin --> UC_Venues
+Admin --> UC_ListUsers
+Admin --> UC_AllOrders
+
+UC_ListUsers <.. UC_ToggleUser : <<extend>>
+UC_ListUsers <.. UC_ChangeRole : <<extend>>
+@enduml

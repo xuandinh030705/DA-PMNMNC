@@ -1,0 +1,67 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+
+start
+
+:Khách hàng chọn sự kiện đang mở bán;
+:Chọn số lượng vé theo từng loại;
+:Nhập thông tin người nhận vé;
+:Bấm nút "Đặt vé & Giữ chỗ";
+
+if (Sự kiện còn hạn và chưa bắt đầu?) then (Không)
+    :Báo lỗi sự kiện đã đóng bán;
+    stop
+else (Có)
+endif
+
+partition "Giao dịch Đặt vé (OrderService)" {
+    :Mở Database Transaction;
+    :Khóa bi quan (lockForUpdate) các loại vé đã chọn;
+
+    if (Đủ vé tồn kho và đúng giới hạn?) then (Không)
+        :Rollback Transaction;
+        :Báo lỗi không đủ vé tồn kho;
+        stop
+    else (Có)
+        :Tăng trường sold (giữ chỗ vé);
+        :Tạo đơn hàng trạng thái Pending;
+        :Thiết lập thời gian hết hạn (now + 15 phút);
+        :Tạo các bản ghi chi tiết đơn hàng (OrderItem);
+        :Commit Transaction;
+    endif
+}
+
+:Chuyển đến màn hình Chi tiết Đơn hàng & Thanh toán;
+
+if (Hành động của khách hàng?) then (Chủ động Hủy đơn)
+    :Khách hàng bấm "Hủy đơn hàng";
+    :Cập nhật trạng thái đơn thành Cancelled;
+    :Trừ trả lại số vé đã giữ vào cột sold;
+    :Thông báo đã hủy đơn thành công;
+    stop
+else (Chờ quá 15 phút không thanh toán)
+    :Quá hạn 15 phút (expires_at < now);
+    :Hệ thống kích hoạt hủy đơn tự động;
+    :Chuyển trạng thái đơn sang Cancelled;
+    :Hoàn trả số vé đã giữ về kho;
+    stop
+else (Tiến hành Thanh toán)
+    :Chọn phương thức thanh toán (Bank / MoMo / Card);
+    :Bấm "Xác nhận Thanh toán";
+    
+    partition "Giao dịch Thanh toán" {
+        :Mở Transaction & Khóa đơn hàng;
+        :Kiểm tra đơn hàng còn hiệu lực (< 15 phút);
+        :Cập nhật status = Paid, lưu paid_at;
+        :Sinh các bản ghi Ticket với mã TKT-XXXXXXXXXX độc nhất;
+        :Commit Transaction;
+    }
+
+    :Hiển thị thông báo thanh toán thành công;
+    :Khách hàng nhận vé điện tử trong "Vé của tôi";
+    :In thẻ vé hoặc lưu mã vé để tham dự sự kiện;
+    stop
+endif
+
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+
+actor "Ban Tổ Chức (Organizer)" as Organizer
+
+rectangle "Phân Hệ Ban Tổ Chức (Organizer)" {
+    usecase "Xem Dashboard thống kê" as UC_OrgDashboard
+    usecase "Tạo sự kiện mới (Draft)" as UC_CreateEvent
+    usecase "Chỉnh sửa sự kiện bản nháp" as UC_EditEvent
+    usecase "Xóa sự kiện bản nháp" as UC_DeleteEvent
+    usecase "Quản lý loại vé sự kiện" as UC_ManageTickets
+    usecase "Thêm / Sửa / Xóa loại vé" as UC_CRUDTickets
+    usecase "Gửi duyệt sự kiện (Pending)" as UC_SubmitApproval
+    usecase "Xem đơn hàng của sự kiện" as UC_ViewOrders
+    usecase "Soát vé tại cửa (Check-in)" as UC_Checkin
+    usecase "Kiểm tra tính hợp lệ của vé" as UC_VerifyTicket
+    usecase "Cập nhật thời gian soát vé" as UC_MarkUsed
+}
+
+Organizer --> UC_OrgDashboard
+Organizer --> UC_CreateEvent
+Organizer --> UC_EditEvent
+Organizer --> UC_DeleteEvent
+Organizer --> UC_ManageTickets
+Organizer --> UC_SubmitApproval
+Organizer --> UC_ViewOrders
+Organizer --> UC_Checkin
+
+UC_ManageTickets ..> UC_CRUDTickets : <<include>>
+UC_SubmitApproval ..> UC_ManageTickets : <<include>>
+UC_Checkin ..> UC_VerifyTicket : <<include>>
+UC_VerifyTicket ..> UC_MarkUsed : <<include>>
+@enduml

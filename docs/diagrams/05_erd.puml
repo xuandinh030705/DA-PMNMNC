@@ -1,0 +1,124 @@
+@startuml
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+
+entity "users" as users {
+    * id : bigint <<PK>>
+    --
+    * name : varchar(255)
+    * email : varchar(255) <<unique>>
+    * password : varchar(255)
+    phone : varchar(20)
+    * role : varchar(50) = 'customer'
+    * is_active : tinyint(1) = 1
+    remember_token : varchar(100)
+    * created_at : timestamp
+    * updated_at : timestamp
+}
+
+entity "categories" as categories {
+    * id : bigint <<PK>>
+    --
+    * name : varchar(255) <<unique>>
+    * slug : varchar(255) <<unique>>
+    description : text
+    * created_at : timestamp
+    * updated_at : timestamp
+}
+
+entity "venues" as venues {
+    * id : bigint <<PK>>
+    --
+    * name : varchar(255)
+    * address : varchar(255)
+    * city : varchar(100)
+    * capacity : unsigned int
+    * created_at : timestamp
+    * updated_at : timestamp
+}
+
+entity "events" as events {
+    * id : bigint <<PK>>
+    --
+    * organizer_id : bigint <<FK>>
+    * category_id : bigint <<FK>>
+    * venue_id : bigint <<FK>>
+    * title : varchar(255)
+    * slug : varchar(255) <<unique>>
+    * description : text
+    banner_path : varchar(255)
+    * start_time : datetime
+    * end_time : datetime
+    * status : varchar(50) = 'draft'
+    * created_at : timestamp
+    * updated_at : timestamp
+    deleted_at : timestamp
+}
+
+entity "ticket_types" as ticket_types {
+    * id : bigint <<PK>>
+    --
+    * event_id : bigint <<FK>>
+    * name : varchar(255)
+    * price : decimal(12,0)
+    * quantity : unsigned int
+    * sold : unsigned int = 0
+    * sale_start : datetime
+    * sale_end : datetime
+    * max_per_order : unsigned int = 10
+    * created_at : timestamp
+    * updated_at : timestamp
+}
+
+entity "orders" as orders {
+    * id : bigint <<PK>>
+    --
+    * user_id : bigint <<FK>>
+    * order_code : varchar(50) <<unique>>
+    * customer_name : varchar(255)
+    * customer_email : varchar(255)
+    customer_phone : varchar(20)
+    * total_amount : decimal(12,0)
+    * status : varchar(50) = 'pending'
+    payment_method : varchar(50)
+    paid_at : datetime
+    expires_at : datetime
+    * created_at : timestamp
+    * updated_at : timestamp
+}
+
+entity "order_items" as order_items {
+    * id : bigint <<PK>>
+    --
+    * order_id : bigint <<FK>>
+    * ticket_type_id : bigint <<FK>>
+    * quantity : unsigned int
+    * unit_price : decimal(12,0)
+    * subtotal : decimal(12,0)
+    * created_at : timestamp
+    * updated_at : timestamp
+}
+
+entity "tickets" as tickets {
+    * id : bigint <<PK>>
+    --
+    * order_item_id : bigint <<FK>>
+    * ticket_code : varchar(50) <<unique>>
+    * status : varchar(50) = 'valid'
+    checked_in_at : datetime
+    * created_at : timestamp
+    * updated_at : timestamp
+}
+
+users ||--o{ events : "organizes"
+categories ||--o{ events : "categorizes"
+venues ||--o{ events : "hosts"
+events ||--o{ ticket_types : "has"
+
+users ||--o{ orders : "places"
+orders ||--|{ order_items : "contains"
+ticket_types ||--o{ order_items : "referenced in"
+order_items ||--|{ tickets : "generates"
+@enduml

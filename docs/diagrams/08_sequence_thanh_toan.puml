@@ -1,0 +1,51 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+autonumber
+
+actor "Khách Hàng\n(Customer)" as Customer
+participant "OrderController" as Controller
+participant "OrderPolicy" as Policy
+participant "OrderService" as Service
+database "Cơ Sở Dữ Liệu\n(SQLite/MySQL)" as DB
+
+Customer -> Controller : POST /orders/{order_code}/pay\n(payment_method)
+activate Controller
+
+Controller -> Policy : authorize('pay', order)
+activate Policy
+Policy --> Controller : Quyền hợp lệ (200 OK)
+deactivate Policy
+
+Controller -> Service : payOrder(order, payment_method)
+activate Service
+
+Service -> DB : BEGIN TRANSACTION
+activate DB
+
+Service -> DB : SELECT * FROM orders WHERE id = ? FOR UPDATE
+DB --> Service : Bản ghi order đã khóa
+
+alt Đơn hàng quá hạn (now > expires_at)
+    Service -> DB : UPDATE ticket_types SET sold = sold - quantity
+    Service -> DB : UPDATE orders SET status = 'cancelled'
+    Service -> DB : COMMIT
+    Service --> Controller : throw BusinessException("Đơn hàng đã hết hạn")
+    Controller --> Customer : Redirect back với flash error
+else Đơn hàng hợp lệ
+    Service -> DB : UPDATE orders SET status = 'paid',\npayment_method = ?, paid_at = NOW()
+    
+    loop Cho từng số lượng vé của mỗi OrderItem
+        Service -> DB : INSERT INTO tickets (order_item_id, ticket_code, status)\nVALUES (?, 'TKT-XXXXXXXXXX', 'valid')
+    end
+
+    Service -> DB : COMMIT
+    deactivate DB
+
+    Service --> Controller : Trả về đối tượng order đã thanh toán
+    deactivate Service
+
+    Controller --> Customer : Redirect /orders/{code}\nvới flash success & danh sách vé
+    deactivate Controller
+end
+@enduml

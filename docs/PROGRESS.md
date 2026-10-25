@@ -26,11 +26,11 @@
   - [x] A6: routes/admin.php, Admin Controllers & Requests, views (Categories, Venues, Users, Events, Orders, Dashboard)
   - [x] Cổng kiểm tra: migrate, route:list (62 routes), view:cache passed 100%
   - [x] Commit: `feat(admin): dashboard, categories, venues, users, events, orders`
-- [ ] **Phase 5: QA Security Tests & Diagrams (A7 song song A8)**
-  - [ ] A7: PHPUnit Feature tests (>= 20 tests), test-cases.md, test-output.txt, rà soát bảo mật & Blade
-  - [ ] A8: docs/diagrams/ (8 file PlantUML + README.md)
-  - [ ] Cổng kiểm tra: php artisan test
-  - [ ] Commit: `test: ...` và `docs(diagrams): ...`
+- [x] **Phase 5: QA Security Tests & Diagrams (A7 song song A8)**
+  - [x] A7: PHPUnit Feature tests (33 tests passed 100%), test-cases.md, test-output.txt, rà soát bảo mật CSRF/XSS
+  - [x] A8: docs/diagrams/ (8 file PlantUML + README.md)
+  - [x] Cổng kiểm tra: `php artisan test` (33 passed, 82 assertions)
+  - [x] Commit: `test: ...` và `docs(diagrams): ...`
 - [ ] **Phase 6: README, Bảng truy vết, Hoàn thiện & Báo cáo cuối (Leader + A1)**
   - [ ] README.md đầy đủ
   - [ ] docs/01_phan_tich_yeu_cau.md: Bảng truy vết FR -> route/controller

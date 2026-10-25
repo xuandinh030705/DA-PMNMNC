@@ -57,3 +57,13 @@
   - `EventController`: Xem xét và phê duyệt (`approve`), từ chối (`reject`) hoặc hủy (`cancel`) sự kiện.
   - `OrderController`: Quản lý, tra cứu và xem chi tiết toàn bộ đơn hàng và mã vé trên toàn sàn.
   - Cổng kiểm tra Phase 4 đạt 62 routes chuẩn xác, view:cache không lỗi, CSDL seed sạch sẽ.
+- **Kiểm thử tự động QA & Thiết kế Sơ đồ hệ thống (Phase 5)**:
+  - **QA & Security**:
+    - Xây dựng 33 ca kiểm thử tính năng (Feature Tests) độc lập: `AuthTest`, `AuthorizationTest`, `StorefrontTest`, `OrderAndPaymentTest`, `CheckinTest`, `AdminManagementTest`.
+    - Kết quả kiểm thử thực tế đạt 100% (33 passed, 82 assertions, 0 failures).
+    - Tạo `docs/testing/test-cases.md` chi tiết từ TC-01 đến TC-33 và lưu log chạy thực `docs/testing/test-output.txt`.
+    - Rà soát bảo mật toàn diện: 100% `@csrf`, chống XSS, chống IDOR qua Policies, tối ưu N+1 Query.
+  - **Diagrams (Sơ đồ hệ thống)**:
+    - Xây dựng 8 file PlantUML chuẩn xác và độc lập: Use Case tổng quan, 3 Use Case chi tiết theo vai trò, ERD 8 bảng chuẩn 100% schema, cây phân rã WBS, Activity luồng mua vé, Sequence luồng thanh toán.
+    - Soạn thảo `docs/diagrams/README.md` hướng dẫn sử dụng và bảng tra cứu tương ứng trong báo cáo.
+  - Cổng kiểm tra Phase 5 vượt qua toàn diện.

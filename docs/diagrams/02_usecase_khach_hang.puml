@@ -1,0 +1,40 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+
+actor "Khách Hàng (Customer)" as Customer
+
+rectangle "Phân Hệ Khách Hàng (Customer)" {
+    usecase "Xem danh sách & Lọc sự kiện" as UC_Browse
+    usecase "Xem chi tiết sự kiện" as UC_Detail
+    usecase "Chọn loại vé & Đặt vé" as UC_SelectTickets
+    usecase "Giữ chỗ 15 phút (Pending)" as UC_Hold
+    usecase "Thanh toán giả lập" as UC_Pay
+    usecase "Nhận vé điện tử (TKT-...)" as UC_ReceiveTicket
+    usecase "Xem lịch sử đơn hàng" as UC_OrderHistory
+    usecase "Hủy đơn hàng chờ thanh toán" as UC_CancelPending
+    usecase "Xem danh sách vé của tôi" as UC_MyTickets
+    usecase "In thẻ vé" as UC_PrintTicket
+    usecase "Cập nhật hồ sơ cá nhân" as UC_EditProfile
+    usecase "Đổi mật khẩu" as UC_ChangePassword
+}
+
+Customer --> UC_Browse
+Customer --> UC_Detail
+Customer --> UC_SelectTickets
+Customer --> UC_OrderHistory
+Customer --> UC_MyTickets
+Customer --> UC_EditProfile
+
+UC_Detail .> UC_Browse : <<extend>>
+UC_SelectTickets ..> UC_Hold : <<include>>
+UC_Pay ..> UC_ReceiveTicket : <<include>>
+UC_SelectTickets <.. UC_Pay : <<extend>>
+
+UC_OrderHistory <.. UC_CancelPending : <<extend>>
+UC_OrderHistory <.. UC_Pay : <<extend>>
+UC_MyTickets <.. UC_PrintTicket : <<extend>>
+UC_EditProfile <.. UC_ChangePassword : <<extend>>
+@enduml

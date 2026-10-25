@@ -1,0 +1,49 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+
+actor "Khách Vãng Lai\n(Guest)" as Guest
+actor "Khách Hàng\n(Customer)" as Customer
+actor "Ban Tổ Chức\n(Organizer)" as Organizer
+actor "Quản Trị Viên\n(Admin)" as Admin
+
+Guest <|-- Customer
+
+rectangle "Hệ Thống Quản Lý Bán Vé Sự Kiện" {
+    usecase "UC01: Xem & Tìm kiếm sự kiện" as UC_Search
+    usecase "UC02: Đăng ký & Đăng nhập" as UC_Auth
+    usecase "UC03: Quản lý hồ sơ cá nhân" as UC_Profile
+    usecase "UC04: Đặt vé & Giữ chỗ" as UC_Checkout
+    usecase "UC05: Thanh toán & Nhận vé" as UC_Pay
+    usecase "UC06: Hủy đơn hàng" as UC_CancelOrder
+    usecase "UC07: Quản lý sự kiện của mình" as UC_ManageEvent
+    usecase "UC08: Quản lý loại vé" as UC_ManageTicketType
+    usecase "UC09: Soát vé (Check-in)" as UC_Checkin
+    usecase "UC10: Phê duyệt sự kiện" as UC_ApproveEvent
+    usecase "UC11: Quản lý danh mục & địa điểm" as UC_ManageMasterData
+    usecase "UC12: Quản lý người dùng" as UC_ManageUsers
+    usecase "UC13: Xem Dashboard thống kê" as UC_Dashboard
+}
+
+Guest --> UC_Search
+Guest --> UC_Auth
+
+Customer --> UC_Profile
+Customer --> UC_Checkout
+Customer --> UC_Pay
+Customer --> UC_CancelOrder
+
+Organizer --> UC_Profile
+Organizer --> UC_ManageEvent
+Organizer --> UC_ManageTicketType
+Organizer --> UC_Checkin
+Organizer --> UC_Dashboard
+
+Admin --> UC_Profile
+Admin --> UC_ApproveEvent
+Admin --> UC_ManageMasterData
+Admin --> UC_ManageUsers
+Admin --> UC_Dashboard
+@enduml
