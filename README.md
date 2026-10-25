@@ -271,10 +271,11 @@ php artisan schedule:work
 Toàn bộ tài liệu phân tích, thiết kế, kịch bản báo cáo và sơ đồ kiến trúc đã được biên soạn chỉn chu trong thư mục `docs/`:
 
 1. **[Tài liệu Phân tích Yêu cầu (SRS)](file:///d:/NMNC/event-ticket/docs/01_phan_tich_yeu_cau.md)**: Đặc tả chi tiết 21 yêu cầu chức năng (FR-01 đến FR-21), 5 yêu cầu phi chức năng (NFR-01 đến NFR-05), 3 luồng công việc nghiệp vụ chính và Bảng Ma trận Truy xuất Nguồn gốc (Traceability Matrix).
-2. **[Kịch bản Thuyết trình & Phản biện](file:///d:/NMNC/event-ticket/docs/DEMO_SCRIPT.md)**: Kịch bản trình diễn trực tiếp theo từng phút (8-10 phút) cho 3 người báo cáo và 15 câu hỏi phản biện đáp án chi tiết dành cho Hội đồng chấm đồ án.
-3. **[Thư viện Sơ đồ Thiết kế (PlantUML)](file:///d:/NMNC/event-ticket/docs/diagrams/README.md)**: 8 file mã nguồn `.puml` chuẩn UML (Use Case tổng quan, Use Case chi tiết 3 tác tử, ERD cơ sở dữ liệu, Sơ đồ chức năng, Activity mua vé, Sequence thanh toán).
-4. **[Tài liệu Kiểm thử Phần mềm](file:///d:/NMNC/event-ticket/docs/testing/test-cases.md)**: Bảng chi tiết 33 test cases, mục tiêu kiểm thử, các bước thực hiện, dữ liệu test và kết quả thực tế.
-5. **[Nhật ký Dự án & Phân công Công việc](file:///d:/NMNC/event-ticket/docs/WORKLOG.md)**: Ghi chép chi tiết các mốc hoàn thành, phân công nhiệm vụ và cam kết đóng góp của các thành viên.
+2. **[Tài liệu Thiết kế Cơ sở Dữ liệu](file:///d:/NMNC/event-ticket/docs/02_thiet_ke_co_so_du_lieu.md)**: Đặc tả chi tiết kiến trúc 8 bảng nghiệp vụ và các bảng hạ tầng Laravel, sơ đồ quan hệ ERD (Mermaid + PlantUML), từ điển dữ liệu (Data Dictionary), chỉ mục, khóa ngoại và cơ chế giao dịch khóa bi quan (Pessimistic Locking).
+3. **[Kịch bản Thuyết trình & Phản biện](file:///d:/NMNC/event-ticket/docs/DEMO_SCRIPT.md)**: Kịch bản trình diễn trực tiếp theo từng phút (8-10 phút) cho 3 người báo cáo và 15 câu hỏi phản biện đáp án chi tiết dành cho Hội đồng chấm đồ án.
+4. **[Thư viện Sơ đồ Thiết kế (PlantUML)](file:///d:/NMNC/event-ticket/docs/diagrams/README.md)**: 8 file mã nguồn `.puml` chuẩn UML (Use Case tổng quan, Use Case chi tiết 3 tác tử, ERD cơ sở dữ liệu, Sơ đồ chức năng, Activity mua vé, Sequence thanh toán).
+5. **[Tài liệu Kiểm thử Phần mềm](file:///d:/NMNC/event-ticket/docs/testing/test-cases.md)**: Bảng chi tiết 33 test cases, mục tiêu kiểm thử, các bước thực hiện, dữ liệu test và kết quả thực tế.
+6. **[Nhật ký Dự án & Phân công Công việc](file:///d:/NMNC/event-ticket/docs/WORKLOG.md)**: Ghi chép chi tiết các mốc hoàn thành, phân công nhiệm vụ và cam kết đóng góp của các thành viên.
 
 ---
 
