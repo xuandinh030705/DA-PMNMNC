@@ -66,4 +66,8 @@
   - **Diagrams (Sơ đồ hệ thống)**:
     - Xây dựng 8 file PlantUML chuẩn xác và độc lập: Use Case tổng quan, 3 Use Case chi tiết theo vai trò, ERD 8 bảng chuẩn 100% schema, cây phân rã WBS, Activity luồng mua vé, Sequence luồng thanh toán.
     - Soạn thảo `docs/diagrams/README.md` hướng dẫn sử dụng và bảng tra cứu tương ứng trong báo cáo.
-  - Cổng kiểm tra Phase 5 vượt qua toàn diện.
+- **Hoàn thiện tài liệu, Hướng dẫn & Đóng gói dự án (Phase 6)**:
+  - Soạn thảo `README.md` chuyên nghiệp tại thư mục gốc: Yêu cầu hệ thống, hướng dẫn cài đặt & khởi chạy từng bước cho Windows (PowerShell/CMD) và Linux/macOS, hướng dẫn chuyển đổi MySQL qua XAMPP/Laragon, bảng tài khoản demo 4 nhóm vai trò, cây thư mục dự án, hướng dẫn chạy 33 Feature tests, hướng dẫn chạy artisan command `orders:expire-pending` và Scheduler.
+  - Cập nhật `.env.example` với hướng dẫn chuyển đổi SQLite sang MySQL minh bạch.
+  - Hoàn thiện và đối soát 100% Bảng truy vết yêu cầu (Traceability Matrix) tại `docs/01_phan_tich_yeu_cau.md` (FR-01 đến FR-21 tương ứng 62 routes và controllers).
+  - Hoàn thành cổng kiểm tra tổng thể hệ thống: Chạy mới CSDL (`migrate:fresh --seed`), kiểm tra danh sách routes (`route:list`), biên dịch view (`view:cache`), và xác nhận 100% test cases (`php artisan test` 33/33 passed).

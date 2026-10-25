@@ -31,12 +31,12 @@
   - [x] A8: docs/diagrams/ (8 file PlantUML + README.md)
   - [x] Cổng kiểm tra: `php artisan test` (33 passed, 82 assertions)
   - [x] Commit: `test: ...` và `docs(diagrams): ...`
-- [ ] **Phase 6: README, Bảng truy vết, Hoàn thiện & Báo cáo cuối (Leader + A1)**
-  - [ ] README.md đầy đủ
-  - [ ] docs/01_phan_tich_yeu_cau.md: Bảng truy vết FR -> route/controller
-  - [ ] Cập nhật docs/WORKLOG.md
-  - [ ] Cổng kiểm tra cuối cùng
-  - [ ] Commit: `docs: readme and final`
+- [x] **Phase 6: README, Bảng truy vết, Hoàn thiện & Báo cáo cuối (Leader + A1)**
+  - [x] README.md đầy đủ (Yêu cầu, cài đặt, switch MySQL, demo accounts, test, scheduler, tài liệu)
+  - [x] docs/01_phan_tich_yeu_cau.md: Bảng truy vết FR -> route/controller/views đầy đủ
+  - [x] Cập nhật docs/WORKLOG.md ghi chép Phase 6
+  - [x] Cổng kiểm tra cuối cùng (migrate fresh, route list, view cache, 33 feature tests pass 100%)
+  - [x] Commit: `docs: readme and final`
 
 ---
 
