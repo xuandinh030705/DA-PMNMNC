@@ -2,4 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Storefront routes will be defined here
+// Temporary placeholder for home until Phase 3 implements full StorefrontController
+Route::get('/', function () {
+    return redirect()->route('login');
+})->name('home');

@@ -27,3 +27,11 @@
   - Hoàn thành `docs/DEMO_SCRIPT.md` (kịch bản trình diễn 8-10 phút, 15 câu hỏi - đáp chuyên sâu bám sát code).
   - Hoàn thành hệ thống CSDL: 7 migrations, 8 models Eloquent kèm relationships 2 chiều, scopes, accessors, Enums, factories, seeders.
   - Cổng kiểm tra Phase 1 `migrate:fresh --seed` vượt qua 100%.
+- **Xác thực, Phân quyền & Giao diện cốt lõi (Phase 2)**:
+  - Xây dựng hệ thống định tuyến xác thực `routes/auth.php` (đăng ký, đăng nhập throttle 5 lần/phút, đăng xuất, cập nhật hồ sơ cá nhân).
+  - Tạo `AuthController`, `ProfileController`, các Form Requests tiếng Việt đầy đủ rules, attributes, messages.
+  - Cài đặt Middleware `CheckRole` (đa quyền) và `CheckActive` (ngắt phiên tài khoản bị khóa) đăng ký alias tại `bootstrap/app.php`.
+  - Thiết lập các Policy kiểm soát truy cập chéo: `EventPolicy`, `TicketTypePolicy`, `OrderPolicy`.
+  - Thiết kế Layout `layouts.app` (Storefront responsive, Google Fonts, Bootstrap 5.3 CDN) và `layouts.panel` (Dashboard sidebar chuyên dụng).
+  - Xây dựng Partials `alerts.blade.php`, `form-errors.blade.php`, các trang lỗi chuẩn hóa tiếng Việt 403, 404, 419, 500.
+  - Cổng kiểm tra Phase 2 (migrate, route:list, view:cache) chạy sạch 100%.

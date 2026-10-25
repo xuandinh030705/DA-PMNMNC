@@ -13,10 +13,10 @@
   - [x] A2: Migrations, Models, Factories, Seeders, Enums
   - [x] Cổng kiểm tra: `php artisan migrate:fresh --seed --force` (8 users, 8 events, 4 orders, 3 tickets)
   - [x] Commit: `feat(db): migrations, models, seeders` và `docs: phan tich yeu cau`
-- [ ] **Phase 2: Auth, Middleware, Policies, Layout (A3)**
-  - [ ] A3: routes/auth.php, Auth Controllers & Requests, Middleware role + active, Policies, Layouts, Errors (403, 404, 419, 500)
-  - [ ] Cổng kiểm tra: migrate, route:list, view:cache
-  - [ ] Commit: `feat(auth): auth, middleware, policies, layout`
+- [x] **Phase 2: Auth, Middleware, Policies, Layout (A3)**
+  - [x] A3: routes/auth.php, Auth Controllers & Requests, Middleware role + active, Policies, Layouts, Errors (403, 404, 419, 500)
+  - [x] Cổng kiểm tra: migrate, route:list, view:cache passed 100%
+  - [x] Commit: `feat(auth): auth, middleware, policies, layout`
 - [ ] **Phase 3: Storefront & Organizer (A4 song song A5)**
   - [ ] A4: routes/storefront.php, Storefront Controllers & Requests, OrderService, ExpirePendingOrders, views
   - [ ] A5: routes/organizer.php, Organizer Controllers & Requests, TicketCheckinService, views
