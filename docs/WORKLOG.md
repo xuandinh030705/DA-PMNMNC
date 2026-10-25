@@ -22,3 +22,8 @@
   - Thiết lập múi giờ `Asia/Ho_Chi_Minh`, ngôn ngữ tiếng Việt `vi`, kết nối SQLite.
   - Tích hợp trait `AuthorizesRequests`, tạo `BusinessException`, tạo cấu trúc route tách biệt.
   - Thiết lập tài liệu đặc tả `docs/SPEC.md`, tiến độ `docs/PROGRESS.md` và nhật ký `docs/WORKLOG.md`.
+- **Phân tích yêu cầu & Cơ sở dữ liệu (Phase 1)**:
+  - Hoàn thành `docs/01_phan_tich_yeu_cau.md` (SRS chuẩn IEEE, 21 yêu cầu chức năng, 5 yêu cầu phi chức năng, 3 quy trình chi tiết, ma trận truy vết).
+  - Hoàn thành `docs/DEMO_SCRIPT.md` (kịch bản trình diễn 8-10 phút, 15 câu hỏi - đáp chuyên sâu bám sát code).
+  - Hoàn thành hệ thống CSDL: 7 migrations, 8 models Eloquent kèm relationships 2 chiều, scopes, accessors, Enums, factories, seeders.
+  - Cổng kiểm tra Phase 1 `migrate:fresh --seed` vượt qua 100%.

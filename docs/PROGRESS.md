@@ -8,11 +8,11 @@
   - [x] Laravel 11/12/13: AuthorizesRequests trong Controller.php, BusinessException.php, 4 route files
   - [x] Ghi docs/SPEC.md, docs/PROGRESS.md, docs/WORKLOG.md
   - [x] Git init & commit chore: init project and spec
-- [ ] **Phase 1: Database & Phân tích yêu cầu (A1 song song A2)**
-  - [ ] A1: docs/01_phan_tich_yeu_cau.md, docs/DEMO_SCRIPT.md, docs/WORKLOG.md
-  - [ ] A2: Migrations, Models, Factories, Seeders, Enums
-  - [ ] Cổng kiểm tra: `php artisan migrate:fresh --seed --force`
-  - [ ] Commit: `feat(db): migrations, models, seeders` và `docs: phan tich yeu cau`
+- [x] **Phase 1: Database & Phân tích yêu cầu (A1 song song A2)**
+  - [x] A1: docs/01_phan_tich_yeu_cau.md, docs/DEMO_SCRIPT.md, docs/WORKLOG.md
+  - [x] A2: Migrations, Models, Factories, Seeders, Enums
+  - [x] Cổng kiểm tra: `php artisan migrate:fresh --seed --force` (8 users, 8 events, 4 orders, 3 tickets)
+  - [x] Commit: `feat(db): migrations, models, seeders` và `docs: phan tich yeu cau`
 - [ ] **Phase 2: Auth, Middleware, Policies, Layout (A3)**
   - [ ] A3: routes/auth.php, Auth Controllers & Requests, Middleware role + active, Policies, Layouts, Errors (403, 404, 419, 500)
   - [ ] Cổng kiểm tra: migrate, route:list, view:cache
