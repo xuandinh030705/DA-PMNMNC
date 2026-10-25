@@ -22,10 +22,10 @@
   - [x] A5: routes/organizer.php, Organizer Controllers & Requests, TicketCheckinService, views
   - [x] Cổng kiểm tra: migrate, route:list, view:cache passed 100%
   - [x] Commit: `feat(storefront): ...` và `feat(organizer): ...`
-- [ ] **Phase 4: Admin (A6)**
-  - [ ] A6: routes/admin.php, Admin Controllers & Requests, views (Categories, Venues, Users, Events, Orders, Dashboard)
-  - [ ] Cổng kiểm tra: migrate, route:list, view:cache
-  - [ ] Commit: `feat(admin): ...`
+- [x] **Phase 4: Admin (A6)**
+  - [x] A6: routes/admin.php, Admin Controllers & Requests, views (Categories, Venues, Users, Events, Orders, Dashboard)
+  - [x] Cổng kiểm tra: migrate, route:list (62 routes), view:cache passed 100%
+  - [x] Commit: `feat(admin): dashboard, categories, venues, users, events, orders`
 - [ ] **Phase 5: QA Security Tests & Diagrams (A7 song song A8)**
   - [ ] A7: PHPUnit Feature tests (>= 20 tests), test-cases.md, test-output.txt, rà soát bảo mật & Blade
   - [ ] A8: docs/diagrams/ (8 file PlantUML + README.md)

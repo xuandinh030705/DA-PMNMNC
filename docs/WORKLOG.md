@@ -49,3 +49,11 @@
     - Quản lý danh sách và chi tiết các đơn hàng thuộc sự kiện của mình.
     - Cổng soát vé (Check-in) với `TicketCheckinService` kiểm tra nghiêm ngặt 5 bước và cập nhật trạng thái `used`.
   - Cổng kiểm tra Phase 3 hoàn thành 100%.
+- **Quản trị hệ thống Admin (Phase 4)**:
+  - Xây dựng hệ thống định tuyến `routes/admin.php` với tiền tố `/admin`, middleware `[auth, active, role:admin]`.
+  - `DashboardController`: Bảng điều khiển thống kê tổng quan (người dùng theo vai trò, sự kiện theo trạng thái, doanh thu, đơn hàng đã thanh toán, sự kiện bán chạy, sự kiện chờ phê duyệt).
+  - `CategoryController` & `VenueController`: CRUD Danh mục và Địa điểm, cơ chế toàn vẹn dữ liệu chặn xóa khi đang có sự kiện liên kết.
+  - `UserController`: Quản lý người dùng toàn hệ thống, tìm kiếm/lọc, đổi vai trò, khóa/mở khóa tài khoản; chặn admin tự khóa hoặc tự hạ quyền chính mình.
+  - `EventController`: Xem xét và phê duyệt (`approve`), từ chối (`reject`) hoặc hủy (`cancel`) sự kiện.
+  - `OrderController`: Quản lý, tra cứu và xem chi tiết toàn bộ đơn hàng và mã vé trên toàn sàn.
+  - Cổng kiểm tra Phase 4 đạt 62 routes chuẩn xác, view:cache không lỗi, CSDL seed sạch sẽ.
