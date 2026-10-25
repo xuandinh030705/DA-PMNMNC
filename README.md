@@ -272,10 +272,11 @@ Toàn bộ tài liệu phân tích, thiết kế, kịch bản báo cáo và sơ
 
 1. **[Tài liệu Phân tích Yêu cầu (SRS)](file:///d:/NMNC/event-ticket/docs/01_phan_tich_yeu_cau.md)**: Đặc tả chi tiết 21 yêu cầu chức năng (FR-01 đến FR-21), 5 yêu cầu phi chức năng (NFR-01 đến NFR-05), 3 luồng công việc nghiệp vụ chính và Bảng Ma trận Truy xuất Nguồn gốc (Traceability Matrix).
 2. **[Tài liệu Thiết kế Cơ sở Dữ liệu](file:///d:/NMNC/event-ticket/docs/02_thiet_ke_co_so_du_lieu.md)**: Đặc tả chi tiết 8 bảng nghiệp vụ, từ điển dữ liệu (Data Dictionary), sơ đồ ERD, cơ chế khóa bi quan (`lockForUpdate`), giữ chỗ 15 phút và file Word: [docs/02_thiet_ke_co_so_du_lieu.docx](file:///d:/NMNC/event-ticket/docs/02_thiet_ke_co_so_du_lieu.docx).
-3. **[Kịch bản Thuyết trình & Phản biện](file:///d:/NMNC/event-ticket/docs/DEMO_SCRIPT.md)**: Kịch bản trình diễn trực tiếp theo từng phút (8-10 phút) cho 3 người báo cáo và 15 câu hỏi phản biện đáp án chi tiết dành cho Hội đồng chấm đồ án.
-4. **[Thư viện Sơ đồ Thiết kế (PlantUML)](file:///d:/NMNC/event-ticket/docs/diagrams/README.md)**: 8 file mã nguồn `.puml` chuẩn UML (Use Case tổng quan, Use Case chi tiết 3 tác tử, ERD cơ sở dữ liệu, Sơ đồ chức năng, Activity mua vé, Sequence thanh toán).
-5. **[Tài liệu Kiểm thử Phần mềm](file:///d:/NMNC/event-ticket/docs/testing/test-cases.md)**: Bảng chi tiết 33 test cases, mục tiêu kiểm thử, các bước thực hiện, dữ liệu test và kết quả thực tế.
-6. **[Nhật ký Dự án & Phân công Công việc](file:///d:/NMNC/event-ticket/docs/WORKLOG.md)**: Ghi chép chi tiết các mốc hoàn thành, phân công nhiệm vụ và cam kết đóng góp của các thành viên.
+3. **[Báo cáo Nghiệm thu theo 5 Tiêu chí Đồ án](file:///d:/NMNC/event-ticket/docs/03_bao_cao_tieu_chi_do_an.md)**: Báo cáo đánh giá chi tiết 5 tiêu chuẩn kỹ thuật cốt lõi (Xác định vai trò & nghiệp vụ, Thiết kế CSDL 3NF & ERD, Migration & Model relationship, Phân quyền đa tầng, Tổ chức Route/Controller/View) kèm file Word: [docs/03_bao_cao_tieu_chi_do_an.docx](file:///d:/NMNC/event-ticket/docs/03_bao_cao_tieu_chi_do_an.docx).
+4. **[Kịch bản Thuyết trình & Phản biện](file:///d:/NMNC/event-ticket/docs/DEMO_SCRIPT.md)**: Kịch bản trình diễn trực tiếp theo từng phút (8-10 phút) cho 3 người báo cáo và 15 câu hỏi phản biện đáp án chi tiết dành cho Hội đồng chấm đồ án.
+5. **[Thư viện Sơ đồ Thiết kế (PlantUML)](file:///d:/NMNC/event-ticket/docs/diagrams/README.md)**: 8 file mã nguồn `.puml` chuẩn UML (Use Case tổng quan, Use Case chi tiết 3 tác tử, ERD cơ sở dữ liệu, Sơ đồ chức năng, Activity mua vé, Sequence thanh toán).
+6. **[Tài liệu Kiểm thử Phần mềm](file:///d:/NMNC/event-ticket/docs/testing/test-cases.md)**: Bảng chi tiết 33 test cases, mục tiêu kiểm thử, các bước thực hiện, dữ liệu test và kết quả thực tế.
+7. **[Nhật ký Dự án & Phân công Công việc](file:///d:/NMNC/event-ticket/docs/WORKLOG.md)**: Ghi chép chi tiết các mốc hoàn thành, phân công nhiệm vụ và cam kết đóng góp của các thành viên.
 
 ---
 
