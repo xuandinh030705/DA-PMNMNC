@@ -17,11 +17,11 @@
   - [x] A3: routes/auth.php, Auth Controllers & Requests, Middleware role + active, Policies, Layouts, Errors (403, 404, 419, 500)
   - [x] Cổng kiểm tra: migrate, route:list, view:cache passed 100%
   - [x] Commit: `feat(auth): auth, middleware, policies, layout`
-- [ ] **Phase 3: Storefront & Organizer (A4 song song A5)**
-  - [ ] A4: routes/storefront.php, Storefront Controllers & Requests, OrderService, ExpirePendingOrders, views
-  - [ ] A5: routes/organizer.php, Organizer Controllers & Requests, TicketCheckinService, views
-  - [ ] Cổng kiểm tra: migrate, route:list, view:cache
-  - [ ] Commit: `feat(storefront): ...` và `feat(organizer): ...`
+- [x] **Phase 3: Storefront & Organizer (A4 song song A5)**
+  - [x] A4: routes/storefront.php, Storefront Controllers & Requests, OrderService, ExpirePendingOrders, views
+  - [x] A5: routes/organizer.php, Organizer Controllers & Requests, TicketCheckinService, views
+  - [x] Cổng kiểm tra: migrate, route:list, view:cache passed 100%
+  - [x] Commit: `feat(storefront): ...` và `feat(organizer): ...`
 - [ ] **Phase 4: Admin (A6)**
   - [ ] A6: routes/admin.php, Admin Controllers & Requests, views (Categories, Venues, Users, Events, Orders, Dashboard)
   - [ ] Cổng kiểm tra: migrate, route:list, view:cache

@@ -35,3 +35,17 @@
   - Thiết kế Layout `layouts.app` (Storefront responsive, Google Fonts, Bootstrap 5.3 CDN) và `layouts.panel` (Dashboard sidebar chuyên dụng).
   - Xây dựng Partials `alerts.blade.php`, `form-errors.blade.php`, các trang lỗi chuẩn hóa tiếng Việt 403, 404, 419, 500.
   - Cổng kiểm tra Phase 2 (migrate, route:list, view:cache) chạy sạch 100%.
+- **Storefront & Kênh Ban Tổ Chức (Phase 3)**:
+  - **Storefront**:
+    - Trang chủ tìm kiếm từ khóa, lọc đa tiêu chí (danh mục, thành phố, ngày), sắp xếp theo ngày/giá (`withMin`), phân trang 9 mục.
+    - Trang chi tiết sự kiện và bảng chọn loại vé, kiểm tra tồn khả dụng và thời gian mở bán.
+    - `OrderService`: Triển khai đặt vé trong `DB::transaction()` + `lockForUpdate()` trên `ticket_types`, sinh mã `ORD-XXXXXXXX` duy nhất, giữ chỗ 15 phút.
+    - Thanh toán giả lập (bank_transfer, momo, card) sinh mã vé `TKT-XXXXXXXXXX`, hủy đơn tự động hoàn trả số lượng vé, lazy check và artisan command `orders:expire-pending`.
+    - Màn hình lịch sử đơn hàng, chi tiết đơn hàng, danh sách vé của tôi kèm nút in vé.
+  - **Kênh Ban Tổ Chức (Organizer)**:
+    - Bảng điều khiển thống kê (số sự kiện, tổng vé bán, doanh thu) dùng `withCount`/`withSum` loại bỏ N+1.
+    - Quản lý sự kiện (CRUD), upload và thay thế ảnh banner sự kiện an toàn, gửi duyệt sự kiện lên Admin.
+    - Quản lý các loại vé (lồng shallow trong event), kiểm tra ràng buộc số lượng và ngày mở bán.
+    - Quản lý danh sách và chi tiết các đơn hàng thuộc sự kiện của mình.
+    - Cổng soát vé (Check-in) với `TicketCheckinService` kiểm tra nghiêm ngặt 5 bước và cập nhật trạng thái `used`.
+  - Cổng kiểm tra Phase 3 hoàn thành 100%.
