@@ -1,0 +1,67 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam sequenceMessageAlign center
+skinparam roundcorner 5
+
+autonumber "<b>[00]</b>"
+
+actor "Nhân Viên Soát Vé /\nBan Tổ Chức (Organizer)" as Staff
+boundary "Màn Hình Soát Vé\n(organizer/checkin/form.blade.php)" as View
+control "CheckinController" as Controller
+control "TicketCheckinService" as Service
+database "Cơ Sở Dữ Liệu\n(SQLite / MySQL)" as DB
+
+Staff -> View : Nhập mã vé hoặc quét QR (ví dụ: 'TKT-82HA9F01BC')\n& Bấm "Kiểm Tra & Check-in"
+activate View
+
+View -> Controller : POST /organizer/checkin\n(ticket_code: 'TKT-82HA9F01BC')
+activate Controller
+
+Controller -> Service : checkIn($organizer, 'TKT-82HA9F01BC')
+activate Service
+
+Service -> DB : SELECT * FROM tickets\nJOIN order_items, orders, ticket_types, events\nWHERE ticket_code = ? LIMIT 1
+activate DB
+DB --> Service : Bản ghi vé đầy đủ liên kết
+deactivate DB
+
+note over Service: <b>Quy trình kiểm tra an ninh 5 bước</b>
+
+alt Bước 1: Vé không tồn tại
+    Service --> Controller : throw BusinessException("Mã vé không tồn tại trong hệ thống.")
+    Controller --> View : back() với thông báo lỗi đỏ
+    View --> Staff : Cảnh báo: Vé không hợp lệ!
+else Bước 2: Đơn hàng chưa thanh toán (order.status != 'paid')
+    Service --> Controller : throw BusinessException("Đơn hàng chưa hoàn tất thanh toán.")
+    Controller --> View : back() với thông báo lỗi vàng
+    View --> Staff : Cảnh báo: Đơn hàng chưa thanh toán tiền!
+else Bước 3: Vé không thuộc sự kiện của Organizer này
+    Service --> Controller : throw BusinessException("Vé không thuộc sự kiện do bạn quản lý.")
+    Controller --> View : back() với thông báo lỗi đỏ
+    View --> Staff : Cảnh báo: Vé của sự kiện khác!
+else Bước 4: Vé đã bị hủy trước đó (ticket.status == 'cancelled')
+    Service --> Controller : throw BusinessException("Vé này đã bị hủy, không còn giá trị.")
+    Controller --> View : back() với thông báo lỗi xám
+    View --> Staff : Cảnh báo: Vé đã bị hủy bỏ!
+else Bước 5: Vé đã được sử dụng trước đó (ticket.status == 'used')
+    Service --> Controller : throw BusinessException("Vé đã check-in vào lúc [hh:mm - dd/mm/yyyy].")
+    Controller --> View : back() với thông báo lỗi đỏ
+    View --> Staff : Cảnh báo: Vé trùng lặp! Đã vào cổng trước đó!
+else Vé hoàn toàn hợp lệ (Thỏa mãn cả 5 điều kiện)
+    Service -> DB : UPDATE tickets SET\n  status = 'used',\n  checked_in_at = NOW()\nWHERE id = ?
+    activate DB
+    DB --> Service : Cập nhật thành công (1 row affected)
+    deactivate DB
+
+    Service --> Controller : Trả về đối tượng $ticket (status: used)
+    deactivate Service
+
+    Controller --> View : back()->with('success', 'Check-in thành công!')\n->with('ticket', $ticket)
+    deactivate Controller
+
+    View --> Staff : Hiển thị màn hình xanh lá: CHECK-IN THÀNH CÔNG!\n- Tên sự kiện, Hạng vé\n- Tên khách hàng, Email, SĐT\n- Thời điểm check-in: vừa xong
+end
+
+deactivate View
+@enduml

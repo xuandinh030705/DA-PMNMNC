@@ -1,0 +1,56 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam sequenceMessageAlign center
+skinparam roundcorner 5
+
+autonumber "<b>[00]</b>"
+
+participant "Laravel Scheduler\n(Cron Job / schedule:work)" as Cron
+control "ExpirePendingOrders\n(Artisan Command)" as Command
+control "OrderService" as Service
+database "Cơ Sở Dữ Liệu\n(SQLite / MySQL)" as DB
+
+Cron -> Command : Kích hoạt định kỳ mỗi phút\nphp artisan orders:expire-pending
+activate Command
+
+Command -> Service : expireAllPendingOrders()
+activate Service
+
+Service -> DB : SELECT * FROM orders\nWHERE status = 'pending'\nAND expires_at IS NOT NULL\nAND expires_at < NOW()
+activate DB
+DB --> Service : Danh sách đơn hàng đã quá hạn 15 phút (Collection)
+deactivate DB
+
+alt Không có đơn hàng nào hết hạn
+    Service --> Command : Trả về: 0 đơn hàng
+    Command --> Cron : Log: "Không có đơn hàng nào cần xử lý."
+else Tìm thấy N đơn hàng hết hạn
+    loop Với từng đơn hàng $order trong danh sách
+        Service -> DB : BEGIN TRANSACTION
+        activate DB
+        
+        Service -> DB : SELECT * FROM orders WHERE id = ?\n<b>FOR UPDATE</b>
+        DB --> Service : Bản ghi order đã khóa
+        
+        loop Với từng OrderItem trong đơn hàng
+            Service -> DB : UPDATE ticket_types\nSET sold = sold - ?\nWHERE id = ?
+            note right of DB: <b>Hoàn trả số lượng vé về kho</b>\nđể khách khác có thể đặt mua
+        end
+        
+        Service -> DB : UPDATE orders SET\n  status = 'cancelled',\n  updated_at = NOW()\nWHERE id = ?
+        note right of DB: Cập nhật trạng thái đơn thành ĐÃ HỦY
+        
+        Service -> DB : COMMIT
+        deactivate DB
+        note over DB: Giải phóng khóa sau khi hoàn tất
+    end
+    
+    Service --> Command : Trả về số lượng đơn đã hủy ($expiredCount)
+    deactivate Service
+    
+    Command --> Cron : In kết quả ra console log:\n"Đã hủy và hoàn vé thành công cho N đơn hàng quá hạn."
+    deactivate Command
+end
+
+@enduml

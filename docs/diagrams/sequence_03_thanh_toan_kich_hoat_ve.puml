@@ -1,0 +1,72 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam sequenceMessageAlign center
+skinparam roundcorner 5
+
+autonumber "<b>[00]</b>"
+
+actor "Khách Hàng\n(Customer)" as Customer
+boundary "Trang Chi Tiết Đơn Hàng\n(orders/show.blade.php)" as View
+control "OrderController" as Controller
+control "OrderPolicy" as Policy
+control "OrderService" as Service
+database "Cơ Sở Dữ Liệu\n(SQLite / MySQL)" as DB
+
+Customer -> View : Chọn phương thức (Chuyển khoản / MoMo / Thẻ)\n& Bấm "Xác Nhận Thanh Toán"
+activate View
+
+View -> Controller : POST /orders/{order_code}/pay\n(payment_method: 'momo')
+activate Controller
+
+Controller -> Policy : authorize('pay', $order)
+activate Policy
+alt Không phải chủ sở hữu đơn hàng
+    Policy --> Controller : 403 Forbidden
+    Controller --> View : Hiển thị lỗi truy cập trái phép
+else Đúng chủ sở hữu đơn
+    Policy --> Controller : Cho phép thực thi (200 OK)
+end
+deactivate Policy
+
+Controller -> Service : payOrder($order, 'momo')
+activate Service
+
+Service -> DB : BEGIN TRANSACTION
+activate DB
+
+Service -> DB : SELECT * FROM orders WHERE id = ?\n<b>FOR UPDATE</b>
+DB --> Service : Bản ghi $lockedOrder (đã khóa)
+
+alt Đơn hàng đã quá hạn giữ chỗ (NOW() > expires_at)
+    Service -> DB : UPDATE ticket_types SET sold = sold - quantity\nWHERE id IN (items.ticket_type_id)
+    note right of DB: Tự động hoàn trả vé về kho
+    Service -> DB : UPDATE orders SET status = 'cancelled' WHERE id = ?
+    Service -> DB : COMMIT
+    Service --> Controller : throw BusinessException("Đơn hàng đã hết hạn giữ chỗ và bị hủy.")
+    Controller --> View : Redirect back với thông báo lỗi
+    View --> Customer : Hiển thị trạng thái đơn đã hủy, từ chối thanh toán
+else Đơn hàng hợp lệ và còn hạn
+    Service -> DB : UPDATE orders SET\n  status = 'paid',\n  payment_method = 'momo',\n  paid_at = NOW(),\n  expires_at = NULL\nWHERE id = ?
+
+    loop Với từng OrderItem trong đơn hàng
+        loop Lặp từ 1 đến quantity (số lượng vé)
+            Service -> DB : INSERT INTO tickets (\n  order_item_id, ticket_code, status, created_at\n) VALUES (\n  ?, 'TKT-XXXXXXXXXX', 'valid', NOW()\n)
+            note right of DB: Sinh mã vé duy nhất độc lập cho từng người tham gia
+        end
+    end
+
+    Service -> DB : COMMIT
+    deactivate DB
+
+    Service --> Controller : Trả về $lockedOrder (status: paid)
+    deactivate Service
+
+    Controller --> View : redirect()->route('orders.show', $order->order_code)\nwith('success', 'Thanh toán thành công! Vé đã được phát hành.')
+    deactivate Controller
+
+    View --> Customer : Hiển thị đơn PAID, danh sách vé điện tử kèm mã QR và nút "In Vé"
+end
+
+deactivate View
+@enduml

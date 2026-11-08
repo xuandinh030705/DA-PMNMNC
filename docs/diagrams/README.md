@@ -17,6 +17,12 @@ Thư mục này chứa toàn bộ các mã nguồn sơ đồ thiết kế hệ t
 | `06_so_do_chuc_nang.puml` | Work Breakdown Structure (WBS) | Cây phân rã chức năng nghiệp vụ của toàn bộ hệ thống theo 3 nhóm vai trò chính. | Chương 2: Cây phân rã chức năng hệ thống |
 | `07_activity_mua_ve.puml` | Activity Diagram | Sơ đồ hoạt động luồng đặt vé: Chọn vé, Giao dịch nguyên tử, Khóa bi quan, Giữ chỗ 15 phút, Nhánh hủy, Nhánh quá hạn tự động và Nhánh thanh toán. | Chương 3: Thiết kế luồng nghiệp vụ Đặt vé |
 | `08_sequence_thanh_toan.puml` | Sequence Diagram | Sơ đồ tuần tự tương tác đa tầng: Customer -> Controller -> Policy -> OrderService -> Database khi thanh toán đơn hàng. | Chương 3: Thiết kế tuần tự chức năng Thanh toán |
+| `sequence_01_dang_nhap.puml` | Sequence Diagram | Sơ đồ tuần tự Xác thực & Phân luồng đăng nhập theo vai trò (Admin / Organizer / Customer), kiểm tra tài khoản bị khóa (`is_active`). | Chương 3: Thiết kế tuần tự Xác thực & Phân quyền |
+| `sequence_02_dat_ve_lockforupdate.puml` | Sequence Diagram | Sơ đồ tuần tự Khách hàng đặt vé & Giữ chỗ 15 phút với Khóa bi quan (`lockForUpdate` + `DB::transaction`) chống bán vượt vé. | Chương 3: Thiết kế tuần tự Đặt vé & Giữ chỗ |
+| `sequence_03_thanh_toan_kich_hoat_ve.puml` | Sequence Diagram | Sơ đồ tuần tự Thanh toán giả lập, kiểm tra hạn giữ chỗ, sinh mã vé điện tử độc nhất `TKT-XXXXXXXXXX`. | Chương 3: Thiết kế tuần tự Thanh toán & Phát hành vé |
+| `sequence_04_soat_ve_checkin_5_buoc.puml` | Sequence Diagram | Sơ đồ tuần tự Quy trình soát vé Check-in 5 bước tại cổng sự kiện qua `TicketCheckinService`. | Chương 3: Thiết kế tuần tự Soát vé Check-in |
+| `sequence_05_gui_va_duyet_su_kien.puml` | Sequence Diagram | Sơ đồ tuần tự Vòng đời sự kiện: Ban tổ chức gửi duyệt -> Quản trị viên kiểm tra và Phê duyệt/Từ chối. | Chương 3: Thiết kế tuần tự Quản lý Vòng đời Sự kiện |
+| `sequence_06_tu_dong_huy_don_het_han.puml` | Sequence Diagram | Sơ đồ tuần tự Tác vụ nền (Scheduler/Artisan Command) tự động quét và hoàn trả vé các đơn quá hạn 15 phút. | Chương 3: Thiết kế tuần tự Quản lý Đơn hàng Tự động |
 
 ---
 

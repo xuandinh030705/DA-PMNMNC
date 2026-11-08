@@ -1,0 +1,90 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam sequenceMessageAlign center
+skinparam roundcorner 5
+
+autonumber "<b>[00]</b>"
+
+actor "Ban Tổ Chức\n(Organizer)" as Organizer
+boundary "Giao Diện Sự Kiện\n(organizer/events)" as OrgView
+control "Organizer\\EventController" as OrgController
+control "EventPolicy" as Policy
+database "Cơ Sở Dữ Liệu\n(SQLite / MySQL)" as DB
+actor "Quản Trị Viên\n(Admin)" as Admin
+boundary "Giao Diện Admin\n(admin/events)" as AdminView
+control "Admin\\EventController" as AdminController
+
+== Giai Đoạn 1: Ban Tổ Chức Gửi Duyệt Sự Kiện ==
+
+Organizer -> OrgView : Bấm "Gửi Duyệt Sự Kiện"
+activate OrgView
+
+OrgView -> OrgController : POST /organizer/events/{id}/submit
+activate OrgController
+
+OrgController -> Policy : authorize('submit', $event)
+activate Policy
+Policy --> OrgController : Hợp lệ (200 OK)
+deactivate Policy
+
+OrgController -> DB : SELECT COUNT(*) FROM ticket_types WHERE event_id = ?
+activate DB
+DB --> OrgController : Số lượng loại vé
+deactivate DB
+
+alt Sự kiện chưa có loại vé nào HOẶC start_time <= NOW()
+    OrgController --> OrgView : back()->with('error', 'Cần ít nhất 01 loại vé và ngày bắt đầu trong tương lai.')
+    OrgView --> Organizer : Báo lỗi chưa đủ điều kiện gửi duyệt
+else Đủ điều kiện gửi duyệt
+    OrgController -> DB : UPDATE events SET status = 'pending' WHERE id = ?
+    activate DB
+    DB --> OrgController : Cập nhật thành công
+    deactivate DB
+
+    OrgController --> OrgView : back()->with('success', 'Đã gửi duyệt sự kiện thành công!')
+    deactivate OrgController
+    OrgView --> Organizer : Cập nhật trạng thái sự kiện: CHỜ DUYỆT (pending)
+end
+deactivate OrgView
+
+== Giai Đoạn 2: Quản Trị Viên Kiểm Duyệt & Phê Duyệt ==
+
+Admin -> AdminView : Vào trang chi tiết sự kiện chờ duyệt
+activate AdminView
+AdminView -> AdminController : GET /admin/events/{id}
+activate AdminController
+AdminController -> DB : SELECT * FROM events\nWITH organizer, venue, category, ticketTypes\nWHERE id = ?
+activate DB
+DB --> AdminController : Chi tiết sự kiện & danh sách vé
+deactivate DB
+AdminController --> AdminView : view('admin.events.show')
+deactivate AdminController
+AdminView --> Admin : Hiển thị toàn bộ thông tin kiểm tra
+
+alt Trường hợp từ chối duyệt
+    Admin -> AdminView : Bấm "Từ chối" kèm lý do
+    AdminView -> AdminController : POST /admin/events/{id}/reject
+    activate AdminController
+    AdminController -> DB : UPDATE events SET status = 'draft' WHERE id = ?
+    activate DB
+    DB --> AdminController : Cập nhật về bản nháp
+    deactivate DB
+    AdminController --> AdminView : back()->with('warning', 'Đã từ chối duyệt sự kiện.')
+    deactivate AdminController
+    AdminView --> Admin : Thông báo đã trả về bản nháp cho Organizer sửa
+else Trường hợp phê duyệt công khai
+    Admin -> AdminView : Bấm nút "Phê Duyệt Sự Kiện"
+    AdminView -> AdminController : POST /admin/events/{id}/approve
+    activate AdminController
+    AdminController -> DB : UPDATE events SET status = 'published' WHERE id = ?
+    activate DB
+    DB --> AdminController : Đã công khai
+    deactivate DB
+    AdminController --> AdminView : back()->with('success', 'Đã phê duyệt sự kiện.')
+    deactivate AdminController
+    AdminView --> Admin : Thông báo sự kiện đã được công khai lên sàn bán vé
+end
+
+deactivate AdminView
+@enduml

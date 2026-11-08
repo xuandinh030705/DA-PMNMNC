@@ -1,0 +1,73 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam sequenceMessageAlign center
+skinparam roundcorner 5
+
+autonumber "<b>[00]</b>"
+
+actor "Người Dùng\n(Guest / User)" as User
+boundary "Giao Diện Đăng Nhập\n(auth/login.blade.php)" as View
+control "AuthController" as Controller
+control "LoginRequest" as FormRequest
+entity "User (Model)" as UserModel
+control "Auth Facade\n(Session Guard)" as Auth
+database "Cơ Sở Dữ Liệu\n(SQLite / MySQL)" as DB
+
+User -> View : Nhập Email, Mật khẩu, Ghi nhớ (remember) & Bấm "Đăng nhập"
+activate View
+
+View -> Controller : POST /login (email, password, remember)
+activate Controller
+
+Controller -> FormRequest : validate(rules)
+activate FormRequest
+FormRequest --> Controller : Dữ liệu hợp lệ
+deactivate FormRequest
+
+Controller -> UserModel : where('email', $email)->first()
+activate UserModel
+UserModel -> DB : SELECT * FROM users WHERE email = ? LIMIT 1
+activate DB
+DB --> UserModel : Bản ghi người dùng
+deactivate DB
+UserModel --> Controller : $user
+deactivate UserModel
+
+alt Tài khoản bị khóa ($user->is_active == false)
+    Controller --> View : back() với thông báo lỗi\n"Tài khoản của bạn đã bị khóa."
+    View --> User : Hiển thị alert đỏ cảnh báo
+else Tài khoản đang hoạt động ($user->is_active == true)
+    Controller -> Auth : attempt($credentials, $remember)
+    activate Auth
+    Auth -> DB : Đối chiếu mật khẩu băm (Hash::check)
+    activate DB
+    DB --> Auth : Kết quả xác thực
+    deactivate DB
+    
+    alt Sai mật khẩu / Không khớp
+        Auth --> Controller : false
+        Controller --> View : back() với thông báo\n"Email hoặc mật khẩu không chính xác."
+        View --> User : Báo lỗi và giữ lại email cũ
+    else Xác thực thành công
+        Auth --> Controller : true
+        deactivate Auth
+        
+        Controller -> Controller : $request->session()->regenerate()
+        
+        alt Vai trò Admin ($user->isAdmin())
+            Controller --> View : redirect()->intended('/admin')
+            View --> User : Chuyển hướng đến Dashboard Quản Trị Viên
+        else Vai trò Ban Tổ Chức ($user->isOrganizer())
+            Controller --> View : redirect()->intended('/organizer')
+            View --> User : Chuyển hướng đến Dashboard Ban Tổ Chức
+        else Vai trò Khách Hàng (Customer)
+            Controller --> View : redirect()->intended('/')
+            View --> User : Chuyển hướng về Trang Chủ Storefront
+        end
+    end
+end
+
+deactivate Controller
+deactivate View
+@enduml

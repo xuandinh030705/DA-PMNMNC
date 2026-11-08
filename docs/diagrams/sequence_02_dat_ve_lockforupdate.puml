@@ -1,0 +1,71 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam sequenceMessageAlign center
+skinparam roundcorner 5
+
+autonumber "<b>[00]</b>"
+
+actor "Khách Hàng\n(Customer)" as Customer
+boundary "Trang Sự Kiện\n(storefront/show.blade.php)" as View
+control "OrderController" as Controller
+control "OrderService" as Service
+database "Cơ Sở Dữ Liệu\n(SQLite / MySQL)" as DB
+boundary "Trang Đơn Hàng\n(orders/show.blade.php)" as OrderView
+
+Customer -> View : Chọn số lượng vé, nhập thông tin người nhận & Bấm "Đặt Vé"
+activate View
+
+View -> Controller : POST /events/{slug}/checkout\n(tickets: [id => qty], customer_name, email, phone)
+activate Controller
+
+Controller -> Service : createOrder($user, $event, $quantities, $customerData)
+activate Service
+
+Service -> DB : BEGIN TRANSACTION
+activate DB
+
+loop Với mỗi loại vé được chọn trong giỏ
+    Service -> DB : SELECT * FROM ticket_types\nWHERE id = ? AND event_id = ?\n<b>FOR UPDATE</b>
+    note right of DB: <b>Khóa bi quan (Pessimistic Lock)</b>\nChặn các phiên khác sửa cùng lúc\nchống bán vượt vé (overbooking)
+    DB --> Service : Bản ghi TicketType (đã khóa độc quyền)
+
+    alt Vé nằm ngoài thời gian mở bán hoặc vượt max_per_order
+        Service -> DB : ROLLBACK
+        Service --> Controller : throw BusinessException("Vượt giới hạn hoặc hết hạn bán")
+        Controller --> View : back() với thông báo lỗi
+        View --> Customer : Hiển thị lỗi form
+    else Số vé còn lại không đủ: (quantity - sold) < qty
+        Service -> DB : ROLLBACK
+        Service --> Controller : throw BusinessException("Số lượng vé còn lại không đủ")
+        Controller --> View : back() với flash error
+        View --> Customer : Báo hết vé khả dụng
+    else Hợp lệ
+        Service -> DB : UPDATE ticket_types\nSET sold = sold + ?\nWHERE id = ?
+        note right of DB: Giữ chỗ tạm thời trong kho vé
+    end
+end
+
+Service -> DB : INSERT INTO orders (\n  user_id, order_code, customer_name,\n  customer_email, total_amount, status,\n  expires_at, created_at\n) VALUES (\n  ?, 'ORD-XXXXXXXX', ?, ?, ?, 'pending',\n  NOW() + 15 phút, NOW()\n)
+DB --> Service : Bản ghi Order (id: 101)
+
+loop Với mỗi loại vé đã đặt
+    Service -> DB : INSERT INTO order_items (\n  order_id, ticket_type_id, quantity,\n  unit_price, subtotal\n) VALUES (?, ?, ?, ?, ?)
+end
+
+Service -> DB : COMMIT
+deactivate DB
+note over DB: Giải phóng khóa sau khi ghi nhận thành công
+
+Service --> Controller : Trả về đối tượng $order đã tạo
+deactivate Service
+
+Controller --> OrderView : redirect()->route('orders.show', $order->order_code)\nwith("Tạo đơn thành công! Bạn có 15 phút giữ chỗ.")
+deactivate Controller
+activate OrderView
+
+OrderView --> Customer : Hiển thị đơn hàng pending, đồng hồ đếm ngược 15:00\nvà các nút thanh toán giả lập
+deactivate OrderView
+deactivate View
+
+@enduml
