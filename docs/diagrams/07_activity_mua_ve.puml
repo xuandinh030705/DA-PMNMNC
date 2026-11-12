@@ -40,7 +40,7 @@ if (Hành động của khách hàng?) then (Chủ động Hủy đơn)
     :Trừ trả lại số vé đã giữ vào cột sold;
     :Thông báo đã hủy đơn thành công;
     stop
-else (Chờ quá 15 phút không thanh toán)
+elseif (Chờ quá 15 phút không thanh toán?) then (Quá hạn 15 phút)
     :Quá hạn 15 phút (expires_at < now);
     :Hệ thống kích hoạt hủy đơn tự động;
     :Chuyển trạng thái đơn sang Cancelled;

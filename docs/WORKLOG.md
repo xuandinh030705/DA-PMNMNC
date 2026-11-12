@@ -1,15 +1,18 @@
 # NHẬT KÝ LÀM VIỆC VÀ PHÂN CÔNG NHÓM (WORKLOG.md)
 
+- **Nhóm thực hiện**: Nhóm 8 — Lớp **68PM2**
+- **Danh sách thành viên (3 thành viên)**:
+  1. **Hồ Đăng Quang** — MSSV: `0021568`
+  2. **Tống Xuân Định** — MSSV: `0008268`
+  3. **Nguyễn Hữu Quý** — MSSV: `0022968`
+
 ## 1. Bảng phân công nhóm
 
-| STT | Thành viên | Vai trò trong nhóm | Mảng phụ trách | PLO phụ trách |
-|-----|------------|-------------------|----------------|---------------|
-| 1 | [Họ tên thành viên 1] | Trưởng nhóm (Leader / Analyst) | Quản lý dự án, Phân tích yêu cầu, Tài liệu nghiệp vụ & Kịch bản demo | PLO1, Mục 7 |
-| 2 | [Họ tên thành viên 2] | Backend & Database Developer | Thiết kế CSDL, Migrations, Models, Seeders, ERD | PLO2 |
-| 3 | [Họ tên thành viên 3] | Frontend & UI/UX Developer | Thiết kế Layouts (Bootstrap 5.3), Blade Views, Auth & Profile | PLO3 |
-| 4 | [Họ tên thành viên 4] | Fullstack Developer (Storefront) | Chức năng Đặt vé, Thanh toán giả lập, Chi tiết sự kiện & Giỏ hàng | PLO3 |
-| 5 | [Họ tên thành viên 5] | Fullstack Developer (Organizer & Admin) | Quản lý Sự kiện, Loại vé, Check-in vé, Phê duyệt & Quản trị hệ thống | PLO3 |
-| 6 | [Họ tên thành viên 6] | QA & Security Engineer | Viết Unit/Feature Tests, Rà soát bảo mật CSRF/XSS/Auth, Vẽ sơ đồ kiến trúc | PLO3, PLO2, PLO6 |
+| STT | Thành viên (MSSV) | Vai trò trong nhóm | Mảng phụ trách | PLO phụ trách |
+|-----|-------------------|-------------------|----------------|---------------|
+| 1 | **Hồ Đăng Quang** (`0021568`) | Trưởng nhóm / Kiến trúc & Fullstack (Storefront) | Quản lý tiến độ, Phân tích yêu cầu (`01_phan_tich_yeu_cau.md`), Đặc tả `SPEC.md`, Layouts (`app`, `panel`), Storefront (tìm/lọc/sắp xếp), `OrderService` (`lockForUpdate`), Thanh toán giả lập, Vé của tôi, Kịch bản Demo | PLO1, PLO3, Mục 7 |
+| 2 | **Tống Xuân Định** (`0008268`) | Backend, Database & Organizer Developer | Thiết kế CSDL 3NF (`02_thiet_ke_co_so_du_lieu.*`), 10 Migrations, 8 Models, Factories & Seeders, Auth & Profile, Middleware (`CheckRole`, `CheckActive`), 3 Policies, Phân hệ Ban tổ chức (CRUD sự kiện/loại vé, đơn hàng, `TicketCheckinService` 5 bước, Scheduler `orders:expire-pending`) | PLO2, PLO3 |
+| 3 | **Nguyễn Hữu Quý** (`0022968`) | Admin Developer, QA & System Architecture | Phân hệ Quản trị viên (`Admin\Dashboard`, CRUD Danh mục/Địa điểm ràng buộc `RESTRICT`, Quản lý người dùng & khóa tài khoản, Duyệt/từ chối/hủy sự kiện, Quản lý đơn hàng), 37 Unit/Feature Tests (`tests/`), `test-cases.md`, 8 Sơ đồ PlantUML + PNG (`docs/diagrams/`), `README.md` & Báo cáo nghiệm thu | PLO2, PLO3, PLO6 |
 
 ---
 
@@ -71,3 +74,15 @@
   - Cập nhật `.env.example` với hướng dẫn chuyển đổi SQLite sang MySQL minh bạch.
   - Hoàn thiện và đối soát 100% Bảng truy vết yêu cầu (Traceability Matrix) tại `docs/01_phan_tich_yeu_cau.md` (FR-01 đến FR-21 tương ứng 62 routes và controllers).
   - Hoàn thành cổng kiểm tra tổng thể hệ thống: Chạy mới CSDL (`migrate:fresh --seed`), kiểm tra danh sách routes (`route:list`), biên dịch view (`view:cache`), và xác nhận 100% test cases (`php artisan test` 33/33 passed).
+
+### Ngày 10/11/2026 (Rà soát, sửa lỗi & đồng bộ tài liệu theo rubric `tailieu/`)
+- **Khởi tạo & Sửa lỗi kỹ thuật**:
+  - Khởi tạo môi trường chạy hoàn chỉnh: `composer install`, tạo `.env`, tạo `database/database.sqlite`, sinh `APP_KEY`, `php artisan storage:link`, `php artisan migrate:fresh --seed --force`.
+  - Sửa lỗi CSS thiếu trong `resources/views/layouts/panel.blade.php` (`.badge-role*`, `.btn-primary-custom`, `.ticket-code-font`, `.card-custom`) và bỏ thẻ `<link>` `bootstrap.min.php` lỗi trong `resources/views/layouts/app.blade.php`.
+  - Sửa `routes/organizer.php` (`->except(['index', 'show'])` cho shallow `ticket-types` thành 57 app routes) và đăng ký lịch chạy `orders:expire-pending` mỗi phút trong `routes/console.php`.
+  - Sửa lỗi xử lý đơn quá hạn trong `app/Policies/OrderPolicy.php` và `app/Services/OrderService.php::payOrder()` để tự động hủy đơn + hoàn trả vé đúng giao dịch (không trả 403 và không bị rollback khi ném `BusinessException`).
+  - Sửa lỗi cú pháp PlantUML trong `docs/diagrams/07_activity_mua_ve.puml` (`elseif`), chỉnh `05_erd.puml`, kết xuất 8 ảnh PNG trong `docs/diagrams/images/` và nhúng vào tài liệu Word `.docx`.
+- **Kiểm thử & Đồng bộ tài liệu**:
+  - Bổ sung `tests/Unit/DomainModelsTest.php` (giải quyết lỗi thiếu thư mục `tests/Unit` khi chạy `php artisan test`), bổ sung test quá hạn thanh toán trong `OrderAndPaymentTest.php` và kiểm tra Dashboard/CRUD trong `AdminManagementTest.php`.
+  - Đồng bộ lại `README.md`, `docs/01_*` đến `06_*`, `docs/testing/test-cases.md`, `docs/testing/test-output.txt` và xuất lại toàn bộ các file `.docx`.
+  - Kết quả kiểm thử sau chỉnh sửa cuối cùng: **37/37 tests PASSED (104 assertions, 0 failures)**.

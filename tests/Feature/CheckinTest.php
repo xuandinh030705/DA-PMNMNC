@@ -35,8 +35,11 @@ class CheckinTest extends TestCase
         ]);
 
         $response->assertSessionHas('success');
-        $this->assertEquals(Ticket::STATUS_USED, $ticket->fresh()->status);
-        $this->assertNotNull($ticket->fresh()->checked_in_at);
+        $freshTicket = $ticket->fresh();
+        $this->assertEquals(Ticket::STATUS_USED, $freshTicket->status);
+        $this->assertNotNull($freshTicket->checked_in_at);
+        $this->assertSame($organizer->id, $freshTicket->checked_in_by);
+        $this->assertSame($organizer->id, $freshTicket->checkedInBy?->id);
     }
 
     public function test_checkin_fails_when_ticket_code_does_not_exist(): void

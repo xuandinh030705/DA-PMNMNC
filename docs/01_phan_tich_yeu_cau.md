@@ -221,7 +221,7 @@ Dự án nhằm xây dựng một nền tảng web hiện đại, tin cậy và 
 | FR-06 | Đặt vé & Giữ chỗ | `checkout.store` | `OrderController@checkout` | `resources/views/storefront/orders/show.blade.php` |
 | FR-07 | Thanh toán giả lập | `orders.pay` | `OrderController@pay` | `resources/views/storefront/orders/show.blade.php` |
 | FR-08 | Hủy đơn hàng | `orders.cancel` | `OrderController@cancel` | `resources/views/storefront/orders/index.blade.php` |
-| FR-09 | Xử lý đơn hết hạn | CLI / Lazy check | `OrderService::expirePendingOrders` | Console / Background |
+| FR-09 | Xử lý đơn hết hạn | CLI / Lazy check | `OrderService::expireAllPendingOrders` | Console / Background |
 | FR-10 | Danh sách vé của tôi | `tickets.index` | `TicketController@index` | `resources/views/storefront/tickets/index.blade.php` |
 | FR-11 | Quản lý sự kiện | `organizer.events.*` | `Organizer\EventController` | `resources/views/organizer/events/*` |
 | FR-12 | Quản lý loại vé | `organizer.events.ticket-types.*`| `Organizer\TicketTypeController` | `resources/views/organizer/ticket-types/*` |

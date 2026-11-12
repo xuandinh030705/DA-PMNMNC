@@ -71,4 +71,28 @@ class AdminManagementTest extends TestCase
         $this->actingAs($admin)->post(route('admin.users.toggle', $customer));
         $this->assertTrue((bool) $customer->fresh()->is_active);
     }
+
+    public function test_admin_can_access_dashboard_and_manage_categories_and_venues(): void
+    {
+        $admin = User::factory()->admin()->create();
+
+        $this->actingAs($admin)->get(route('admin.dashboard'))->assertStatus(200);
+        $this->actingAs($admin)->get(route('admin.users.index'))->assertStatus(200);
+
+        $catResponse = $this->actingAs($admin)->post(route('admin.categories.store'), [
+            'name' => 'Hội Nghị Công Nghệ',
+            'description' => 'Các sự kiện công nghệ chuyên sâu',
+        ]);
+        $catResponse->assertRedirect(route('admin.categories.index'));
+        $this->assertDatabaseHas('categories', ['name' => 'Hội Nghị Công Nghệ']);
+
+        $venueResponse = $this->actingAs($admin)->post(route('admin.venues.store'), [
+            'name' => 'Trung Tâm Triển Lãm Mới',
+            'address' => 'Số 10 Đường Láng',
+            'city' => 'Hà Nội',
+            'capacity' => 2500,
+        ]);
+        $venueResponse->assertRedirect(route('admin.venues.index'));
+        $this->assertDatabaseHas('venues', ['name' => 'Trung Tâm Triển Lãm Mới']);
+    }
 }

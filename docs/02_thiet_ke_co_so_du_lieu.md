@@ -5,7 +5,8 @@
 - **Nền tảng**: Laravel 13 (PHP 8.3+)
 - **Hệ quản trị CSDL**: SQLite (Mặc định) / Hỗ trợ MySQL 8.0+ (InnoDB)
 - **Chuẩn hóa**: Dạng chuẩn 3 (Third Normal Form - 3NF)
-- **File Word đính kèm**: [02_thiet_ke_co_so_du_lieu.docx](file:///d:/NMNC/event-ticket/docs/02_thiet_ke_co_so_du_lieu.docx)
+- **File Word đính kèm**: [02_thiet_ke_co_so_du_lieu.docx](./02_thiet_ke_co_so_du_lieu.docx)
+- **Sơ đồ ERD ảnh PNG**: [05_erd.png](./diagrams/images/05_erd.png)
 
 ---
 
@@ -167,7 +168,7 @@ Lưu trữ đơn hàng, khách mua, tổng tiền và hạn giữ chỗ.
 | `customer_email` | VARCHAR(255) | - | No | - | Email nhận vé điện tử. |
 | `customer_phone` | VARCHAR(20) | - | Yes | NULL | Số điện thoại liên hệ. |
 | `total_amount` | DECIMAL(12,0) | - | No | - | Tổng tiền đơn hàng (VNĐ). |
-| `status` | VARCHAR(50) | - | No | 'pending' | Trạng thái: `pending`, `paid`, `cancelled`, `refunded`. |
+| `status` | VARCHAR(50) | - | No | 'pending' | Trạng thái: `pending`, `paid`, `cancelled`. |
 | `payment_method` | VARCHAR(50) | - | Yes | NULL | Phương thức: `bank_transfer`, `momo`, `card`. |
 | `paid_at` | DATETIME | - | Yes | NULL | Thời điểm hoàn tất thanh toán. |
 | `expires_at` | DATETIME | - | Yes | NULL | Hạn giữ chỗ = `created_at + 15 phút`. |

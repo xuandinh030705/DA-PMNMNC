@@ -140,6 +140,49 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
         }
 
+        .card-custom {
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.5rem 1.25rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+        }
+
+        .badge-role {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-role-admin { background-color: #fee2e2; color: #dc2626; }
+        .badge-role-organizer { background-color: #fef3c7; color: #d97706; }
+        .badge-role-customer { background-color: #e0e7ff; color: #4338ca; }
+
+        .ticket-code-font {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+        }
+
         @media (max-width: 991.98px) {
             #sidebar {
                 margin-left: calc(-1 * var(--sidebar-width));

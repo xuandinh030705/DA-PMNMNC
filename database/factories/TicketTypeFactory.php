@@ -16,6 +16,8 @@ class TicketTypeFactory extends Factory
         return [
             'event_id' => Event::factory(),
             'name' => fake()->randomElement(['Vé Tiêu chuẩn', 'Vé VIP', 'Vé Early Bird', 'Vé SV']),
+            'zone' => fake()->randomElement(['Khu A', 'Khu B', 'Khán đài VIP', null]),
+            'description' => fake()->optional()->sentence(),
             'price' => fake()->randomElement([100000, 200000, 500000, 1000000]),
             'quantity' => 100,
             'sold' => 0,

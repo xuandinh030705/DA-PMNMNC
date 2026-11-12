@@ -15,6 +15,8 @@ class TicketType extends Model
     protected $fillable = [
         'event_id',
         'name',
+        'zone',
+        'description',
         'price',
         'quantity',
         'sold',
@@ -39,13 +41,14 @@ class TicketType extends Model
     protected function remaining(): Attribute
     {
         return Attribute::make(
-            get: fn() => max(0, $this->quantity - $this->sold)
+            get: fn () => max(0, $this->quantity - $this->sold)
         );
     }
 
     public function isOnSale(): bool
     {
         $now = now();
+
         return $this->event->isPublished()
             && $this->event->start_time > $now
             && $now->gte($this->sale_start)

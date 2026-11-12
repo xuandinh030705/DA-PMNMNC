@@ -120,5 +120,5 @@ events ||--o{ ticket_types : "has"
 users ||--o{ orders : "places"
 orders ||--|{ order_items : "contains"
 ticket_types ||--o{ order_items : "referenced in"
-order_items ||--|{ tickets : "generates"
+order_items ||--o{ tickets : "generates"
 @enduml

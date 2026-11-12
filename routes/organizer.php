@@ -19,7 +19,9 @@ Route::prefix('organizer')
         Route::post('events/{event}/submit', [EventController::class, 'submit'])->name('events.submit');
 
         // Ticket Types nested shallow in Events
-        Route::resource('events.ticket-types', TicketTypeController::class)->shallow();
+        Route::resource('events.ticket-types', TicketTypeController::class)
+            ->shallow()
+            ->except(['index', 'show']);
 
         // Orders of Organizer's events
         Route::get('orders', [OrderController::class, 'index'])->name('orders.index');

@@ -149,7 +149,16 @@ class OrderAndPaymentTest extends TestCase
 
         $this->assertEquals(Order::STATUS_PAID, $order->fresh()->status);
         $this->assertNotNull($order->fresh()->paid_at);
-        $this->assertCount(2, Ticket::where('order_item_id', $orderItem->id)->get());
+
+        $tickets = Ticket::where('order_item_id', $orderItem->id)->get();
+        $this->assertCount(2, $tickets);
+
+        foreach ($tickets as $ticket) {
+            $this->assertNotEmpty($ticket->qr_payload);
+            $this->assertNotEmpty($ticket->qr_signature);
+            $this->assertTrue($ticket->hasValidQrSignature());
+            $this->assertNull($ticket->checked_in_by);
+        }
     }
 
     public function test_customer_can_cancel_pending_order_and_tickets_are_returned(): void
@@ -208,5 +217,36 @@ class OrderAndPaymentTest extends TestCase
 
         $this->assertEquals(Order::STATUS_CANCELLED, $expiredOrder->fresh()->status);
         $this->assertEquals(6, $ticketType->fresh()->sold); // 10 - 4 = 6
+    }
+
+    public function test_paying_expired_order_cancels_order_and_restores_tickets(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $ticketType = TicketType::factory()->create([
+            'quantity' => 50,
+            'sold' => 5,
+        ]);
+
+        $expiredOrder = Order::factory()->pending()->create([
+            'user_id' => $customer->id,
+            'expires_at' => now()->subMinute(),
+        ]);
+
+        OrderItem::factory()->create([
+            'order_id' => $expiredOrder->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 3,
+        ]);
+
+        $response = $this->actingAs($customer)
+            ->from(route('orders.show', $expiredOrder->order_code))
+            ->post(route('orders.pay', $expiredOrder->order_code), [
+                'payment_method' => 'bank_transfer',
+            ]);
+
+        $response->assertRedirect(route('orders.show', $expiredOrder->order_code));
+        $response->assertSessionHas('error');
+        $this->assertEquals(Order::STATUS_CANCELLED, $expiredOrder->fresh()->status);
+        $this->assertEquals(2, $ticketType->fresh()->sold);
     }
 }

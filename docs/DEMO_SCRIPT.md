@@ -1,6 +1,9 @@
 # KỊCH BẢN DEMO VÀ BỘ CÂU HỎI VẤN ĐÁP BẢO VỆ ĐỒ ÁN
 ## HỆ THỐNG QUẢN LÝ BÁN VÉ SỰ KIỆN
 
+- **Nhóm thực hiện**: **Nhóm 8 — Lớp 68PM2**
+- **Thành viên**: Hồ Đăng Quang (`0021568`), Tống Xuân Định (`0008268`), Nguyễn Hữu Quý (`0022968`)
+
 ---
 
 ### PHẦN 1: KỊCH BẢN DEMO HỆ THỐNG (8 - 10 PHÚT)
@@ -20,7 +23,7 @@
 
 #### TIẾN TRÌNH TRÌNH DIỄN THEO TỪNG VAI TRÒ
 
-#### Chặng 1: Khách vãng lai & Khách hàng mua vé (Thời lượng: ~3.5 phút)
+#### Chặng 1: Khách vãng lai & Khách hàng mua vé (Thời lượng: ~3.5 phút — Phụ trách: Hồ Đăng Quang)
 1. **Khách vãng lai (Guest)**:
    - Truy cập trang chủ `http://localhost:8000/`.
    - Giới thiệu giao diện hiện đại: Thanh tìm kiếm, bộ lọc Danh mục, Thành phố, Khoảng thời gian, bộ sắp xếp (Ngày tổ chức, Giá vé tăng/giảm).
@@ -41,7 +44,7 @@
 
 ---
 
-#### Chặng 2: Ban tổ chức sự kiện (Organizer) (Thời lượng: ~3.5 phút)
+#### Chặng 2: Ban tổ chức sự kiện (Organizer) (Thời lượng: ~3.5 phút — Phụ trách: Tống Xuân Định)
 1. **Đăng nhập Ban tổ chức**:
    - Đăng xuất tài khoản khách hàng, đăng nhập bằng `organizer1@example.com` / `password`.
    - Hệ thống tự động chuyển hướng đến **Dashboard Ban tổ chức** (`/organizer`):
@@ -62,7 +65,7 @@
 
 ---
 
-#### Chặng 3: Quản trị viên hệ thống (Admin) (Thời lượng: ~2 phút)
+#### Chặng 3: Quản trị viên hệ thống (Admin) & Kiểm thử (Thời lượng: ~2–3 phút — Phụ trách: Nguyễn Hữu Quý)
 1. **Đăng nhập Quản trị viên**:
    - Đăng xuất, đăng nhập bằng `admin@example.com` / `password`.
    - Hệ thống tự động chuyển hướng đến **Admin Dashboard** (`/admin`):

@@ -12,14 +12,19 @@ class Ticket extends Model
     use HasFactory;
 
     public const STATUS_VALID = 'valid';
+
     public const STATUS_USED = 'used';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
         'order_item_id',
         'ticket_code',
+        'qr_payload',
+        'qr_signature',
         'status',
         'checked_in_at',
+        'checked_in_by',
     ];
 
     protected function casts(): array
@@ -29,10 +34,45 @@ class Ticket extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (Ticket $ticket): void {
+            if (empty($ticket->qr_payload)) {
+                $ticket->qr_payload = static::buildQrPayload($ticket->ticket_code);
+            }
+
+            if (empty($ticket->qr_signature)) {
+                $ticket->qr_signature = static::generateQrSignature($ticket->qr_payload);
+            }
+        });
+    }
+
+    public static function buildQrPayload(string $ticketCode): string
+    {
+        return json_encode([
+            'v' => 1,
+            'ticket_code' => $ticketCode,
+        ], JSON_THROW_ON_ERROR);
+    }
+
+    public static function generateQrSignature(string $payload): string
+    {
+        return hash_hmac('sha256', $payload, (string) config('app.key'));
+    }
+
+    public function hasValidQrSignature(): bool
+    {
+        if (empty($this->qr_payload) || empty($this->qr_signature)) {
+            return false;
+        }
+
+        return hash_equals(static::generateQrSignature($this->qr_payload), $this->qr_signature);
+    }
+
     public static function generateUniqueTicketCode(): string
     {
         do {
-            $code = 'TKT-' . strtoupper(Str::random(10));
+            $code = 'TKT-'.strtoupper(Str::random(10));
         } while (static::where('ticket_code', $code)->exists());
 
         return $code;
@@ -41,6 +81,11 @@ class Ticket extends Model
     public function orderItem(): BelongsTo
     {
         return $this->belongsTo(OrderItem::class);
+    }
+
+    public function checkedInBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'checked_in_by');
     }
 
     public function isValid(): bool

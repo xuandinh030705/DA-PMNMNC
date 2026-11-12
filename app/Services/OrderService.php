@@ -16,11 +16,7 @@ class OrderService
     /**
      * Create a pending order with 15-minute reservation and pessimistic locking.
      *
-     * @param  User  $user
-     * @param  Event  $event
      * @param  array<int, int>  $ticketQuantities  [ticket_type_id => quantity]
-     * @param  array  $customerData
-     * @return Order
      *
      * @throws BusinessException
      */
@@ -31,7 +27,7 @@ class OrderService
         }
 
         // Filter only positive quantities
-        $quantities = array_filter($ticketQuantities, fn($qty) => (int) $qty > 0);
+        $quantities = array_filter($ticketQuantities, fn ($qty) => (int) $qty > 0);
         if (empty($quantities)) {
             throw new BusinessException('Vui lòng chọn ít nhất một loại vé với số lượng lớn hơn 0.');
         }
@@ -50,7 +46,7 @@ class OrderService
                     ->first();
 
                 if (! $ticketType) {
-                    throw new BusinessException("Loại vé không tồn tại hoặc không thuộc sự kiện này.");
+                    throw new BusinessException('Loại vé không tồn tại hoặc không thuộc sự kiện này.');
                 }
 
                 $now = now();
@@ -107,15 +103,15 @@ class OrderService
     /**
      * Process mock payment for a pending order.
      *
-     * @param  Order  $order
-     * @param  string  $paymentMethod
-     * @return Order
      *
      * @throws BusinessException
      */
     public function payOrder(Order $order, string $paymentMethod): Order
     {
-        return DB::transaction(function () use ($order, $paymentMethod) {
+        /** @var Order|null $paidOrder */
+        $paidOrder = null;
+
+        $expired = DB::transaction(function () use ($order, $paymentMethod, &$paidOrder): bool {
             /** @var Order $lockedOrder */
             $lockedOrder = Order::where('id', $order->id)->lockForUpdate()->firstOrFail();
 
@@ -125,7 +121,8 @@ class OrderService
 
             if ($lockedOrder->expires_at && now()->gt($lockedOrder->expires_at)) {
                 $this->cancelOrder($lockedOrder);
-                throw new BusinessException('Đơn hàng đã hết thời gian giữ chỗ (15 phút) và đã tự động hủy.');
+
+                return true;
             }
 
             $lockedOrder->status = Order::STATUS_PAID;
@@ -137,24 +134,36 @@ class OrderService
             // Generate unique tickets for each item
             foreach ($lockedOrder->orderItems as $item) {
                 for ($i = 0; $i < $item->quantity; $i++) {
+                    $ticketCode = Ticket::generateUniqueTicketCode();
+                    $qrPayload = Ticket::buildQrPayload($ticketCode);
+
                     Ticket::create([
                         'order_item_id' => $item->id,
-                        'ticket_code' => Ticket::generateUniqueTicketCode(),
+                        'ticket_code' => $ticketCode,
+                        'qr_payload' => $qrPayload,
+                        'qr_signature' => Ticket::generateQrSignature($qrPayload),
                         'status' => Ticket::STATUS_VALID,
                         'checked_in_at' => null,
+                        'checked_in_by' => null,
                     ]);
                 }
             }
 
-            return $lockedOrder;
+            $paidOrder = $lockedOrder;
+
+            return false;
         });
+
+        if ($expired) {
+            throw new BusinessException('Đơn hàng đã hết thời gian giữ chỗ (15 phút) và đã tự động hủy.');
+        }
+
+        return $paidOrder;
     }
 
     /**
      * Cancel a pending order and restore ticket quantities.
      *
-     * @param  Order  $order
-     * @return Order
      *
      * @throws BusinessException
      */

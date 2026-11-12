@@ -18,6 +18,8 @@ class TicketTypeRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
+            'zone' => ['nullable', 'string', 'max:100'],
+            'description' => ['nullable', 'string', 'max:1000'],
             'price' => ['required', 'numeric', 'min:0'],
             'quantity' => ['required', 'integer', "min:{$minQuantity}"],
             'sale_start' => ['required', 'date'],
@@ -30,6 +32,8 @@ class TicketTypeRequest extends FormRequest
     {
         return [
             'name' => 'Tên loại vé',
+            'zone' => 'Khu vực chỗ ngồi',
+            'description' => 'Mô tả quyền lợi',
             'price' => 'Giá vé',
             'quantity' => 'Số lượng vé phát hành',
             'sale_start' => 'Thời gian mở bán',

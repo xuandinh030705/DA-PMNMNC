@@ -17,7 +17,7 @@ class OrderSeeder extends Seeder
         $c2 = User::where('email', 'customer2@example.com')->first();
         $c3 = User::where('email', 'customer3@example.com')->first();
 
-        $ticketTypes = TicketType::whereHas('event', fn($q) => $q->where('status', 'published'))->get();
+        $ticketTypes = TicketType::whereHas('event', fn ($q) => $q->where('status', 'published'))->get();
         if ($ticketTypes->isEmpty()) {
             return;
         }
@@ -57,6 +57,7 @@ class OrderSeeder extends Seeder
             'ticket_code' => Ticket::generateUniqueTicketCode(),
             'status' => Ticket::STATUS_USED,
             'checked_in_at' => now()->subHour(),
+            'checked_in_by' => $tt1->event->organizer_id,
         ]);
 
         // Ticket 2: valid
