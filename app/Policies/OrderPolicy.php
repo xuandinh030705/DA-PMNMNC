@@ -36,8 +36,7 @@ class OrderPolicy
     public function pay(User $user, Order $order): bool
     {
         return $user->id === $order->user_id
-            && $order->isPending()
-            && ! $order->isExpired();
+            && $order->isPending();
     }
 
     /**

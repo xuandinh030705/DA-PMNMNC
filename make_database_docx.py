@@ -144,12 +144,12 @@ def build_database_document(output_path):
     meta_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     set_table_borders(meta_table, color="CBD5E1", sz="6")
     meta_data = [
-        ("Mã tài liệu / Phiên bản:", "DDD-ETMS-v1.0 (Final Release)"),
+        ("Mã tài liệu / Phiên bản:", "DDD-ETMS-v1.1 (Final Release)"),
+        ("Nhóm thực hiện:", "Nhóm 8 - Lớp 68PM2 (Hồ Đăng Quang, Tống Xuân Định, Nguyễn Hữu Quý)"),
         ("Nền tảng Framework:", "PHP 8.3+ / Laravel 13 Framework"),
         ("Hệ quản trị CSDL:", "SQLite 3 (Mặc định) / Hỗ trợ MySQL 8.0+ (InnoDB)"),
         ("Mã hóa ký tự (Charset):", "UTF-8 Unicode (utf8mb4_unicode_ci)"),
         ("Quy chuẩn thiết kế:", "Chuẩn hóa dạng 3NF (Third Normal Form)"),
-        ("Ngày phát hành:", "Năm học 2026"),
     ]
     for idx, (label, val) in enumerate(meta_data):
         row_cells = meta_table.rows[idx].cells
@@ -267,6 +267,18 @@ def build_database_document(output_path):
         "Ban quản trị hệ thống không thể xóa nhầm một danh mục hoặc địa điểm đang được gán cho các sự kiện đang diễn ra."
     )
 
+    erd_img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs", "diagrams", "images", "05_erd.png")
+    if os.path.exists(erd_img_path):
+        p_img = doc.add_paragraph()
+        p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_img.add_run().add_picture(erd_img_path, width=Inches(6.2))
+        p_cap = doc.add_paragraph()
+        p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r_cap = p_cap.add_run("Hình 1: Sơ đồ Quan hệ Thực thể (ERD - 8 bảng nghiệp vụ)")
+        r_cap.italic = True
+        r_cap.font.size = Pt(9.5)
+        r_cap.font.color.rgb = RGBColor(100, 116, 139)
+
     # ==================== PHẦN 3 ====================
     h1 = doc.add_heading("PHẦN 3: TỪ ĐIỂN DỮ LIỆU CHI TIẾT (DATA DICTIONARY)", level=1)
     h1.paragraph_format.space_before = Pt(18)
@@ -368,7 +380,7 @@ def build_database_document(output_path):
                 ("customer_email", "VARCHAR(255)", "-", "No", "-", "Email nhận thông tin vé điện tử."),
                 ("customer_phone", "VARCHAR(20)", "-", "Yes", "NULL", "Số điện thoại liên lạc người nhận vé."),
                 ("total_amount", "DECIMAL(12,0)", "-", "No", "-", "Tổng số tiền cần thanh toán của đơn hàng (VNĐ)."),
-                ("status", "VARCHAR(50)", "-", "No", "'pending'", "Trạng thái: 'pending', 'paid', 'cancelled', 'refunded'."),
+                ("status", "VARCHAR(50)", "-", "No", "'pending'", "Trạng thái: 'pending', 'paid', 'cancelled'."),
                 ("payment_method", "VARCHAR(50)", "-", "Yes", "NULL", "Phương thức thanh toán: 'bank_transfer', 'momo', 'card'."),
                 ("paid_at", "DATETIME", "-", "Yes", "NULL", "Thời điểm thanh toán thành công."),
                 ("expires_at", "DATETIME", "-", "Yes", "NULL", "Thời điểm hết hạn giữ chỗ (Mặc định: created_at + 15 phút)."),
@@ -396,7 +408,7 @@ def build_database_document(output_path):
             "cols": [
                 ("id", "BIGINT UNSIGNED", "PK", "No", "Auto Increment", "Mã định danh duy nhất của vé điện tử."),
                 ("order_item_id", "BIGINT UNSIGNED", "FK", "No", "-", "Khóa ngoại trỏ tới order_items.id (Gắn với dòng đặt vé)."),
-                ("ticket_code", "VARCHAR(50)", "UK", "No", "-", "Mã vé duy nhất để tra cứu / QR Code (Ví dụ: 'TKT-82HA9F01BC')."),
+                ("ticket_code", "VARCHAR(50)", "UK", "No", "-", "Mã vé duy nhất để tra cứu / check-in (Ví dụ: 'TKT-82HA9F01BC')."),
                 ("status", "VARCHAR(50)", "-", "No", "'valid'", "Trạng thái vé: 'valid' (Hợp lệ), 'used' (Đã dùng), 'cancelled'."),
                 ("checked_in_at", "DATETIME", "-", "Yes", "NULL", "Thời điểm ban tổ chức quét mã check-in tại cổng."),
                 ("created_at", "TIMESTAMP", "-", "Yes", "CURRENT_TIMESTAMP", "Thời điểm sinh vé điện tử."),
@@ -526,18 +538,18 @@ def build_database_document(output_path):
 
     seed_headers = ["Seeder Class", "Thực Thể", "Số Lượng Mẫu", "Nội Dung Dữ Liệu Khởi Tạo"]
     seed_data = [
-        ["UserSeeder", "users", "8 tài khoản", "1 Admin, 2 Ban tổ chức hoạt động, 3 Khách hàng, 1 Khách hàng bị khóa, 1 Ban tổ chức bị khóa."],
-        ["CategorySeeder", "categories", "5 danh mục", "Âm nhạc & Lễ hội, Hội thảo & Triển lãm, Thể thao & Giải đấu, Sân khấu & Nghệ thuật, Khóa học."],
-        ["VenueSeeder", "venues", "5 địa điểm", "Trung tâm Hội nghị Quốc gia, Sân vận động Mỹ Đình, Nhà hát Hòa Bình, GEM Center, White Palace."],
-        ["EventSeeder", "events & ticket_types", "8 sự kiện, 16 loại vé", "4 sự kiện đã xuất bản (published), 2 bản nháp (draft), 1 sự kiện đã hủy, 1 đã kết thúc."],
-        ["OrderSeeder", "orders, items, tickets", "4 đơn, 3 vé điện tử", "2 đơn đã thanh toán (paid) kèm vé điện tử, 1 đơn đang chờ (pending), 1 đơn đã hủy."],
+        ["UserSeeder", "users", "8 tài khoản", "1 Admin (admin@example.com), 2 Organizer (organizer1..2@example.com), 5 Customer (customer1..5@example.com)."],
+        ["CategorySeeder", "categories", "5 danh mục", "Âm nhạc & Hòa nhạc, Hội thảo & Workshop, Thể thao & Giải đấu, Nghệ thuật & Sân khấu, Công nghệ & Triển lãm."],
+        ["VenueSeeder", "venues", "4 địa điểm", "TT Hội nghị Quốc gia HN, Nhà thi đấu Quân khu 7, Cung Thể thao Tiên Sơn, Nhà hát Hòa Bình."],
+        ["EventSeeder", "events & ticket_types", "8 sự kiện, 16 loại vé", "5 sự kiện published, 1 sự kiện draft, 1 sự kiện pending, 1 sự kiện cancelled."],
+        ["OrderSeeder", "orders, items, tickets", "4 đơn, 3 vé điện tử", "2 đơn đã thanh toán (paid) kèm 3 vé điện tử (1 used, 2 valid), 1 đơn pending, 1 đơn cancelled."],
     ]
     col_w_seed = [Inches(1.4), Inches(1.5), Inches(1.2), Inches(2.9)]
     add_styled_table(doc, seed_headers, seed_data, col_widths=col_w_seed)
 
     doc.add_paragraph(
-        "Kết quả kiểm định toàn vẹn: 100% các bảng đều vượt qua 33 bài kiểm thử tính năng tự động (Feature Tests) "
-        "đạt 82 assertions thành công, không phát hiện bất kỳ lỗi vi phạm khóa ngoại, mất đồng bộ tồn kho hoặc rò rỉ dữ liệu."
+        "Kết quả kiểm định toàn vẹn: 100% các bảng đều vượt qua 37 bài kiểm thử tự động (2 Unit + 35 Feature Tests) "
+        "đạt 104 assertions thành công, không phát hiện bất kỳ lỗi vi phạm khóa ngoại, mất đồng bộ tồn kho hoặc rò rỉ dữ liệu."
     )
 
     # Save document
@@ -545,5 +557,6 @@ def build_database_document(output_path):
     print(f"Document successfully created at: {output_path}")
 
 if __name__ == "__main__":
-    out_file = r"d:\NMNC\event-ticket\docs\02_thiet_ke_co_so_du_lieu.docx"
-    build_database_document(out_file)
+    docs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
+    build_database_document(os.path.join(docs_dir, "02_thiet_ke_co_so_du_lieu.docx"))
+    build_database_document(os.path.join(docs_dir, "thiet_ke_co_so_du_lieu.docx"))

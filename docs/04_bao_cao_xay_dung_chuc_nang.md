@@ -1,10 +1,10 @@
 # BÁO CÁO MỤC 3: XÂY DỰNG CHỨC NĂNG HỆ THỐNG (CHUẨN ĐẦU RA PLO3)
 ## HỆ THỐNG QUẢN LÝ BÁN VÉ SỰ KIỆN (EVENT TICKET MANAGEMENT SYSTEM)
 
-- **Mã tài liệu**: FUNC-ETMS-v1.0 (Final Release)
+- **Mã tài liệu**: FUNC-ETMS-v1.1
 - **Nền tảng**: Laravel 13 (PHP 8.3+) / Blade / Bootstrap 5.3 CDN
-- **File Word đính kèm**: [04_bao_cao_xay_dung_chuc_nang.docx](file:///d:/NMNC/event-ticket/docs/04_bao_cao_xay_dung_chuc_nang.docx)
-- **Chuẩn đầu ra**: PLO3 - Xây dựng và phát triển chức năng phần mềm
+- **File Word đính kèm**: [04_bao_cao_xay_dung_chuc_nang.docx](./04_bao_cao_xay_dung_chuc_nang.docx)
+- **Chuẩn đầu ra**: PLO3 - Xây dựng và phát triển chức năng phần mềm (đối chiếu `tailieu/2.jpg`)
 
 ---
 
@@ -13,64 +13,51 @@
 | Tiêu Chí | Nội Dung Tiêu Chí Đánh Giá | Mức Độ Đạt Được | Minh Chứng Kỹ Thuật Trong Dự Án |
 | :---: | :--- | :---: | :--- |
 | **3.1** | Hoàn thành các chức năng CRUD chính | **100%** | CRUD Sự kiện, Hạng vé, Đơn hàng, Danh mục, Địa điểm, Người dùng |
-| **3.2** | Tìm kiếm, lọc, sắp xếp hoặc phân trang dữ liệu | **100%** | Tìm kiếm từ khóa, lọc danh mục/thành phố/ngày, sắp xếp giá/ngày, phân trang 9/10/15 |
-| **3.3** | Áp dụng Laravel MVC: route, controller, model, blade | **100%** | 4 route files độc lập (62 routes), Service layer, 8 Models relations, 2 Master layouts |
-| **3.4** | Validation form nhập liệu | **100%** | 12 FormRequests độc lập, thông báo lỗi tiếng Việt UTF-8 chuẩn |
-| **3.5** | Đăng nhập, đăng xuất, xác thực người dùng nếu phù hợp | **100%** | AuthController, băm Bcrypt, Throttle giới hạn 5 lần/phút, Remember me, Hồ sơ cá nhân |
+| **3.2** | Tìm kiếm, lọc, sắp xếp hoặc phân trang dữ liệu | **100%** | Tìm kiếm `q`, lọc `category`/`city`/`from`/`to`, sắp xếp `sort`, phân trang 9/10/12 |
+| **3.3** | Áp dụng Laravel MVC: route, controller, model, blade | **100%** | 4 route files độc lập (57 app routes), Service layer, 8 Models relations, 2 Master layouts |
+| **3.4** | Validation form nhập liệu | **100%** | 11 FormRequests độc lập, thông báo lỗi tiếng Việt UTF-8 chuẩn |
+| **3.5** | Đăng nhập, đăng xuất, xác thực người dùng nếu phù hợp | **100%** | `AuthController`, băm Bcrypt, middleware `throttle:5,1`, Remember me, Hồ sơ cá nhân |
 | **3.6** | Giao diện Blade rõ ràng, dễ sử dụng, có layout/template phù hợp | **100%** | `layouts/app.blade.php`, `layouts/panel.blade.php`, partials alerts/errors, Bootstrap 5 CDN |
-| **3.7** | Chức năng hoạt động ổn định, ít lỗi khi thao tác | **100%** | Khóa bi quan `lockForUpdate()`, soát vé 5 bước, xử lý ngoại lệ `BusinessException` |
+| **3.7** | Chức năng hoạt động ổn định, ít lỗi khi thao tác | **100%** | Khóa bi quan `lockForUpdate()`, soát vé 5 bước, `orders:expire-pending` theo lịch, `BusinessException` |
 
 ---
 
 ### CHI TIẾT HIỆN THỰC HÓA 7 TIÊU CHÍ
 
 #### 3.1. Hoàn Thành Các Chức Năng CRUD Chính
-- **Sự kiện (Events CRUD)**: Ban tổ chức và Admin tạo sự kiện, tải ảnh banner lưu storage, xem chi tiết, cập nhật nội dung, chuyển đổi trạng thái (`draft` -> `pending` -> `published`/`cancelled`), hỗ trợ xóa mềm (`softDeletes`) khi đã có đơn hàng.
-- **Hạng vé (Ticket Types CRUD)**: Ban tổ chức tạo các loại vé (VIP, Standard, Early Bird), cập nhật giá tiền VNĐ, điều chỉnh số lượng phát hành, giới hạn vé mỗi đơn và thời gian mở/đóng bán.
-- **Đơn hàng (Orders CRUD)**: Khách hàng đặt vé, thanh toán giả lập, hủy đơn; Admin tra cứu và xem chi tiết đơn hàng toàn sàn.
-- **Danh mục & Địa điểm (Categories & Venues CRUD)**: Admin thêm, sửa, xóa với cơ chế `RESTRICT` chặn xóa khi đang có sự kiện liên kết.
-- **Người dùng (Users CRUD)**: Admin quản lý danh sách, tìm kiếm, chỉnh sửa vai trò (Role), kích hoạt hoặc khóa tài khoản (`is_active`).
+- **Sự kiện (Events CRUD)**: Ban tổ chức tạo sự kiện nháp, tải ảnh banner lưu disk `public`, xem chi tiết, cập nhật khi ở trạng thái `draft`, xóa bản nháp (`SoftDeletes`), gửi duyệt (`pending`); Admin xem chi tiết, phê duyệt (`published`), từ chối (`draft`) hoặc hủy (`cancelled`).
+- **Hạng vé (Ticket Types CRUD)**: Ban tổ chức tạo các loại vé (`VIP`, `Standard`, ...), cập nhật giá tiền VNĐ, số lượng phát hành (không nhỏ hơn `sold`), giới hạn vé mỗi đơn (`max_per_order`) và thời gian mở/đóng bán.
+- **Đơn hàng (Orders)**: Khách hàng đặt vé giữ chỗ, thanh toán giả lập, hủy đơn `pending`; Organizer và Admin tra cứu, lọc và xem chi tiết đơn hàng.
+- **Danh mục & Địa điểm (Categories & Venues CRUD)**: Admin thêm, sửa, xóa kèm kiểm tra `$category->events()->exists()` / `$venue->events()->exists()` và ràng buộc khóa ngoại `RESTRICT`.
+- **Người dùng (Users)**: Admin quản lý danh sách, tìm kiếm/lọc theo vai trò, cập nhật vai trò và khóa/mở khóa tài khoản (`is_active`).
 
 #### 3.2. Tìm Kiếm, Lọc, Sắp Xếp & Phân Trang Dữ Liệu
-- **Tìm kiếm đa điều kiện**: Khách hàng tìm kiếm theo từ khóa tiêu đề/mô tả sự kiện (`?search=...`), lọc theo danh mục (`?category=...`), lọc theo thành phố (`?city=...`), và lọc theo khoảng thời gian tổ chức (`?date_from=...&date_to=...`).
-- **Sắp xếp**: Sắp xếp sự kiện theo ngày bắt đầu gần nhất (`start_time ASC`) hoặc theo giá vé thấp nhất (`withMin('ticketTypes', 'price')`).
-- **Phân trang chuẩn mực**: Sử dụng `paginate()` kết hợp `withQueryString()` giữ nguyên bộ lọc: Storefront 9 sự kiện/trang dạng card lưới, Admin & Organizer 10-15 dòng/trang dạng bảng. Áp dụng `Paginator::useBootstrapFive()` tại `AppServiceProvider`.
+- **Tìm kiếm đa điều kiện trên Storefront (`StorefrontController@index`)**: Tìm theo tiêu đề (`?q=...`), lọc theo danh mục (`?category=...`), lọc theo thành phố (`?city=...`), lọc theo khoảng thời gian (`?from=...&to=...`).
+- **Sắp xếp (`?sort=...`)**: Hỗ trợ `date_asc`, `date_desc`, `price_asc`, `price_desc` kết hợp `withMin('ticketTypes as min_price', 'price')`.
+- **Phân trang chuẩn mực**: Sử dụng `paginate()->withQueryString()` (9 sự kiện/trang ở Storefront, 12 vé/trang ở `tickets.index`, 10 dòng/trang ở các bảng quản trị) với `Paginator::useBootstrapFive()` tại `AppServiceProvider`.
 
 #### 3.3. Áp Dụng Chuẩn Mực Mô Hình Laravel MVC
-- **Routes (62 Routes)**: Tách thành 4 tệp độc lập `auth.php`, `storefront.php`, `organizer.php`, `admin.php`.
-- **Controllers**: Tổ chức theo namespace `App\Http\Controllers\Auth`, `Storefront`, `Organizer`, `Admin`. Áp dụng tư tưởng Skinny Controller, trích xuất logic giao dịch phức tạp sang Service Layer (`OrderService`, `TicketCheckinService`).
-- **Models**: 8 Eloquent models trong `app/Models/` định nghĩa quan hệ 2 chiều (`belongsTo`, `hasMany`, `hasManyThrough`), scopes truy vấn cục bộ và casting Enums.
-- **Views**: Hệ thống Blade template kế thừa phân cấp, tái sử dụng partials và components.
+- **Routes (57 app routes)**: Tách thành 4 tệp độc lập `auth.php`, `storefront.php`, `organizer.php`, `admin.php` được nạp từ `routes/web.php`.
+- **Controllers & Services**: Tổ chức theo namespace `App\Http\Controllers\Auth`, `Storefront`, `Organizer`, `Admin`; tách nghiệp vụ sang `OrderService` và `TicketCheckinService`.
+- **Models**: 8 Eloquent models trong `app/Models/` định nghĩa quan hệ 2 chiều, scopes cục bộ và accessors.
+- **Views**: Hệ thống Blade template kế thừa phân cấp từ `layouts/app.blade.php` và `layouts/panel.blade.php`.
 
-#### 3.4. Validation Form Nhập Liệu (12 Form Requests)
-Tách toàn bộ kiểm tra hợp lệ dữ liệu sang 12 Form Requests độc lập trong `app/Http/Requests/`:
-```php
-// app/Http/Requests/Organizer/EventRequest.php
-public function rules(): array {
-    return [
-        'title' => ['required', 'string', 'max:255'],
-        'category_id' => ['required', 'exists:categories,id'],
-        'venue_id' => ['required', 'exists:venues,id'],
-        'start_time' => ['required', 'date', 'after:now'],
-        'end_time' => ['required', 'date', 'after:start_time'],
-        'banner' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-    ];
-}
-```
+#### 3.4. Validation Form Nhập Liệu (11 Form Requests)
+Toàn bộ validation được tách sang 11 Form Requests độc lập trong `app/Http/Requests/` (Auth: 3, Storefront: 2, Organizer: 3, Admin: 3), mỗi class đều khai báo đủ `rules()`, `attributes()` và `messages()` bằng tiếng Việt có dấu.
 
 #### 3.5. Đăng Nhập, Đăng Xuất & Xác Thực Người Dùng
-- Mật khẩu băm Bcrypt 12 rounds an toàn.
-- Chống brute-force: Giới hạn tối đa 5 lần đăng nhập sai trong 1 phút (`RateLimiter::hit(...)`), tự động khóa tạm thời và thông báo số giây phải chờ.
-- Hỗ trợ `Remember Me` sinh token ngẫu nhiên lưu trong cột `remember_token`.
-- Khách hàng và Ban tổ chức có thể xem và cập nhật hồ sơ cá nhân, đổi mật khẩu tại `/profile`.
+- Mật khẩu băm Bcrypt qua `Hash::make()` và cast `'hashed'` trên `User`.
+- Chống brute-force bằng route middleware `throttle:5,1` trên route `POST /login` (`login.store`).
+- Kiểm tra `is_active` ngay khi đăng nhập và trên mỗi request qua middleware `CheckActive`.
+- Hỗ trợ `Remember Me` và trang hồ sơ cá nhân `/profile` (đổi họ tên, SĐT, mật khẩu kiểm tra `current_password`).
 
 #### 3.6. Giao Diện Blade Rõ Ràng, Có Layout Phù Hợp
-- 2 Master Layouts: `layouts/app.blade.php` (Storefront cho khách hàng) và `layouts/panel.blade.php` (Dashboard Admin & Organizer có Sidebar).
-- Partials dùng chung: `partials/alerts.blade.php` (thông báo flash message tự tắt sau 5s); `partials/form-errors.blade.php` (danh sách lỗi nhập liệu).
-- Toàn bộ giao diện dùng Bootstrap 5.3 CDN và Bootstrap Icons CDN (Zero-node build, không cần npm).
+- 2 Master Layouts đồng bộ CSS: `layouts/app.blade.php` (Storefront) và `layouts/panel.blade.php` (Admin & Organizer Sidebar).
+- Partials dùng chung: `partials/alerts.blade.php`, `partials/form-errors.blade.php`.
+- Toàn bộ giao diện dùng Bootstrap 5.3 CDN và Bootstrap Icons CDN (Zero-node build).
 
 #### 3.7. Chức Năng Hoạt Động Ổn Định, Ít Lỗi Khi Thao Tác
-- **Khóa bi quan (`lockForUpdate`)**: Chống bán vượt số lượng vé (Race Condition / Overselling).
-- **Tự động thu hồi vé**: Hủy đơn sau 15 phút chưa thanh toán và hoàn trả vé vào kho (`orders:expire-pending`).
-- **Soát vé 5 bước**: `TicketCheckinService` xác thực nghiêm ngặt ngăn chặn vé giả, vé hủy, vé đã dùng.
-- **Xử lý ngoại lệ**: Lớp `BusinessException` hiển thị thông báo lỗi nghiệp vụ thân thiện, không làm sập ứng dụng.
+- **Khóa bi quan (`lockForUpdate`)**: Chống bán vượt số lượng vé khi nhiều người đặt đồng thời.
+- **Thu hồi vé hết hạn 15 phút**: Kết hợp Lazy Check (`checkAndExpire` khi xem đơn và xử lý hủy an toàn khi khách bấm thanh toán muộn) cùng Artisan command `orders:expire-pending` đã đăng ký lịch chạy mỗi phút trong `routes/console.php`.
+- **Soát vé 5 bước**: `TicketCheckinService` ngăn chặn vé không tồn tại, đơn chưa thanh toán, vé không thuộc Organizer, vé đã hủy hoặc đã dùng.
+- **Xử lý ngoại lệ**: Lớp `BusinessException` tự render redirect kèm thông báo lỗi thân thiện.
