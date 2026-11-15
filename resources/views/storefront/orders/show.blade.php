@@ -81,6 +81,9 @@
                                     <tr class="border-bottom">
                                         <td class="py-3">
                                             <div class="fw-bold text-dark">{{ $item->ticketType->name }}</div>
+                                            @if ($item->ticketType->zone)
+                                                <span class="badge bg-secondary-subtle text-secondary-emphasis border me-1 small">{{ $item->ticketType->zone }}</span>
+                                            @endif
                                             <small class="text-muted">{{ $item->ticketType->event->title }}</small>
                                         </td>
                                         <td class="text-center py-3 fw-semibold">x{{ $item->quantity }}</td>
@@ -210,6 +213,9 @@
                                 <h6 class="fw-bold text-dark mb-1 text-truncate">{{ $ticketEvent->title }}</h6>
                                 <div class="small text-secondary mb-1">
                                     <strong>Loại vé:</strong> {{ $ticketItem->ticketType->name }}
+                                    @if ($ticketItem->ticketType->zone)
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis border ms-1">{{ $ticketItem->ticketType->zone }}</span>
+                                    @endif
                                 </div>
                                 <div class="small text-muted mb-2">
                                     <i class="bi bi-clock me-1"></i> {{ $ticketEvent->start_time->format('H:i - d/m/Y') }}

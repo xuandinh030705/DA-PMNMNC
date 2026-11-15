@@ -44,7 +44,12 @@
                             <h5 class="fw-bold text-dark mb-2 text-truncate-2">{{ $event->title }}</h5>
 
                             <div class="d-flex flex-column gap-1 small text-muted mb-3">
-                                <div><strong>Hạng vé:</strong> <span class="text-dark fw-semibold">{{ $item->ticketType->name }}</span> ({{ number_format($item->unit_price, 0, ',', '.') }} đ)</div>
+                                <div>
+                                    <strong>Hạng vé:</strong> <span class="text-dark fw-semibold">{{ $item->ticketType->name }}</span> ({{ number_format($item->unit_price, 0, ',', '.') }} đ)
+                                    @if ($item->ticketType->zone)
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis border ms-1">{{ $item->ticketType->zone }}</span>
+                                    @endif
+                                </div>
                                 <div><i class="bi bi-clock me-1 text-primary"></i> {{ $event->start_time->format('H:i - d/m/Y') }}</div>
                                 <div><i class="bi bi-geo-alt me-1 text-danger"></i> {{ $event->venue->name }} ({{ $event->venue->address }})</div>
                                 <div><i class="bi bi-person me-1 text-secondary"></i> Khách tham dự: <strong class="text-dark">{{ $item->order->customer_name }}</strong></div>
