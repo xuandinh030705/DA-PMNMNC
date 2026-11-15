@@ -115,7 +115,12 @@
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <div>
                                             <h6 class="fw-bold text-dark mb-0">{{ $type->name }}</h6>
-                                            <div class="fw-bold text-primary fs-5">
+                                            @if ($type->zone)
+                                                <div class="small text-muted mt-1">
+                                                    <i class="bi bi-geo-alt text-danger me-1"></i><span class="badge bg-secondary-subtle text-secondary-emphasis border">{{ $type->zone }}</span>
+                                                </div>
+                                            @endif
+                                            <div class="fw-bold text-primary fs-5 mt-1">
                                                 {{ number_format($type->price, 0, ',', '.') }} đ
                                             </div>
                                         </div>
@@ -129,6 +134,12 @@
                                             </span>
                                         @endif
                                     </div>
+
+                                    @if ($type->description)
+                                        <div class="small text-secondary mb-2 bg-light-subtle p-2 rounded border">
+                                            <i class="bi bi-info-circle me-1 text-primary"></i>{{ $type->description }}
+                                        </div>
+                                    @endif
 
                                     <div class="small text-muted mb-2">
                                         <div>Giới hạn: tối đa {{ $type->max_per_order }} vé/đơn</div>
