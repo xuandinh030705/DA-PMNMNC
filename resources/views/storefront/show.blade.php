@@ -64,8 +64,12 @@
 
                 <!-- Event Description -->
                 <h5 class="fw-bold text-dark mb-3"><i class="bi bi-info-circle me-2 text-primary"></i>Giới thiệu sự kiện</h5>
-                <div class="text-secondary lh-lg mb-4" style="white-space: pre-line;">
-                    {{ $event->description }}
+                <div class="event-description mb-4">
+                    @forelse ($event->description_paragraphs as $paragraph)
+                        <p>{{ $paragraph }}</p>
+                    @empty
+                        <p class="text-muted fst-italic mb-0">Thông tin mô tả đang được cập nhật.</p>
+                    @endforelse
                 </div>
 
                 <!-- Venue Information -->
@@ -188,3 +192,40 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+    .event-description {
+        position: relative;
+        padding: 1.25rem 1.4rem;
+        background: linear-gradient(180deg, #f8f9ff 0%, #f6f8fc 100%);
+        border: 1px solid #e6e9f5;
+        border-left: 4px solid #4f46e5;
+        border-radius: .85rem;
+        color: #495057;
+        font-size: 1rem;
+        line-height: 1.9;
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
+    .event-description p {
+        margin-bottom: 1rem;
+    }
+
+    .event-description p:first-child {
+        color: #343a40;
+        font-weight: 500;
+    }
+
+    .event-description p:last-child {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 575.98px) {
+        .event-description {
+            text-align: left;
+        }
+    }
+</style>
+@endpush

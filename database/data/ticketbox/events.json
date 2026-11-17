@@ -1,0 +1,727 @@
+{
+    "source": "https://github.com/dangquang2k5/EzTicket-Website (nhánh develop-Frontend, importDataTicketBox/ticketbox_merged.json)",
+    "generated_at": "2026-11-17 18:45:58",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "events": [
+        {
+            "source_id": 25973,
+            "source_url": "https://ticketbox.vn/event/liveshow-goc-ban-cong",
+            "title": "Liveshow Góc Ban Công: Vệt nắng - TUẤN HƯNG, QUẢ DƯA HẤU, LỆ QUYÊN, PHÚC TIỆP, ĐĂNG KHÔI, HÀ ANH,...",
+            "slug": "liveshow-goc-ban-cong",
+            "category": "nghe-thuat-san-khau",
+            "description": "Từ những thanh âm ngẫu hứng trên ban công số 19 Hàng Khay đến những đại nhạc hội rực rỡ ánh sáng, “Góc Ban Công 2026” chọn trở về với sự thuần khiết nhất trong một không gian riêng tư và tinh tế. Rời xa những ồn ào phố thị, chương trình năm nay là lời tri ân bằng âm nhạc mà Tuấn Hưng dành riêng cho những tâm hồn đồng điệu. Với quy mô giới hạn chỉ 588 ghế tại Hội trường Quần Ngựa, mỗi khán giả sẽ trở thành một mảnh ghép trong bức tranh nghệ thuật đặc biệt nhất, trực tiếp chạm vào từng rung động của âm nhạc qua những bản phối mới lạ từ Giám đốc âm nhạc Nguyễn Thanh Bình cùng sự hội ngộ của những tri kỷ như Lệ Quyên. Dưới bàn tay dàn dựng chuyên nghiệp của Absolute Media, Góc Ban Công 2026 không chỉ là một đêm diễn mà là một cuộc đối thoại bằng cảm xúc. Đây là nơi Tuấn Hưng rũ bỏ những công thức cũ để một lần nữa định nghĩa lại sự chân thành của người Nghệ sĩ luôn sống và hát vì khán giả.",
+            "banner": "events/ticketbox/liveshow-goc-ban-cong.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365181/ticketbox_banners/ff2nagnarweg8ca8cxpl.jpg",
+            "venue": {
+                "name": "Hội trường Trung tâm Văn hoá Thể thao Quần Ngựa",
+                "address": "số 55, Đốc Ngữ, Phường Ngọc Hà, Thành phố Hà Nội",
+                "city": "Hà Nội",
+                "capacity": 588
+            },
+            "organizer": {
+                "name": "Absolute Media",
+                "email": "absolute-media@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365184/ticketbox_organizers/lxlpuye4akgwctrhtgpu.png"
+            },
+            "start_time": "2026-07-13 20:00:00",
+            "end_time": "2026-07-13 22:00:00",
+            "min_price": 1500000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "DELUXE",
+                    "price": 1500000,
+                    "quantity": 311,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "VIP",
+                    "price": 2900000,
+                    "quantity": 173,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "SVIP",
+                    "price": 5000000,
+                    "quantity": 104,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 25746,
+            "source_url": "https://ticketbox.vn/event/nhung-thanh-pho-mo-mang-summer-hanoi-2026",
+            "title": "[Hà Nội] Những Thành Phố Mơ Màng Summer 2026",
+            "slug": "nhung-thanh-pho-mo-mang-summer-hanoi-2026",
+            "category": "am-nhac-hoa-nhac",
+            "description": "Những Thành Phố Mơ Màng Summer 2026 - Hà Nội Nhà Hát Mơ Màng chính thức mở cửa và bản giao hưởng mùa hè của Những Thành Phố Mơ Màng đang chuẩn bị cất lời. Sẽ là một mùa hè sôi động, kỳ diệu, bùng nổ và vô vàn điều bất ngờ dành cho cư dân. 10 nghệ sĩ cùng kết hợp với dàn liveband chất lượng sẽ mang tới một trải nghiệm cực kỳ mãn nhãn và đặc biệt cho mùa hè năm nay! Thông tin sự kiện - Thời gian: 12/07/2026 (thời gian chi tiết sẽ được cập nhật sau)- Địa điểm: Sự kiện ngoài trời (khu vực sự kiện đang được chờ cập nhật) Sơ đồ hạng vé & quyền lợi Giá vé và các round mở bán Điều khoản và điều kiện:",
+            "banner": "events/ticketbox/nhung-thanh-pho-mo-mang-summer-hanoi-2026.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365205/ticketbox_banners/znhgllrxwcxc3y94bjpz.png",
+            "venue": {
+                "name": "Sự kiện ngoài trời",
+                "address": "Sự kiện ngoài trời, Thành phố Hà Nội",
+                "city": "Hà Nội",
+                "capacity": 3000
+            },
+            "organizer": {
+                "name": "Những Thành Phố Mơ Màng",
+                "email": "nhung-thanh-pho-mo-mang@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365207/ticketbox_organizers/txcme1ed0qptmdl5bxcm.jpg"
+            },
+            "start_time": "2026-07-12 16:00:00",
+            "end_time": "2026-07-12 22:30:00",
+            "min_price": 449000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "STANDARD TICKET",
+                    "price": 449000,
+                    "quantity": 1588,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "VIP A TICKET",
+                    "price": 999000,
+                    "quantity": 882,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "VIP B TICKET",
+                    "price": 999000,
+                    "quantity": 530,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 26037,
+            "source_url": "https://ticketbox.vn/event/nguoi-yeu-cu-la-tri-ky",
+            "title": "HÀ NHI - NGƯỜI YÊU CŨ LÀ TRI KỶ",
+            "slug": "nguoi-yeu-cu-la-tri-ky",
+            "category": "am-nhac-hoa-nhac",
+            "description": "Giới thiệu sự kiện: HÀ NHI | Người Yêu Cũ Là Tri Kỷ | SKY MELODY | Ecopark Gác lại những ồn ào phố thị, bạn có hẹn với Hà Nhi trong một đêm nhạc được mong chờ nhất tháng 8 này tại Sky Melody. Không còn là những sân khấu rực rỡ ánh đèn màu, Hà Nhi lần đầu tiên đến với #Ecopark để kể cho bạn nghe những câu chuyện tình yêu giữa không gian xanh mát thơ mộng của miền xanh. THÔNG TIN CHI TIẾT:Thời gian: 18:30 | Chủ Nhật ngày 23.08.2026Địa điểm: The Garden Bistro Ecopark Band nhạc: Khánh An BandNhóm bè: Sky Melody Điều khoản và điều kiện: Quý khách vui lòng diện trang phục lịch sự, trang nhã.- Mỗi vé chỉ dành cho 01 người. Chương trình không dành cho trẻ em dưới 6 tuổi, với mỗi trẻ em từ 6 tuổi trở lên cần mua 01 vé riêng.- Để cảm xúc không bị ngắt quãng và tránh ảnh hưởng tới người khác, vui lòng tắt điện thoại hoặc để chế độ rung.- Hãy giữ lại cuống vé để Sky Melody hỗ trợ bạn khi cần ra vào khu vực.- Vui lòng không hút thuốc, không mang thú cưng vào trong khu vực sự kiện.",
+            "banner": "events/ticketbox/nguoi-yeu-cu-la-tri-ky.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365255/ticketbox_banners/y7llc9d1uub3kp4pm3b9.jpg",
+            "venue": {
+                "name": "The Garden Bistro - Ecopark Hưng Yên",
+                "address": "Công Viên Biệt Thự Đảo, Xã Phụng Công, Tỉnh Hưng Yên",
+                "city": "Hưng Yên",
+                "capacity": 900
+            },
+            "organizer": {
+                "name": "Công ty cổ phần Sky Melody",
+                "email": "cong-ty-co-phan-sky-melody@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365256/ticketbox_organizers/dfzwb3jk41irn8tvastr.jpg"
+            },
+            "start_time": "2026-07-23 18:30:00",
+            "end_time": "2026-07-23 21:00:00",
+            "min_price": 1150000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "Hạng Cloud",
+                    "price": 1150000,
+                    "quantity": 405,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Hạng Sun",
+                    "price": 1450000,
+                    "quantity": 225,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Hạng Shine",
+                    "price": 1800000,
+                    "quantity": 135,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Hạng Soul",
+                    "price": 2000000,
+                    "quantity": 72,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Hạng Melody",
+                    "price": 2750000,
+                    "quantity": 45,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Hạng Sky",
+                    "price": 3100000,
+                    "quantity": 18,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 25948,
+            "source_url": "https://ticketbox.vn/event/city-sightseeing-saigon-xe-buyt-2-tang",
+            "title": "City Sightseeing SaiGon: Xe Buýt 2 Tầng",
+            "slug": "city-sightseeing-saigon-xe-buyt-2-tang",
+            "category": "tham-quan-trai-nghiem",
+            "description": "Quý khách vui lòng liên hệ đặt chỗ trước từ 2 - 3h sau khi mua vé thành công để được hỗ trợ tốt nhất. v Chính sách kèm theo: Dưới 6 tuổi: Miễn phí (Điều kiện: 01 người lớn kèm 01 trẻ em dưới 06 tuổi đi cùng). v Dịch vụ theo giá vé bao gồm: VAT. Nhân viên hỗ trợ; dịch vụ chăm sóc khách hàng và hỗ trợ du khách theo các chính sách của Bên A trong suốt chuyến đi. Đối với tour ngày: mỗi khách được cấp trong lần lên xe đầu tiên miễn phí: 01 tai nghe (earphone) sử dụng suốt thời gian sử dụng dịch vụ, bản đồ tuyến city tour, thời gian xe đến đón tại các điểm dừng trên hành trình, áo mưa tiện dụng. Xe buýt Hop on Hop off là gì? Xe buýt Hop on Hop off là loại xe buýt 2 tầng chuyên phục vụ khách du lịch, cho phép bạn tham quan thành phố theo hành trình được thiết kế sẵn. Du khách có thể tùy ý lên hoặc xuống tại các trạm dừng thay vì phải đi trọn tuyến như các loại xe buýt thông thường. Nhờ đó, bạn có thể chủ động kết hợp giữa việc di chuyển và khám phá những điểm đến yêu thích. Hiện nay, dịch vụ xe buýt 2 tầng Hop on Hop off đã có mặt tại nhiều thành phố du lịch lớn của Việt Nam như TP. Hồ Chí Minh, Hà Nội, Huế,... Đây được xem là lựa chọn thú vị dành cho những ai muốn trải nghiệm không khí sôi động của thành phố từ trên cao và kết hợp ngắm cảnh xung quanh thành phố. Ưu điểm của dịch vụ xe Hop on Hop off là gì? Không chỉ tiện lợi, xe buýt hop on hop off còn chinh phục du khách nhờ những...",
+            "banner": "events/ticketbox/city-sightseeing-saigon-xe-buyt-2-tang.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365188/ticketbox_banners/kqwiotkrgwdvxhx8cn7z.png",
+            "venue": {
+                "name": "Đối diện Nhà hát Thành phố",
+                "address": "Số 7 Công Trường Lam Sơn, Phường Sài Gòn, Thành phố Hồ Chí Minh",
+                "city": "TP. Hồ Chí Minh",
+                "capacity": 500
+            },
+            "organizer": {
+                "name": "VietNam Sightseeing",
+                "email": "vietnam-sightseeing@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365190/ticketbox_organizers/rizjfegzkgysdx2hwl2w.png"
+            },
+            "start_time": "2026-07-24 09:00:00",
+            "end_time": "2026-07-24 21:00:00",
+            "min_price": 105000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "Vé Đêm 1 Vòng (Trẻ em)",
+                    "price": 105000,
+                    "quantity": 225,
+                    "max_per_order": 4
+                },
+                {
+                    "name": "Vé Đêm 1 Vòng (Người Lớn)",
+                    "price": 145000,
+                    "quantity": 125,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Vé 4 Giờ - Trẻ em (Khách Việt Nam)",
+                    "price": 150000,
+                    "quantity": 75,
+                    "max_per_order": 4
+                },
+                {
+                    "name": "Vé 4 Giờ - Người Lớn (Khách Việt Nam)",
+                    "price": 200000,
+                    "quantity": 40,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Vé 4 Giờ - Trẻ em (Khách Quốc Tế)",
+                    "price": 225000,
+                    "quantity": 25,
+                    "max_per_order": 4
+                },
+                {
+                    "name": "Vé 4 Giờ - Người Lớn (Khách quốc tế)",
+                    "price": 300000,
+                    "quantity": 10,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 23759,
+            "source_url": "https://ticketbox.vn/event/tour-dem-van-mieu",
+            "title": "TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR",
+            "slug": "tour-dem-van-mieu",
+            "category": "tham-quan-trai-nghiem",
+            "description": "Giới thiệu sự kiện: Tham quan Văn Miếu Đêm Một không gian vừa mộc mạc, vừa quen thuộc nhưng lại ấn tượng về đêm với sắc thái ngàn năm văn hiến. Nhấn mạnh vào hành trình học, trở thành những bậc kỳ tài của đất nước, không gian Văn Miếu - Quốc Tử Giám về đêm được tái hiện toàn cảnh một môi trường đơn sơ về học tập thời xưa, trong trang sử 1000 năm trước, nơi hệ thống giáo dục phần lớn do các Thầy Đồ đảm nhiệm. Đến với tour đêm Văn Miếu, bạn sẽ có cái nhìn toàn cảnh về nền quốc học Việt Nam, nơi mỗi người không chỉ học cái chữ mà còn học để khám phá ra cái chân - thiện - mỹ đã có sẵn nơi mình. Hành trình sẽ đi qua các phần: lớn lên với lời ru của mẹ, lời dạy của cha; và hành trình trải nghiệm con chữ qua công nghệ mới thực tế ảo; điểm nhấn quan trọng trước khi bước vào không gian học tập thời xưa là trò chuyện với cụ rùa qua công nghệ AI, với những câu hỏi từ đơn giản đến sâu sắc, \"cụ\" sẽ trả lời cho mọi người các thông tin hết sức hữu ích về Văn Miếu - Quốc Tử Giám và lịch sử Việt Nam. Một trong những điểm nhấn chính là không gian học tập thời xưa với Thầy Đồ, với bút mực, giấy dó... nhằm cho khách tham quan cảm nhận được không khí của những nhân tài thời xưa phải trải qua hành trình học tập như thế nào. Chương trình kết lại bằng trải nghiệm xem trình chiếu 3D mapping \"Tinh hoa đạo học\", \"Sử đá lưu danh\", làm sáng lên toàn bộ cái tinh hoa của học tập thời đó. Chi tiết trải...",
+            "banner": "events/ticketbox/tour-dem-van-mieu.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648621/ticketbox_banners/ip4cevmxoj4oyw8lzbto.png",
+            "venue": {
+                "name": "Văn Miếu - Quốc Tử Giám",
+                "address": "58 Quốc Tử Giám, Phường Văn Miếu - Quốc Tử Giám, Thành phố Hà Nội",
+                "city": "Hà Nội",
+                "capacity": 1200
+            },
+            "organizer": {
+                "name": "TRUNG TÂM HOẠT ĐỘNG VĂN HÓA KHOA HỌC VĂN MIẾU – QUỐC TỬ GIÁM",
+                "email": "trung-tam-hoat-dong-van-hoa-khoa-hoc-van@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648623/ticketbox_organizers/darniauso8qav1hbu968.png"
+            },
+            "start_time": "2026-07-06 18:30:00",
+            "end_time": "2026-07-06 21:30:00",
+            "min_price": 0,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "Tinh hoa đạo học - Vé trẻ em cao 1m - 1.3m",
+                    "price": 149000,
+                    "quantity": 540,
+                    "max_per_order": 4
+                },
+                {
+                    "name": "Sử đá lưu danh - Vé Trẻ em 1m - 1,3m",
+                    "price": 149000,
+                    "quantity": 300,
+                    "max_per_order": 4
+                },
+                {
+                    "name": "COMBO 2 show - Vé trẻ em cao 1m - 1.3m",
+                    "price": 199000,
+                    "quantity": 180,
+                    "max_per_order": 4
+                },
+                {
+                    "name": "Tinh hoa đạo học - Vé người lớn",
+                    "price": 299000,
+                    "quantity": 96,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Sử đá lưu danh",
+                    "price": 299000,
+                    "quantity": 60,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "COMBO 2 show",
+                    "price": 399000,
+                    "quantity": 24,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 25963,
+            "source_url": "https://ticketbox.vn/event/hoc-vien-phep-thuat-nxnx37",
+            "title": "Nhà Hát Kịch IDECAF: NXNX37 - Học Viện Phép Thuật",
+            "slug": "hoc-vien-phep-thuat-nxnx37",
+            "category": "nghe-thuat-san-khau",
+            "description": "Chương trình Ngày Xửa Ngày Xưa 37-- HỌC VIỆN PHÉP THUẬT -- Tác giả: Quang Thảo Đạo diễn: Đình Toàn Với sự tham gia của của các diễn viên: Bạch Long, Thanh Thuỷ, Hoàng Trinh, Đình Toàn, Mỹ Duyên, Hồng Ánh Đại Nghĩa, Quang Thảo, Quốc Thịnh, Tuyền Mập, Trà Ngọc, Cẩm Hò, Trịnh Minh Dũng, Đông Hải, Kan Lê Tâm Anh, Quách Bình, Việt Trang, Thiên Trang, Quốc Tuấn, Mai Phượng, Hoài Trang, Phạm Hạnh, Trung Tín, Bảo Cường và Nhà Hát Thiếu Nhi Nụ Cười.",
+            "banner": "events/ticketbox/hoc-vien-phep-thuat-nxnx37.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365193/ticketbox_banners/a645sgvsghlhamrzglct.jpg",
+            "venue": {
+                "name": "Nhà Hát Bến Thành",
+                "address": "Số 06 Mạc Đĩnh Chi, Phường Sài Gòn, Thành phố Hồ Chí Minh",
+                "city": "TP. Hồ Chí Minh",
+                "capacity": 800
+            },
+            "organizer": {
+                "name": "Công Ty TNHH Sân Khấu - Nghệ Thuật Thái Dương",
+                "email": "cong-ty-tnhh-san-khau-nghe-thuat-thai-du@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365194/ticketbox_organizers/xy6rucyvnakl4fzaowyc.png"
+            },
+            "start_time": "2026-07-31 09:30:00",
+            "end_time": "2026-07-31 12:30:00",
+            "min_price": 250000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "LẦU",
+                    "price": 250000,
+                    "quantity": 387,
+                    "max_per_order": 4
+                },
+                {
+                    "name": "THƯỜNG",
+                    "price": 300000,
+                    "quantity": 215,
+                    "max_per_order": 4
+                },
+                {
+                    "name": "VIP",
+                    "price": 350000,
+                    "quantity": 129,
+                    "max_per_order": 4
+                },
+                {
+                    "name": "VVIP",
+                    "price": 400000,
+                    "quantity": 69,
+                    "max_per_order": 4
+                }
+            ]
+        },
+        {
+            "source_id": 26063,
+            "source_url": "https://ticketbox.vn/event/san-khau-thien-dang-thien-duong-promax",
+            "title": "SÂN KHẤU THIÊN ĐĂNG: THIÊN ĐƯỜNG PROMAX",
+            "slug": "san-khau-thien-dang-thien-duong-promax",
+            "category": "nghe-thuat-san-khau",
+            "description": "Sân khấu Kịch Thiên Đăng trân trọng giới thiệu vở diễn MỚI NHẤT THÁNG 5/2026\"THIÊN ĐƯỜNG PROMAX\" Tác giả kịch bản : ĐINH TIẾN DŨNG Đạo diễn: NSUT THÀNH LỘC Biên đạo múa :DƯƠNG NAM LONG Âm nhạc: TRƯƠNG KHOA - HẠNH THẢO Với sự tham gia của các diễn viên: NSƯT THÀNH LỘC - LÊ HOÀNG GIANG - TRƯƠNG HẠ - MẠNH HÙNG - MAI THANH TÚ - YẾN NHI - HỮU KHANG - TRẦN TRUNG - HOÀNG DUYÊN - DUY PHAN - TÚ ANH PHAN - TIẾN HOÀNG Tóm tắt nội dung: Người thanh niên ngỡ mình đã qua đời và hồn mình được đến cõi thiên đường trong bộ dạng hoá kiếp là một người đàn bà tên Thiện. Bà Thiện từng bước khám phá cõi thiên đường xem có giống như những gì mà thế giới của những người sống thường hay tưởng tượng và thậm chí cả thêu dệt đó là một nơi sống thật lý tưởng , hoàn hảo đến không tưởngThế nhưng bà Thiện phát hiện ra mặt trái của cái thiên đường mà bà đang ở cũng có những khiếm khuyết, bất trắc và không hề hoàn hảo, có khi còn tệ hơn bà nghĩ và bà muốn vùng thoát khỏi cái nơi mà bà và nhiều người hoang tưởng khác đã từng háo hức muốn được vào... Giấc mơ kết thúc... Thì ra đó chỉ là một gói lập trình về thiên đường ảo trong một trò chơi điện tử tại một quán game cafe mà anh thanh niên đã lựa chọn trải nghiệm. Bước ra khỏi quán cà phê, chàng thanh niên thở phào nhẹ nhỏm khi ngộ ra được vấn đề :Không có thiên đường nào lý tưởng bằng chính nơi mình đang sống và thiên đường chỉ được tạo ra bằng chính đôi tay của...",
+            "banner": "events/ticketbox/san-khau-thien-dang-thien-duong-promax.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365227/ticketbox_banners/egxatsfzscurilu99opt.jpg",
+            "venue": {
+                "name": "TẦNG 12B TÒA NHÀ IMC",
+                "address": "62 Trần Quang Khải, Phường Tân Định, Thành phố Hồ Chí Minh",
+                "city": "TP. Hồ Chí Minh",
+                "capacity": 500
+            },
+            "organizer": {
+                "name": "CÔNG TY TNHH SÂN KHẤU NGHỆ THUẬT THIÊN ĐĂNG",
+                "email": "cong-ty-tnhh-san-khau-nghe-thuat-thien-d@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365228/ticketbox_organizers/lsa8w720oeorcxej3xtn.png"
+            },
+            "start_time": "2026-07-28 19:30:00",
+            "end_time": "2026-07-28 22:30:00",
+            "min_price": 330000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "VÉ THƯỜNG",
+                    "price": 330000,
+                    "quantity": 321,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "VIP",
+                    "price": 400000,
+                    "quantity": 179,
+                    "max_per_order": 1
+                }
+            ]
+        },
+        {
+            "source_id": 24924,
+            "source_url": "https://ticketbox.vn/event/meta-show-trien-lam-nghe-thuat-anh-sang",
+            "title": "[Metashow] Triển Lãm Nghệ Thuật Ánh Sáng",
+            "slug": "meta-show-trien-lam-nghe-thuat-anh-sang",
+            "category": "nghe-thuat-san-khau",
+            "description": "Giới thiệu Chính sách hoàn/huỷ Không có chính sách hoàn/huỷ. Thông tin triển lãm Địa chỉ: L9-L10, Tầng 4, Thiso Mall Sala, 10 Mai Chí Thọ, P. An Khánh, TP. Hồ Chí Minh Thời gian hoạt động: Thứ 2 - Chủ Nhật, 10:00 – 22:00 (Last check-in 21:15) Hotline: 0767 988 886",
+            "banner": "events/ticketbox/meta-show-trien-lam-nghe-thuat-anh-sang.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648656/ticketbox_banners/n3kqoepbyn5pgbz873jc.jpg",
+            "venue": {
+                "name": "Lầu 4, Thiso Mall Sala",
+                "address": "Số 10, đường Mai Chí Thọ, Phường An Khánh, Thành phố Hồ Chí Minh",
+                "city": "TP. Hồ Chí Minh",
+                "capacity": 1500
+            },
+            "organizer": {
+                "name": "Metashow Exhibition",
+                "email": "metashow-exhibition@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648658/ticketbox_organizers/rkiktjsnn9vh92xxjsxm.jpg"
+            },
+            "start_time": "2026-07-05 10:00:00",
+            "end_time": "2026-07-05 22:00:00",
+            "min_price": 150000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "STANDARD S",
+                    "price": 150000,
+                    "quantity": 675,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "STANDARD L",
+                    "price": 220000,
+                    "quantity": 375,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "SPECIAL S",
+                    "price": 290000,
+                    "quantity": 225,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "VIP S",
+                    "price": 390000,
+                    "quantity": 120,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "SPECIAL L",
+                    "price": 490000,
+                    "quantity": 75,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "VIP L",
+                    "price": 550000,
+                    "quantity": 30,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 26095,
+            "source_url": "https://ticketbox.vn/event/regal-fountain-show-nhac-nuoc",
+            "title": "Regal Fountain - Nhạc Nước Thực Cảnh 3D Mapping Huyền Sử Miền Di Sản",
+            "slug": "regal-fountain-show-nhac-nuoc",
+            "category": "nghe-thuat-san-khau",
+            "description": "Regal Fountain - Nhạc Nước Thực Cảnh 3D Mapping Huyền Sử Miền Di Sản Vượt xa một màn trình diễn giải trí thông thường, nhạc nước 3D mapping tại Regal Legend là một tác phẩm nghệ thuật sử thi thực thụ. Thông qua những màn sương nước khổng lồ và kỹ thuật chiếu hình 3D sống động đến từng chi tiết, những câu chuyện lịch sử ngàn năm và cội nguồn di sản văn hóa được kể lại một cách đầy tráng lệ. Mỗi nhịp điệu âm nhạc, mỗi khung hình ánh sáng là một chương truyện đưa khán giả du hành ngược thời gian, chạm vào linh hồn của quá khứ vàng son. Đây là nơi công nghệ hiện đại cúi mình tôn vinh những giá trị vĩnh cửu của dân tộc. Điều khoản & Điều kiện tham gia chương trình: - Coupon đã mua sẽ không được đổi trả với bất kỳ lý do nào - Trẻ em dưới 6 tuổi được miễn phí nhưng phải ngồi cùng ghế Bô Mẹ - Chỗ ngồi sẽ được sắp xếp theo nguyên tắc “first come, first served” (đến trước ngồi trước)",
+            "banner": "events/ticketbox/regal-fountain-show-nhac-nuoc.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365268/ticketbox_banners/b2wvdopxbblgngcmirak.png",
+            "venue": {
+                "name": "Regal Legend",
+                "address": "Võ Nguyên Giáp, Phường Đồng Hới, Tỉnh Quảng Trị",
+                "city": "Quảng Trị",
+                "capacity": 2500
+            },
+            "organizer": {
+                "name": "REGAL GROUP",
+                "email": "regal-group@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365269/ticketbox_organizers/wl86f5waazmypry0kaiy.png"
+            },
+            "start_time": "2026-07-30 18:00:00",
+            "end_time": "2026-07-30 22:00:00",
+            "min_price": 150000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "EARLY BIRD - COUPON",
+                    "price": 150000,
+                    "quantity": 1607,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "COUPON",
+                    "price": 200000,
+                    "quantity": 893,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 26073,
+            "source_url": "https://ticketbox.vn/event/workshop-ngot-lanh",
+            "title": "WORKSHOP \"NGỌT & LÀNH - YÊU THƯƠNG LÀ SỰ THẤU HIỂU\"",
+            "slug": "workshop-ngot-lanh",
+            "category": "hoi-thao-workshop",
+            "description": "WORKSHOP “NGỌT & LÀNH – YÊU THƯƠNG LÀ SỰ THẤU HIỂU\" Có những thời điểm, việc chọn quà không còn là “mình nên mua gì?” mà là “mình thật sự muốn gửi gắm điều gì?”. Giữa nhịp sống tấp nập, người ta bắt đầu tìm kiếm những điều tinh tế hơn — không phô trương, không vội vàng. Một món quà vừa đủ: đủ ngọt để cảm nhận, đủ lành để giữ lại lâu dài. Từ lý tưởng đó, Workshop “NGỌT & LÀNH – YÊU THƯƠNG LÀ SỰ THẤU HIỂU” được tạo nên như một hành trình trải nghiệm cảm xúc. Không ồn ào, không đại trà — mà là một không gian được chuẩn bị vừa đủ để bạn hiểu mình đang muốn trao điều gì. 1. NHỮNG TRẢI NGHIỆM TẠI “NGỌT & LÀNH” Đây không chỉ là một workshop làm quà handmade, mà là một hành trình gồm những “điểm chạm” — nơi bạn vừa tạo tác, vừa kết nối với cảm xúc của mình. Chạm Vị Ngọt LànhTự tay làm chocolate/bánh handmade, lựa chọn hương vị và hoàn thiện từng chi tiết. Không chỉ là làm theo công thức, mà là chọn “tầng vị” phù hợp với cảm xúc và với người bạn đang nghĩ đến. Chạm Điều Khó NóiMột khoảng để bạn viết ra những điều chưa từng nói. Không cần hoa mỹ, chỉ cần đủ thật lòng — bởi đôi khi, một lá thư tay lại mang nhiều ý nghĩa hơn bất kỳ món quà nào. Chạm Tay Gói GhémHoàn thiện và gói lại món quà của mình — một set quà “Ngọt & Lành” mang dấu ấn cá nhân, được chuẩn bị bằng những “chân thành” và thời gian. Chạm Khoảnh Khắc ChungKhi mọi thứ hoàn thành, điều còn lại không chỉ là thành phẩm, mà là...",
+            "banner": "events/ticketbox/workshop-ngot-lanh.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365301/ticketbox_banners/alperbpu7jkdoqyk4ztp.png",
+            "venue": {
+                "name": "Mr.Tươi - Cafe & Juice Bar Vegetable",
+                "address": "99 Nguyễn Cửu Vân, Phường Gia Định, Thành phố Hồ Chí Minh",
+                "city": "TP. Hồ Chí Minh",
+                "capacity": 60
+            },
+            "organizer": {
+                "name": "Quà Tặng Tâm Ý - Trao chân thành, chạm trái tim",
+                "email": "qua-tang-tam-y-trao-chan-thanh-cham-trai@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780365303/ticketbox_organizers/vpstjdrfhckkcbhugdwi.jpg"
+            },
+            "start_time": "2026-07-31 08:30:00",
+            "end_time": "2026-07-31 11:30:00",
+            "min_price": 299000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "CHỐN RIÊNG",
+                    "price": 299000,
+                    "quantity": 29,
+                    "max_per_order": 2
+                },
+                {
+                    "name": "TÂM GIAO",
+                    "price": 598000,
+                    "quantity": 11,
+                    "max_per_order": 2
+                },
+                {
+                    "name": "TRỌN VẸN",
+                    "price": 849000,
+                    "quantity": 10,
+                    "max_per_order": 1
+                },
+                {
+                    "name": "VIÊN MÃN",
+                    "price": 999000,
+                    "quantity": 10,
+                    "max_per_order": 1
+                }
+            ]
+        },
+        {
+            "source_id": 26115,
+            "source_url": "https://ticketbox.vn/event/kcd-openinfra-days-2026",
+            "title": "KCD & OpenInfra Days 2026",
+            "slug": "kcd-openinfra-days-2026",
+            "category": "cong-nghe-trien-lam",
+            "description": "Giới thiệu sự kiện KCD & OpenInfra Days Vietnam 2026 là sự kiện công nghệ quy mô lớn, đánh dấu năm đầu tiên Kubernetes Community Day (KCD) – sự kiện cộng đồng chính thức của Cloud Native Computing Foundation (CNCF) – được tổ chức tại Việt Nam, kết hợp cùng ngày hội Điện toán đám mây mã nguồn mở OpenInfra. Sự kiện là điểm hẹn giao thoa nơi hạ tầng mở gặp gỡ sự đổi mới sáng tạo Cloud-Native (Where Open Infrastructure Meets Cloud-Native Innovation). Điểm đặc sắc nhất của sự kiện chính là sự quy tụ của hệ sinh thái công nghệ tiên tiến nhất hiện nay, bao gồm Cloud & Infrastructure, Cloud Native, CI/CD & Automation, và AI Infrastructure. Người tham gia không nên bỏ lỡ cơ hội này vì đây là nền tảng tối ưu để cập nhật những xu hướng công nghệ mới nhất từ các chuyên gia toàn cầu, mở rộng mạng lưới đối tác chất lượng cao, và tiếp cận với hơn 700 nhân sự/chuyên gia hàng đầu trong ngành công nghiệp phần mềm và hạ tầng tại Việt Nam và quốc tế. Chi tiết sự kiện Thời gian: 25 Tháng 7, 2026 Địa điểm: Hà Nội, Việt Nam Chương trình chính Sự kiện diễn ra xuyên suốt cả ngày 25/07/2026 với dòng thời gian được phân bổ tối ưu: Buổi sáng: Phiên toàn thể & Khởi động Phiên song song (3 Rooms) Từ đầu giờ đến 10:00 (Phiên toàn thể - Central Room): Lễ khai mạc sự kiện trọng thể với sự tham gia của các đại diện CNCF, OpenInfra Foundation và Ban tổ chức. 05 bài phát biểu chính (Keynotes) đặc sắc, mang tầm...",
+            "banner": "events/ticketbox/kcd-openinfra-days-2026.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648635/ticketbox_banners/gcmgne7ckohzjqlqjnga.jpg",
+            "venue": {
+                "name": "Sheraton Hanoi Hotel",
+                "address": "11 Xuân Diệu, Phường Tây Hồ, Thành phố Hà Nội",
+                "city": "Hà Nội",
+                "capacity": 600
+            },
+            "organizer": {
+                "name": "VOI - VIA - Cloud Native Viet Nam",
+                "email": "voi-via-cloud-native-viet-nam@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648637/ticketbox_organizers/n0ctaozwlvdyywrj6vod.png"
+            },
+            "start_time": "2026-07-25 08:30:00",
+            "end_time": "2026-07-25 18:00:00",
+            "min_price": 200000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "Standard",
+                    "price": 200000,
+                    "quantity": 318,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Standard Plus",
+                    "price": 300000,
+                    "quantity": 176,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "Late",
+                    "price": 500000,
+                    "quantity": 106,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 26106,
+            "source_url": "https://ticketbox.vn/event/dpa17-sme-banking-trong-ky-nguyen-doi-moi",
+            "title": "SME Banking trong kỷ nguyên đổi mới: Nền tảng số, mô hình vận hành và trải nghiệm khách hàng",
+            "slug": "dpa17-sme-banking-trong-ky-nguyen-doi-moi",
+            "category": "hoi-thao-workshop",
+            "description": "Trong nhiều tổ chức Tài chính - Ngân hàng, SME Banking thường nằm trong khối Corporate Banking hoặc Retail Banking. Tuy nhiên, cách tổ chức này gây cản trở lớn tới việc khai thác giá trị tiềm năng mà phân khúc này mang lại. SME Banking có yêu cầu riêng về nền tảng số (Digital Platform), mô hình vận hành (Operating Model) và trải nghiệm khách hàng (Customer Experience). Nhiều tổ chức Tài chính - Ngân hàng đã nhận ra điều này và bắt đầu tách SME Banking thành một hướng vận hành riêng. Đây cũng là lúc những bài toán mới xuất hiện. SME Banking mở ra nhiều cơ hội tăng trưởng nhưng đi kèm đó là không ít thách thức: chi phí phục vụ cao, dữ liệu tài chính phân tán và thiếu nhất quán, bài toán phục vụ khách hàng phức tạp hơn Retail Banking nhưng lại thiếu quy mô và tính đồng nhất để vận hành theo cách của Corporate Banking. Các cách triển khai SME Banking theo hướng end-to-end tại Việt Nam vẫn đang trong giai đoạn định hình, chưa có nhiều trường hợp đủ trưởng thành để trở thành hình mẫu tham chiếu cho thị trường. Với những người đang trực tiếp chịu trách nhiệm về hành trình này trong các tổ chức Tài chính - Ngân hàng, áp lực không chỉ đến từ chiến lược mà còn từ vận hành hàng ngày: ưu tiên gì trước, đánh đổi như thế nào, và đâu là hướng đi có thể chứng minh được giá trị với tổ chức. Digital Product in Action 17 (DPA17) được GEEK Up tổ chức để thảo luận sâu hơn về 3 khía cạnh: nền tảng...",
+            "banner": "events/ticketbox/dpa17-sme-banking-trong-ky-nguyen-doi-moi.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648699/ticketbox_banners/x14bu3drxiwrmvlq40xr.png",
+            "venue": {
+                "name": "Mövenpick Hotel Ha Noi Centre",
+                "address": "83A Lý Thường Kiệt, Phường Cửa Nam, Thành phố Hà Nội",
+                "city": "Hà Nội",
+                "capacity": 300
+            },
+            "organizer": {
+                "name": "GEEK Up",
+                "email": "geek-up@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648700/ticketbox_organizers/datbgdcnqsce7efugvke.png"
+            },
+            "start_time": "2026-07-11 13:30:00",
+            "end_time": "2026-07-11 16:30:00",
+            "min_price": 1999000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "VÉ THAM DỰ",
+                    "price": 1999000,
+                    "quantity": 300,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 26027,
+            "source_url": "https://ticketbox.vn/event/saigon-heat-da-nang-dolphins-12-07",
+            "title": "VBA 2026 - Saigon Heat - Da Nang Dragons 12.07",
+            "slug": "saigon-heat-da-nang-dolphins-12-07",
+            "category": "the-thao-giai-dau",
+            "description": "VBA 2026 - Saigon Heat vs Da Nang Dolphins",
+            "banner": "events/ticketbox/saigon-heat-da-nang-dolphins-12-07.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648616/ticketbox_banners/yu3qskqx1x9pbfl0jsdl.png",
+            "venue": {
+                "name": "Nhà thi đấu MLC (CIS Arena cũ)",
+                "address": "Số 7, Đường 23, Phường Tân Mỹ, Thành phố Hồ Chí Minh",
+                "city": "TP. Hồ Chí Minh",
+                "capacity": 3500
+            },
+            "organizer": {
+                "name": "CÔNG TY TNHH BÓNG RỔ SÀI GÒN",
+                "email": "cong-ty-tnhh-bong-ro-sai-gon@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648617/ticketbox_organizers/vk8uwnsewffrphttpzop.png"
+            },
+            "start_time": "2026-07-12 19:30:00",
+            "end_time": "2026-07-12 21:30:00",
+            "min_price": 200000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "STANDARD A",
+                    "price": 200000,
+                    "quantity": 1607,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "HEATZONE",
+                    "price": 250000,
+                    "quantity": 893,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "PREMIUM - A1",
+                    "price": 450000,
+                    "quantity": 536,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "VIP - A1",
+                    "price": 700000,
+                    "quantity": 286,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "COURTSIDE",
+                    "price": 2000000,
+                    "quantity": 178,
+                    "max_per_order": 10
+                }
+            ]
+        },
+        {
+            "source_id": 25804,
+            "source_url": "https://ticketbox.vn/event/dua-xe-go-kart-city-park",
+            "title": "ĐUA XE GO-KART CITY PARK",
+            "slug": "dua-xe-go-kart-city-park",
+            "category": "the-thao-giai-dau",
+            "description": "Trải nghiệm Go Kart tại The Global City – Tốc độ đỉnh cao giữa lòng TP.HCM Nếu bạn đang tìm kiếm một hoạt động giải trí đầy kịch tính và tốc độ ngay tại TP.HCM, Go Kart Global City chính là điểm đến không thể bỏ qua. Tọa lạc tại khu đô thị The Global City, phường An Phú, quận 2, đường đua Go Kart quận 2 mang đến trải nghiệm đua xe độc đáo, hiện đại và an toàn cho mọi lứa tuổi. Hãy cùng khám phá tất cả về bộ môn này và những điều thú vị đang chờ đón bạn! Go Kart là gì? Go Kart là một loại hình đua xe mini, sử dụng những chiếc xe bốn bánh nhỏ gọn, không hộp số, với thiết kế trọng tâm thấp để đảm bảo sự ổn định và an toàn khi vào cua. Đây được xem là “F1 thu nhỏ”, mang lại cảm giác hồi hộp, phấn khích như các giải đua xe chuyên nghiệp nhưng dễ tiếp cận hơn. Từ những tay đua mới bắt đầu đến người chơi lâu năm, Go Kart đều phù hợp để thử thách kỹ năng lái xe và thỏa mãn đam mê tốc độ. Go Kart tại The Global City – Điểm nhấn tại quận 2 Go Kart quận 2 tại The Global City là đường đua tích hợp dài nhất Đông Nam Á, với tổng chiều dài gần 1,5 km, bao gồm cả khu vực trong nhà và ngoài trời. Được đầu tư bởi Masterise Homes, đường đua này sử dụng xe Go Kart hiện đại (cả xe xăng và xe điện), kết hợp thiết kế chuyên nghiệp với các khúc cua kỹ thuật và đoạn thẳng tốc độ cao. Nằm trong khuôn viên City Park, đây không chỉ là nơi để đua xe mà còn là điểm giải trí lý tưởng cho gia đình, bạn bè và...",
+            "banner": "events/ticketbox/dua-xe-go-kart-city-park.jpg",
+            "image_source": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648651/ticketbox_banners/a6ubzxlhmnxfueouo8cr.jpg",
+            "venue": {
+                "name": "THE GLOBAL CITY",
+                "address": "Đường Đỗ Xuân Hợp, P.An Phú, TP. Thủ Đức, Thành phố Hồ Chí Minh",
+                "city": "TP. Hồ Chí Minh",
+                "capacity": 400
+            },
+            "organizer": {
+                "name": "CITY PARK",
+                "email": "city-park@ticketbox.local",
+                "logo": "https://res.cloudinary.com/dnomlcn3p/image/upload/v1780648653/ticketbox_organizers/h0iqvgjg7snqm4fyfmr4.png"
+            },
+            "start_time": "2026-07-05 09:00:00",
+            "end_time": "2026-07-05 22:00:00",
+            "min_price": 342000,
+            "status": "published",
+            "ticket_types": [
+                {
+                    "name": "1 lượt chơi trong nhà - 1 Indoor session",
+                    "price": 342000,
+                    "quantity": 180,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "1 lượt chơi ngoài trời - 1 Outdoor session",
+                    "price": 513000,
+                    "quantity": 100,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "2 lượt chơi trong nhà - Combo 2 Indoor sessions",
+                    "price": 598800,
+                    "quantity": 60,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "3 lượt chơi trong nhà - Combo 3 Indoor Sessions",
+                    "price": 838800,
+                    "quantity": 32,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "2 lượt chơi ngoài trời - Combo 2 Outdoor sessions",
+                    "price": 924000,
+                    "quantity": 18,
+                    "max_per_order": 10
+                },
+                {
+                    "name": "3 lượt chơi ngoài trời - Combo 3 Outdoor sessions",
+                    "price": 1290000,
+                    "quantity": 10,
+                    "max_per_order": 10
+                }
+            ]
+        }
+    ]
+}

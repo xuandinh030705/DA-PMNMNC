@@ -151,6 +151,8 @@ Hệ thống đã chuẩn bị sẵn các tài khoản mẫu cho từng vai trò
 | 7 | **Khách hàng bị khóa (Blocked)**| `blocked@gmail.com` | Phạm Văn Bị Khóa | **Bị khóa** | Kiểm tra Middleware `CheckActive`: Tự động văng đăng nhập và báo lỗi |
 | 8 | **Ban tổ chức bị khóa (Blocked)**| `organizer_blocked@eventhub.vn` | Công Ty Sự Kiện Cấm | **Bị khóa** | Kiểm tra chặn quyền truy cập ban tổ chức vi phạm |
 
+> **Dữ liệu Ticketbox:** `TicketboxEventSeeder` nạp thêm 14 sự kiện thật (kèm banner) và 14 tài khoản ban tổ chức tương ứng, email dạng `{ten-ban-to-chuc}@ticketbox.local`, mật khẩu cũng là `password`. Xem chi tiết tại [`database/data/ticketbox/README.md`](database/data/ticketbox/README.md).
+
 ---
 
 ## 6. CẤU TRÚC THƯ MỤC DỰ ÁN
@@ -180,9 +182,10 @@ d:\NMNC\event-ticket\
 │       └── TicketCheckinService.php # 5 bước xác thực vé tại cổng kiểm soát
 ├── bootstrap/app.php              # Cấu hình Routing, Middleware alias
 ├── database/
+│   ├── data/ticketbox/            # Dữ liệu thật từ Ticketbox (14 sự kiện + banner) và script chuyển đổi
 │   ├── factories/                 # Factory sinh dữ liệu mẫu
 │   ├── migrations/                # 7 Migration tạo bảng hệ thống
-│   └── seeders/                   # Seeder dữ liệu mẫu ban đầu
+│   └── seeders/                   # Seeder dữ liệu mẫu (gồm TicketboxEventSeeder)
 ├── docs/                          # Thư viện tài liệu đồ án
 │   ├── 01_phan_tich_yeu_cau.md    # Tài liệu đặc tả yêu cầu phần mềm (SRS đầy đủ)
 │   ├── DEMO_SCRIPT.md             # Kịch bản demo 8-10 phút & 15 câu hỏi phản biện
