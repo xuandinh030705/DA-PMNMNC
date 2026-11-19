@@ -54,4 +54,50 @@ class TicketPdfTest extends TestCase
             $this->app->make(TicketPdfService::class)->filenameFor($ticket),
         );
     }
+
+    public function test_ticket_owner_can_download_the_ticket_pdf(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $ticket = $this->createTicketFor($customer, 'TKT-PDFOWNER1');
+
+        $response = $this->actingAs($customer)->get(route('tickets.pdf', $ticket));
+
+        $response->assertOk();
+        $response->assertDownload('ve-TKT-PDFOWNER1.pdf');
+        $this->assertStringStartsWith('%PDF-', (string) $response->getContent());
+    }
+
+    public function test_customer_cannot_download_someone_elses_ticket_pdf(): void
+    {
+        $owner = User::factory()->customer()->create();
+        $stranger = User::factory()->customer()->create();
+        $ticket = $this->createTicketFor($owner, 'TKT-PDFOWNER2');
+
+        $this->actingAs($stranger)
+            ->get(route('tickets.pdf', $ticket))
+            ->assertForbidden();
+    }
+
+    public function test_guest_is_redirected_to_login_when_downloading_ticket_pdf(): void
+    {
+        $owner = User::factory()->customer()->create();
+        $ticket = $this->createTicketFor($owner, 'TKT-PDFOWNER3');
+
+        $this->get(route('tickets.pdf', $ticket))
+            ->assertRedirect(route('login'));
+    }
+
+    private function createTicketFor(User $customer, string $ticketCode): Ticket
+    {
+        $order = Order::factory()->paid()->create(['user_id' => $customer->id]);
+        $orderItem = OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => TicketType::factory(),
+        ]);
+
+        return Ticket::factory()->valid()->create([
+            'order_item_id' => $orderItem->id,
+            'ticket_code' => $ticketCode,
+        ]);
+    }
 }

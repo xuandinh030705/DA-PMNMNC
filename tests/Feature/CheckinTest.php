@@ -124,4 +124,87 @@ class CheckinTest extends TestCase
         $response->assertSessionHas('error');
         $this->assertEquals(Ticket::STATUS_VALID, $ticket->fresh()->status);
     }
+
+    public function test_checkin_accepts_a_signed_qr_payload(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $ticket = $this->createTicketFor($organizer, 'TKT-QRVALID123');
+
+        $response = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => $ticket->qr_payload,
+        ]);
+
+        $response->assertSessionHas('success');
+        $this->assertEquals(Ticket::STATUS_USED, $ticket->fresh()->status);
+    }
+
+    public function test_checkin_rejects_a_qr_payload_with_tampered_signature(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $ticket = $this->createTicketFor($organizer, 'TKT-QRTAMPER1');
+
+        // Same ticket code but re-serialized payload => HMAC no longer matches.
+        $tamperedPayload = json_encode(['v' => 1, 'ticket_code' => 'TKT-QRTAMPER1', 'extra' => 'forged']);
+
+        $response = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => $tamperedPayload,
+        ]);
+
+        $response->assertSessionHas('error');
+        $this->assertEquals(Ticket::STATUS_VALID, $ticket->fresh()->status);
+    }
+
+    public function test_checkin_rejects_malformed_qr_json(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+
+        $response = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => '{"v":1,',
+        ]);
+
+        $response->assertSessionHas('error');
+        $response->assertSessionMissing('success_ticket');
+    }
+
+    public function test_checkin_accepts_lowercase_typed_ticket_code(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $ticket = $this->createTicketFor($organizer, 'TKT-LOWERCASE1');
+
+        $response = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => 'tkt-lowercase1',
+        ]);
+
+        $response->assertSessionHas('success');
+        $this->assertEquals(Ticket::STATUS_USED, $ticket->fresh()->status);
+    }
+
+    public function test_checkin_form_provides_camera_scanner_and_manual_input(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+
+        $response = $this->actingAs($organizer)->get(route('organizer.checkin.form'));
+
+        $response->assertOk();
+        $response->assertSee('name="ticket_code"', false);
+        $response->assertSee('id="qr-reader"', false);
+        $response->assertSee('id="btn-start-camera"', false);
+        $response->assertSee('js/html5-qrcode.min.js', false);
+    }
+
+    private function createTicketFor(User $organizer, string $ticketCode): Ticket
+    {
+        $event = Event::factory()->create(['organizer_id' => $organizer->id]);
+        $ticketType = TicketType::factory()->create(['event_id' => $event->id]);
+        $order = Order::factory()->paid()->create();
+        $orderItem = OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => $ticketType->id,
+        ]);
+
+        return Ticket::factory()->valid()->create([
+            'order_item_id' => $orderItem->id,
+            'ticket_code' => $ticketCode,
+        ]);
+    }
 }
