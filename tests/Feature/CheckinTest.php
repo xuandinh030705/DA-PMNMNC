@@ -193,6 +193,24 @@ class CheckinTest extends TestCase
         $response->assertSee('js/html5-qrcode.min.js', false);
     }
 
+    public function test_checkin_success_card_renders_the_flashed_summary(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $this->createTicketFor($organizer, 'TKT-SUMMARY01');
+
+        $response = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => 'TKT-SUMMARY01',
+        ]);
+
+        $response->assertSessionHas('success_ticket', fn ($value) => is_array($value));
+
+        $this->actingAs($organizer)
+            ->get(route('organizer.checkin.form'))
+            ->assertOk()
+            ->assertSee('TKT-SUMMARY01')
+            ->assertSee('Nhân viên soát vé');
+    }
+
     private function createTicketFor(User $organizer, string $ticketCode): Ticket
     {
         $event = Event::factory()->create(['organizer_id' => $organizer->id]);
