@@ -24,7 +24,7 @@ class EventController extends Controller
             $keyword = trim($request->q);
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', "%{$keyword}%")
-                    ->orWhereHas('organizer', fn($sub) => $sub->where('name', 'like', "%{$keyword}%"));
+                    ->orWhereHas('organizer', fn ($sub) => $sub->where('name', 'like', "%{$keyword}%"));
             });
         }
 

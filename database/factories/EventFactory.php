@@ -25,7 +25,7 @@ class EventFactory extends Factory
             'category_id' => Category::factory(),
             'venue_id' => Venue::factory(),
             'title' => $title,
-            'slug' => Str::slug($title) . '-' . fake()->unique()->numberBetween(100, 9999),
+            'slug' => Str::slug($title).'-'.fake()->unique()->numberBetween(100, 9999),
             'description' => fake()->paragraphs(3, true),
             'banner_path' => null,
             'start_time' => $startTime,

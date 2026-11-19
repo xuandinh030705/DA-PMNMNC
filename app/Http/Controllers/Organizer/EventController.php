@@ -25,7 +25,7 @@ class EventController extends Controller
         }
 
         if ($request->filled('q')) {
-            $query->where('title', 'like', '%' . trim($request->q) . '%');
+            $query->where('title', 'like', '%'.trim($request->q).'%');
         }
 
         $events = $query->latest()->paginate(10)->withQueryString();

@@ -14,7 +14,9 @@ class Order extends Model
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_PAID = 'paid';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
@@ -42,7 +44,7 @@ class Order extends Model
     public static function generateUniqueOrderCode(): string
     {
         do {
-            $code = 'ORD-' . strtoupper(Str::random(8));
+            $code = 'ORD-'.strtoupper(Str::random(8));
         } while (static::where('order_code', $code)->exists());
 
         return $code;

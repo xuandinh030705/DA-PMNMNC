@@ -24,7 +24,7 @@ class StorefrontController extends Controller
 
         // Search by keyword in title
         if ($request->filled('q')) {
-            $query->where('title', 'like', '%' . trim($request->q) . '%');
+            $query->where('title', 'like', '%'.trim($request->q).'%');
         }
 
         // Filter by Category
