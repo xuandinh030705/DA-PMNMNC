@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\EventStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\RedirectResponse;
@@ -24,7 +25,7 @@ class EventController extends Controller
             $keyword = trim($request->q);
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', "%{$keyword}%")
-                    ->orWhereHas('organizer', fn($sub) => $sub->where('name', 'like', "%{$keyword}%"));
+                    ->orWhereHas('organizer', fn ($sub) => $sub->where('name', 'like', "%{$keyword}%"));
             });
         }
 
@@ -44,7 +45,7 @@ class EventController extends Controller
     {
         $this->authorize('approve', $event);
 
-        $event->status = Event::STATUS_PUBLISHED;
+        $event->status = EventStatus::PUBLISHED;
         $event->save();
 
         return back()->with('success', "Đã phê duyệt sự kiện '{$event->title}'. Sự kiện hiện đã được công khai trên hệ thống.");
@@ -54,7 +55,7 @@ class EventController extends Controller
     {
         $this->authorize('reject', $event);
 
-        $event->status = Event::STATUS_DRAFT;
+        $event->status = EventStatus::DRAFT;
         $event->save();
 
         return back()->with('warning', "Đã từ chối duyệt sự kiện '{$event->title}'. Trạng thái sự kiện đã quay về Bản nháp.");
@@ -64,7 +65,7 @@ class EventController extends Controller
     {
         $this->authorize('cancel', $event);
 
-        $event->status = Event::STATUS_CANCELLED;
+        $event->status = EventStatus::CANCELLED;
         $event->save();
 
         return back()->with('success', "Đã hủy sự kiện '{$event->title}'.");

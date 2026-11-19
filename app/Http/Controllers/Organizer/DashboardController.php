@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Organizer;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\OrderItem;
@@ -30,7 +31,7 @@ class DashboardController extends Controller
         $totalRevenue = OrderItem::whereHas('ticketType.event', function ($query) use ($organizer) {
             $query->where('organizer_id', $organizer->id);
         })->whereHas('order', function ($query) {
-            $query->where('status', 'paid');
+            $query->where('status', OrderStatus::PAID);
         })->sum('subtotal');
 
         // Recent events with eager-loaded relations to avoid N+1

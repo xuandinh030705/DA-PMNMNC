@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\OrderStatus;
+use App\Enums\TicketStatus;
 use App\Exceptions\BusinessException;
 use App\Models\Event;
 use App\Models\Order;
@@ -85,7 +87,7 @@ class OrderService
                 'customer_email' => $customerData['customer_email'] ?? $user->email,
                 'customer_phone' => $customerData['customer_phone'] ?? $user->phone,
                 'total_amount' => $totalAmount,
-                'status' => Order::STATUS_PENDING,
+                'status' => OrderStatus::PENDING,
                 'payment_method' => null,
                 'paid_at' => null,
                 'expires_at' => now()->addMinutes(15),
@@ -125,7 +127,7 @@ class OrderService
                 return true;
             }
 
-            $lockedOrder->status = Order::STATUS_PAID;
+            $lockedOrder->status = OrderStatus::PAID;
             $lockedOrder->payment_method = $paymentMethod;
             $lockedOrder->paid_at = now();
             $lockedOrder->expires_at = null;
@@ -142,7 +144,7 @@ class OrderService
                         'ticket_code' => $ticketCode,
                         'qr_payload' => $qrPayload,
                         'qr_signature' => Ticket::generateQrSignature($qrPayload),
-                        'status' => Ticket::STATUS_VALID,
+                        'status' => TicketStatus::VALID,
                         'checked_in_at' => null,
                         'checked_in_by' => null,
                     ]);
@@ -184,7 +186,7 @@ class OrderService
                     ->decrement('sold', $item->quantity);
             }
 
-            $lockedOrder->status = Order::STATUS_CANCELLED;
+            $lockedOrder->status = OrderStatus::CANCELLED;
             $lockedOrder->save();
 
             return $lockedOrder;
@@ -209,7 +211,7 @@ class OrderService
      */
     public function expireAllPendingOrders(): int
     {
-        $expiredOrders = Order::where('status', Order::STATUS_PENDING)
+        $expiredOrders = Order::where('status', OrderStatus::PENDING)
             ->where('expires_at', '<', now())
             ->get();
 

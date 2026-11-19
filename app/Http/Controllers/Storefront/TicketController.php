@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Storefront;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -16,11 +17,11 @@ class TicketController extends Controller
     {
         $tickets = Ticket::whereHas('orderItem.order', function ($query) use ($request) {
             $query->where('user_id', $request->user()->id)
-                ->where('status', 'paid');
+                ->where('status', OrderStatus::PAID);
         })
-        ->with(['orderItem.order', 'orderItem.ticketType.event.venue'])
-        ->latest()
-        ->paginate(12);
+            ->with(['orderItem.order', 'orderItem.ticketType.event.venue'])
+            ->latest()
+            ->paginate(12);
 
         return view('storefront.tickets.index', compact('tickets'));
     }

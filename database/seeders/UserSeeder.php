@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,7 @@ class UserSeeder extends Seeder
                 'name' => 'Quản Trị Viên Hệ Thống',
                 'password' => Hash::make('password'),
                 'phone' => '0901234567',
-                'role' => User::ROLE_ADMIN,
+                'role' => UserRole::ADMIN,
                 'is_active' => true,
             ]
         );
@@ -29,7 +30,7 @@ class UserSeeder extends Seeder
                 'name' => 'Ban Tổ Chức Sao Mai',
                 'password' => Hash::make('password'),
                 'phone' => '0912345678',
-                'role' => User::ROLE_ORGANIZER,
+                'role' => UserRole::ORGANIZER,
                 'is_active' => true,
             ]
         );
@@ -40,7 +41,7 @@ class UserSeeder extends Seeder
                 'name' => 'Công Ty Âm Nhạc Trẻ',
                 'password' => Hash::make('password'),
                 'phone' => '0923456789',
-                'role' => User::ROLE_ORGANIZER,
+                'role' => UserRole::ORGANIZER,
                 'is_active' => true,
             ]
         );
@@ -62,7 +63,7 @@ class UserSeeder extends Seeder
                     'name' => $name,
                     'password' => Hash::make('password'),
                     'phone' => "093456789{$num}",
-                    'role' => User::ROLE_CUSTOMER,
+                    'role' => UserRole::CUSTOMER,
                     'is_active' => true,
                 ]
             );

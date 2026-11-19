@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Enums\EventStatus;
+use App\Enums\UserRole;
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\User;
@@ -20,7 +22,7 @@ class AdminManagementTest extends TestCase
         $response = $this->actingAs($admin)->post(route('admin.events.approve', $event));
 
         $response->assertSessionHas('success');
-        $this->assertEquals(Event::STATUS_PUBLISHED, $event->fresh()->status);
+        $this->assertSame(EventStatus::PUBLISHED, $event->fresh()->status);
     }
 
     public function test_admin_can_reject_pending_event_back_to_draft(): void
@@ -31,7 +33,7 @@ class AdminManagementTest extends TestCase
         $response = $this->actingAs($admin)->post(route('admin.events.reject', $event));
 
         $response->assertSessionHas('warning');
-        $this->assertEquals(Event::STATUS_DRAFT, $event->fresh()->status);
+        $this->assertSame(EventStatus::DRAFT, $event->fresh()->status);
     }
 
     public function test_admin_can_cancel_event(): void
@@ -42,7 +44,7 @@ class AdminManagementTest extends TestCase
         $response = $this->actingAs($admin)->post(route('admin.events.cancel', $event));
 
         $response->assertSessionHas('success');
-        $this->assertEquals(Event::STATUS_CANCELLED, $event->fresh()->status);
+        $this->assertSame(EventStatus::CANCELLED, $event->fresh()->status);
     }
 
     public function test_admin_cannot_delete_category_with_existing_events(): void
@@ -78,6 +80,15 @@ class AdminManagementTest extends TestCase
 
         $this->actingAs($admin)->get(route('admin.dashboard'))->assertStatus(200);
         $this->actingAs($admin)->get(route('admin.users.index'))->assertStatus(200);
+        $this->actingAs($admin)->get(route('admin.users.edit', $admin))->assertStatus(200);
+
+        $customer = User::factory()->customer()->create();
+        $this->actingAs($admin)->put(route('admin.users.update', $customer), [
+            'name' => $customer->name,
+            'role' => UserRole::ORGANIZER->value,
+            'is_active' => 1,
+        ])->assertRedirect(route('admin.users.index'));
+        $this->assertSame(UserRole::ORGANIZER, $customer->fresh()->role);
 
         $catResponse = $this->actingAs($admin)->post(route('admin.categories.store'), [
             'name' => 'Hội Nghị Công Nghệ',

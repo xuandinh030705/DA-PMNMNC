@@ -16,4 +16,13 @@ enum UserRole: string
             self::CUSTOMER => 'Khách hàng',
         };
     }
+
+    public function badgeClass(): string
+    {
+        return match ($this) {
+            self::ADMIN => 'badge-role-admin',
+            self::ORGANIZER => 'badge-role-organizer',
+            self::CUSTOMER => 'badge-role-customer',
+        };
+    }
 }

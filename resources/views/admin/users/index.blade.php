@@ -60,8 +60,8 @@
                                 <td><code>{{ $user->email }}</code></td>
                                 <td class="small">{{ $user->phone ?: 'Chưa cập nhật' }}</td>
                                 <td>
-                                    <span class="badge badge-role badge-role-{{ $user->role }}">
-                                        {{ $user->role === 'admin' ? 'Quản Trị Viên' : ($user->role === 'organizer' ? 'Ban Tổ Chức' : 'Khách Hàng') }}
+                                    <span class="badge badge-role {{ $user->roleBadgeClass() }}">
+                                        {{ $user->roleLabel() }}
                                     </span>
                                 </td>
                                 <td>

@@ -11,7 +11,7 @@ class CheckRole
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      * @param  string  ...$roles
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
@@ -28,7 +28,9 @@ class CheckRole
             }
         }
 
-        if (! in_array($request->user()->role, $allowedRoles, true)) {
+        $userRole = $request->user()->role?->value;
+
+        if ($userRole === null || ! in_array($userRole, $allowedRoles, true)) {
             abort(403, 'Bạn không có quyền truy cập khu vực này.');
         }
 

@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enums\EventStatus;
+use App\Enums\OrderStatus;
+use App\Enums\TicketStatus;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Ticket;
@@ -17,7 +20,7 @@ class OrderSeeder extends Seeder
         $c2 = User::where('email', 'customer2@example.com')->first();
         $c3 = User::where('email', 'customer3@example.com')->first();
 
-        $ticketTypes = TicketType::whereHas('event', fn ($q) => $q->where('status', 'published'))->get();
+        $ticketTypes = TicketType::whereHas('event', fn ($q) => $q->where('status', EventStatus::PUBLISHED))->get();
         if ($ticketTypes->isEmpty()) {
             return;
         }
@@ -35,7 +38,7 @@ class OrderSeeder extends Seeder
             'customer_email' => $c1->email,
             'customer_phone' => $c1->phone,
             'total_amount' => $subtotal1,
-            'status' => Order::STATUS_PAID,
+            'status' => OrderStatus::PAID,
             'payment_method' => 'bank_transfer',
             'paid_at' => now()->subHours(2),
             'expires_at' => null,
@@ -55,7 +58,7 @@ class OrderSeeder extends Seeder
         Ticket::create([
             'order_item_id' => $item1->id,
             'ticket_code' => Ticket::generateUniqueTicketCode(),
-            'status' => Ticket::STATUS_USED,
+            'status' => TicketStatus::USED,
             'checked_in_at' => now()->subHour(),
             'checked_in_by' => $tt1->event->organizer_id,
         ]);
@@ -64,7 +67,7 @@ class OrderSeeder extends Seeder
         Ticket::create([
             'order_item_id' => $item1->id,
             'ticket_code' => Ticket::generateUniqueTicketCode(),
-            'status' => Ticket::STATUS_VALID,
+            'status' => TicketStatus::VALID,
             'checked_in_at' => null,
         ]);
 
@@ -78,7 +81,7 @@ class OrderSeeder extends Seeder
             'customer_email' => $c2->email,
             'customer_phone' => $c2->phone,
             'total_amount' => $subtotal2,
-            'status' => Order::STATUS_PAID,
+            'status' => OrderStatus::PAID,
             'payment_method' => 'momo',
             'paid_at' => now()->subMinutes(30),
             'expires_at' => null,
@@ -97,7 +100,7 @@ class OrderSeeder extends Seeder
         Ticket::create([
             'order_item_id' => $item2->id,
             'ticket_code' => Ticket::generateUniqueTicketCode(),
-            'status' => Ticket::STATUS_VALID,
+            'status' => TicketStatus::VALID,
             'checked_in_at' => null,
         ]);
 
@@ -111,7 +114,7 @@ class OrderSeeder extends Seeder
             'customer_email' => $c3->email,
             'customer_phone' => $c3->phone,
             'total_amount' => $subtotal3,
-            'status' => Order::STATUS_PENDING,
+            'status' => OrderStatus::PENDING,
             'payment_method' => null,
             'paid_at' => null,
             'expires_at' => now()->addMinutes(15),
@@ -137,7 +140,7 @@ class OrderSeeder extends Seeder
             'customer_email' => $c1->email,
             'customer_phone' => $c1->phone,
             'total_amount' => $subtotal4,
-            'status' => Order::STATUS_CANCELLED,
+            'status' => OrderStatus::CANCELLED,
             'payment_method' => null,
             'paid_at' => null,
             'expires_at' => now()->subMinutes(50),

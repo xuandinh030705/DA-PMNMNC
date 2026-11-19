@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +21,7 @@ class OrderFactory extends Factory
             'customer_email' => fake()->safeEmail(),
             'customer_phone' => fake()->numerify('09########'),
             'total_amount' => 500000,
-            'status' => Order::STATUS_PENDING,
+            'status' => OrderStatus::PENDING,
             'payment_method' => null,
             'paid_at' => null,
             'expires_at' => now()->addMinutes(15),
@@ -30,7 +31,7 @@ class OrderFactory extends Factory
     public function pending(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => Order::STATUS_PENDING,
+            'status' => OrderStatus::PENDING,
             'expires_at' => now()->addMinutes(15),
         ]);
     }
@@ -38,7 +39,7 @@ class OrderFactory extends Factory
     public function paid(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => Order::STATUS_PAID,
+            'status' => OrderStatus::PAID,
             'payment_method' => 'bank_transfer',
             'paid_at' => now(),
         ]);
@@ -47,7 +48,7 @@ class OrderFactory extends Factory
     public function cancelled(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => Order::STATUS_CANCELLED,
+            'status' => OrderStatus::CANCELLED,
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\Event;
 use App\Models\Order;
 use App\Models\User;
@@ -70,10 +71,10 @@ class AuthorizationTest extends TestCase
         // Attempt to self-demote
         $responseDemote = $this->actingAs($admin)->from(route('admin.users.edit', $admin))->put(route('admin.users.update', $admin), [
             'name' => $admin->name,
-            'role' => User::ROLE_CUSTOMER,
+            'role' => UserRole::CUSTOMER->value,
             'is_active' => 1,
         ]);
         $responseDemote->assertSessionHas('error');
-        $this->assertEquals(User::ROLE_ADMIN, $admin->fresh()->role);
+        $this->assertSame(UserRole::ADMIN, $admin->fresh()->role);
     }
 }
