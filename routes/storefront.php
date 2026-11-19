@@ -19,4 +19,5 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/orders/{order:order_code}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
     Route::get('/my-tickets', [TicketController::class, 'index'])->name('tickets.index');
+    Route::get('/my-tickets/{ticket}/pdf', [TicketController::class, 'downloadPdf'])->name('tickets.pdf');
 });
