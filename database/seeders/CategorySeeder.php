@@ -31,6 +31,10 @@ class CategorySeeder extends Seeder
                 'name' => 'Công nghệ & Triển lãm',
                 'description' => 'Triển lãm thiết bị công nghệ hiện đại, ngày hội khởi nghiệp và đổi mới sáng tạo.',
             ],
+            [
+                'name' => 'Tham quan & Trải nghiệm',
+                'description' => 'Tour tham quan, trải nghiệm văn hoá và các hoạt động khám phá địa phương.',
+            ],
         ];
 
         foreach ($categories as $cat) {
