@@ -18,13 +18,20 @@ class CheckinController extends Controller
 
     public function store(CheckinRequest $request, TicketCheckinService $checkinService): RedirectResponse
     {
+        $ticketInput = trim((string) $request->input('ticket_code'));
+
         try {
-            $ticket = $checkinService->checkIn($request->user(), $request->ticket_code);
+            $ticket = $checkinService->checkIn($request->user(), $ticketInput);
 
             return back()->with('success_ticket', $ticket)
                 ->with('success', "Soát vé THÀNH CÔNG! Vé '{$ticket->ticket_code}' hợp lệ.");
         } catch (BusinessException $e) {
-            return back()->withInput()->with('error', $e->getMessage());
+            $redirect = back()->with('error', $e->getMessage());
+
+            // Do not refill a scanned QR payload into the manual input after a failure.
+            return str_starts_with($ticketInput, '{')
+                ? $redirect
+                : $redirect->withInput();
         }
     }
 }

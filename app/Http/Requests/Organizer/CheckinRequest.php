@@ -14,7 +14,7 @@ class CheckinRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ticket_code' => ['required', 'string'],
+            'ticket_code' => ['required', 'string', 'max:2000'],
         ];
     }
 
@@ -28,7 +28,8 @@ class CheckinRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'ticket_code.required' => 'Vui lòng nhập mã vé cần kiểm tra.',
+            'ticket_code.required' => 'Vui lòng nhập mã vé hoặc quét mã QR cần kiểm tra.',
+            'ticket_code.max' => 'Dữ liệu quét được quá dài, vui lòng thử lại.',
         ];
     }
 }

@@ -28,6 +28,17 @@ class TicketFactory extends Factory
         ];
     }
 
+    /**
+     * Keep the QR payload and signature aligned with the (possibly overridden) ticket code.
+     */
+    public function configure(): static
+    {
+        return $this->afterMaking(function (Ticket $ticket): void {
+            $ticket->qr_payload = Ticket::buildQrPayload($ticket->ticket_code);
+            $ticket->qr_signature = Ticket::generateQrSignature($ticket->qr_payload);
+        });
+    }
+
     public function valid(): static
     {
         return $this->state(fn (array $attributes) => [
