@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\TicketStatus;
 use App\Models\Event;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -36,7 +37,7 @@ class CheckinTest extends TestCase
 
         $response->assertSessionHas('success');
         $freshTicket = $ticket->fresh();
-        $this->assertEquals(Ticket::STATUS_USED, $freshTicket->status);
+        $this->assertSame(TicketStatus::USED, $freshTicket->status);
         $this->assertNotNull($freshTicket->checked_in_at);
         $this->assertSame($organizer->id, $freshTicket->checked_in_by);
         $this->assertSame($organizer->id, $freshTicket->checkedInBy?->id);
@@ -73,7 +74,7 @@ class CheckinTest extends TestCase
         ]);
 
         $response->assertSessionHas('error');
-        $this->assertNotEquals(Ticket::STATUS_USED, $ticket->fresh()->status);
+        $this->assertNotSame(TicketStatus::USED, $ticket->fresh()->status);
     }
 
     public function test_checkin_fails_when_ticket_is_already_used(): void
@@ -122,7 +123,7 @@ class CheckinTest extends TestCase
         ]);
 
         $response->assertSessionHas('error');
-        $this->assertEquals(Ticket::STATUS_VALID, $ticket->fresh()->status);
+        $this->assertSame(TicketStatus::VALID, $ticket->fresh()->status);
     }
 
     public function test_checkin_accepts_a_signed_qr_payload(): void
@@ -135,7 +136,7 @@ class CheckinTest extends TestCase
         ]);
 
         $response->assertSessionHas('success');
-        $this->assertEquals(Ticket::STATUS_USED, $ticket->fresh()->status);
+        $this->assertSame(TicketStatus::USED, $ticket->fresh()->status);
     }
 
     public function test_checkin_rejects_a_qr_payload_with_tampered_signature(): void
@@ -151,7 +152,7 @@ class CheckinTest extends TestCase
         ]);
 
         $response->assertSessionHas('error');
-        $this->assertEquals(Ticket::STATUS_VALID, $ticket->fresh()->status);
+        $this->assertSame(TicketStatus::VALID, $ticket->fresh()->status);
     }
 
     public function test_checkin_rejects_malformed_qr_json(): void
@@ -176,7 +177,7 @@ class CheckinTest extends TestCase
         ]);
 
         $response->assertSessionHas('success');
-        $this->assertEquals(Ticket::STATUS_USED, $ticket->fresh()->status);
+        $this->assertSame(TicketStatus::USED, $ticket->fresh()->status);
     }
 
     public function test_checkin_form_provides_camera_scanner_and_manual_input(): void

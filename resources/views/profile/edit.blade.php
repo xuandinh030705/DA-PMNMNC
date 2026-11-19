@@ -14,8 +14,8 @@
                 <div>
                     <h4 class="fw-bold mb-1">{{ $user->name }}</h4>
                     <div class="d-flex gap-2 align-items-center">
-                        <span class="badge badge-role badge-role-{{ $user->role }}">
-                            {{ $user->role === 'admin' ? 'Quản Trị Viên' : ($user->role === 'organizer' ? 'Ban Tổ Chức' : 'Khách Hàng') }}
+                        <span class="badge badge-role {{ $user->roleBadgeClass() }}">
+                            {{ $user->roleLabel() }}
                         </span>
                         <span class="badge bg-success-subtle text-success border border-success-subtle">
                             <i class="bi bi-check-circle-fill me-1"></i> Hoạt động

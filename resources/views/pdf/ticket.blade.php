@@ -243,7 +243,7 @@
                                 <span class="label">Trạng thái</span>
                             </td>
                             <td style="padding: 3px 0;">
-                                <span class="badge {{ $ticket->status === \App\Models\Ticket::STATUS_USED ? 'badge-used' : ($ticket->status === \App\Models\Ticket::STATUS_CANCELLED ? 'badge-cancelled' : '') }}">
+                                <span class="badge {{ $ticket->isUsed() ? 'badge-used' : ($ticket->isCancelled() ? 'badge-cancelled' : '') }}">
                                     {{ $ticket->statusLabel() }}
                                 </span>
                             </td>

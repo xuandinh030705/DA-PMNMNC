@@ -16,8 +16,8 @@ class OrderController extends Controller
         $query = Order::whereHas('orderItems.ticketType.event', function ($q) use ($organizer) {
             $q->where('organizer_id', $organizer->id);
         })
-        ->with(['orderItems.ticketType.event.venue'])
-        ->latest();
+            ->with(['orderItems.ticketType.event.venue'])
+            ->latest();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);

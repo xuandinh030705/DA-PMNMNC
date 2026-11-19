@@ -47,9 +47,9 @@
                 <div class="mb-3">
                     <label for="role" class="form-label fw-semibold">Vai trò người dùng <span class="text-danger">*</span></label>
                     <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
-                        <option value="customer" {{ old('role', $user->role) === 'customer' ? 'selected' : '' }}>Khách hàng (Customer)</option>
-                        <option value="organizer" {{ old('role', $user->role) === 'organizer' ? 'selected' : '' }}>Ban tổ chức (Organizer)</option>
-                        <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Quản trị viên (Admin)</option>
+                        <option value="customer" {{ old('role', $user->role?->value) === 'customer' ? 'selected' : '' }}>Khách hàng (Customer)</option>
+                        <option value="organizer" {{ old('role', $user->role?->value) === 'organizer' ? 'selected' : '' }}>Ban tổ chức (Organizer)</option>
+                        <option value="admin" {{ old('role', $user->role?->value) === 'admin' ? 'selected' : '' }}>Quản trị viên (Admin)</option>
                     </select>
                 </div>
 

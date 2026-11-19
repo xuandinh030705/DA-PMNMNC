@@ -1,5 +1,8 @@
 <?php
 
+use App\Support\TextFormatter;
+use Illuminate\Support\Str;
+
 /**
  * Chuyển dữ liệu Ticketbox (bản gốc lấy từ repo EzTicket-Website,
  * nhánh develop-Frontend, thư mục importDataTicketBox) sang định dạng
@@ -11,16 +14,15 @@
  * Đầu vào : source/ticketbox_merged.json
  * Đầu ra  : events.json + images/*.jpg (banner đã chuẩn hoá 16:9)
  */
-
 $baseDir = __DIR__;
 $projectRoot = dirname(__DIR__, 3);
-if (is_file($projectRoot . '/vendor/autoload.php')) {
-    require $projectRoot . '/vendor/autoload.php';
+if (is_file($projectRoot.'/vendor/autoload.php')) {
+    require $projectRoot.'/vendor/autoload.php';
 }
 
-$sourceFile = $baseDir . '/source/ticketbox_merged.json';
-$imagesDir = $baseDir . '/images';
-$outputFile = $baseDir . '/events.json';
+$sourceFile = $baseDir.'/source/ticketbox_merged.json';
+$imagesDir = $baseDir.'/images';
+$outputFile = $baseDir.'/events.json';
 
 if (! is_file($sourceFile)) {
     fwrite(STDERR, "Không tìm thấy dữ liệu nguồn: {$sourceFile}\n");
@@ -77,7 +79,7 @@ $normalizeCity = static function (string $address): string {
 $plainText = static function (?string $html, int $limit = 1400): string {
     $text = html_entity_decode(strip_tags((string) $html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
     // Chuẩn hoá kiểu chữ: bỏ chữ "đậm" Unicode, ký tự vô hình, gộp khoảng trắng.
-    $text = \App\Support\TextFormatter::clean($text);
+    $text = TextFormatter::clean($text);
     if (mb_strlen($text) <= $limit) {
         return $text;
     }
@@ -85,7 +87,7 @@ $plainText = static function (?string $html, int $limit = 1400): string {
     $cut = mb_substr($text, 0, $limit);
     $lastSpace = mb_strrpos($cut, ' ');
 
-    return rtrim($lastSpace ? mb_substr($cut, 0, $lastSpace) : $cut, " ,.;:-") . '...';
+    return rtrim($lastSpace ? mb_substr($cut, 0, $lastSpace) : $cut, ' ,.;:-').'...';
 };
 
 $normalizeTierName = static function (string $name): string {
@@ -283,17 +285,18 @@ foreach ($picks as $index => $config) {
     $source = $allEvents[$index] ?? null;
     if (! $source) {
         fwrite(STDERR, "Bỏ qua index {$index}: không có dữ liệu.\n");
+
         continue;
     }
 
     $slug = trim((string) preg_replace('/[^a-z0-9-]+/', '-', strtolower((string) ($source['url'] ?? ''))), '-');
     if ($slug === '') {
-        $slug = 'su-kien-' . $index;
+        $slug = 'su-kien-'.$index;
     }
     $baseSlug = $slug;
     $suffix = 2;
     while (isset($usedSlugs[$slug])) {
-        $slug = $baseSlug . '-' . $suffix++;
+        $slug = $baseSlug.'-'.$suffix++;
     }
     $usedSlugs[$slug] = true;
 
@@ -309,12 +312,12 @@ foreach ($picks as $index => $config) {
     if ($orgName === '') {
         $orgName = 'Ban tổ chức Ticketbox';
     }
-    $emailSlug = trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower(\Illuminate\Support\Str::ascii($orgName))), '-');
+    $emailSlug = trim((string) preg_replace('/[^a-z0-9]+/', '-', strtolower(Str::ascii($orgName))), '-');
     $emailSlug = $emailSlug !== '' ? mb_substr($emailSlug, 0, 40) : 'organizer';
-    $email = $emailSlug . '@ticketbox.local';
+    $email = $emailSlug.'@ticketbox.local';
     $emailSuffix = 2;
     while (isset($usedEmails[$email])) {
-        $email = $emailSlug . '-' . $emailSuffix++ . '@ticketbox.local';
+        $email = $emailSlug.'-'.$emailSuffix++.'@ticketbox.local';
     }
     $usedEmails[$email] = true;
 
@@ -322,11 +325,12 @@ foreach ($picks as $index => $config) {
     $tiers = $pickTiers($source, $capacity);
     if ($tiers === []) {
         fwrite(STDERR, "Bỏ qua '{$source['title']}': không có hạng vé hợp lệ.\n");
+
         continue;
     }
 
-    $imagePath = 'images/' . $slug . '.jpg';
-    $absoluteImage = $baseDir . '/' . $imagePath;
+    $imagePath = 'images/'.$slug.'.jpg';
+    $absoluteImage = $baseDir.'/'.$imagePath;
     $imageOk = false;
     if ($skipImages && is_file($absoluteImage)) {
         $imageOk = true;
@@ -345,12 +349,12 @@ foreach ($picks as $index => $config) {
 
     $output[] = [
         'source_id' => (int) $source['id'],
-        'source_url' => 'https://ticketbox.vn/event/' . $source['url'],
+        'source_url' => 'https://ticketbox.vn/event/'.$source['url'],
         'title' => trim((string) preg_replace('/\s+/u', ' ', (string) $source['title'])),
         'slug' => $slug,
         'category' => $config['category'],
         'description' => $plainText($source['description'] ?? ''),
-        'banner' => $imageOk ? 'events/ticketbox/' . $slug . '.jpg' : null,
+        'banner' => $imageOk ? 'events/ticketbox/'.$slug.'.jpg' : null,
         'image_source' => $source['bannerURL'],
         'venue' => [
             'name' => $venueName,
@@ -380,10 +384,10 @@ $payload = [
 
 file_put_contents(
     $outputFile,
-    json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n"
+    json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n"
 );
 
-echo 'Đã tạo ' . count($output) . " sự kiện -> {$outputFile}\n";
+echo 'Đã tạo '.count($output)." sự kiện -> {$outputFile}\n";
 foreach ($output as $event) {
     echo sprintf(
         "  - %-60s | %-24s | %d hạng vé | %s\n",

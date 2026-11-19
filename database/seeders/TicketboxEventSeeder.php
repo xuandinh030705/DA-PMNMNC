@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\EventStatus;
+use App\Enums\UserRole;
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\TicketType;
@@ -109,7 +111,7 @@ class TicketboxEventSeeder extends Seeder
                 'description' => $data['description'],
                 'start_time' => $start,
                 'end_time' => $end,
-                'status' => Event::STATUS_PUBLISHED,
+                'status' => EventStatus::PUBLISHED,
             ]);
 
             if ($bannerPath !== null) {
@@ -182,7 +184,7 @@ class TicketboxEventSeeder extends Seeder
             [
                 'name' => $data['name'],
                 'password' => Hash::make('password'),
-                'role' => User::ROLE_ORGANIZER,
+                'role' => UserRole::ORGANIZER,
                 'is_active' => true,
             ]
         );

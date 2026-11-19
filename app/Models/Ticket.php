@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TicketStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,12 +11,6 @@ use Illuminate\Support\Str;
 class Ticket extends Model
 {
     use HasFactory;
-
-    public const STATUS_VALID = 'valid';
-
-    public const STATUS_USED = 'used';
-
-    public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
         'order_item_id',
@@ -30,6 +25,7 @@ class Ticket extends Model
     protected function casts(): array
     {
         return [
+            'status' => TicketStatus::class,
             'checked_in_at' => 'datetime',
         ];
     }
@@ -90,36 +86,26 @@ class Ticket extends Model
 
     public function isValid(): bool
     {
-        return $this->status === self::STATUS_VALID;
+        return $this->status === TicketStatus::VALID;
     }
 
     public function isUsed(): bool
     {
-        return $this->status === self::STATUS_USED;
+        return $this->status === TicketStatus::USED;
     }
 
     public function isCancelled(): bool
     {
-        return $this->status === self::STATUS_CANCELLED;
+        return $this->status === TicketStatus::CANCELLED;
     }
 
     public function statusLabel(): string
     {
-        return match ($this->status) {
-            self::STATUS_VALID => 'Hợp lệ',
-            self::STATUS_USED => 'Đã sử dụng',
-            self::STATUS_CANCELLED => 'Đã hủy',
-            default => $this->status,
-        };
+        return $this->status?->label() ?? '';
     }
 
     public function statusBadgeClass(): string
     {
-        return match ($this->status) {
-            self::STATUS_VALID => 'bg-success',
-            self::STATUS_USED => 'bg-info text-dark',
-            self::STATUS_CANCELLED => 'bg-danger',
-            default => 'bg-secondary',
-        };
+        return $this->status?->badgeClass() ?? 'bg-secondary';
     }
 }
