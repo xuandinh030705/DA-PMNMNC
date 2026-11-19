@@ -88,6 +88,7 @@
                         <thead class="table-light small">
                             <tr>
                                 <th>Tên loại vé</th>
+                                <th>Khu vực</th>
                                 <th>Giá vé</th>
                                 <th class="text-center">Số lượng</th>
                                 <th class="text-center">Đã bán</th>
@@ -103,6 +104,16 @@
                                     <td>
                                         <div class="fw-bold text-dark">{{ $type->name }}</div>
                                         <small class="text-muted">Tối đa: {{ $type->max_per_order }} vé/đơn</small>
+                                        @if ($type->description)
+                                            <div class="small text-secondary mt-1">{{ \Illuminate\Support\Str::limit($type->description, 90) }}</div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($type->zone)
+                                            <span class="badge bg-secondary-subtle text-secondary-emphasis border">{{ $type->zone }}</span>
+                                        @else
+                                            <span class="text-muted small">—</span>
+                                        @endif
                                     </td>
                                     <td class="fw-bold text-primary">
                                         {{ number_format($type->price, 0, ',', '.') }} đ

@@ -29,6 +29,19 @@
                 </div>
 
                 <div class="row g-3 mb-3">
+                    <div class="col-md-5">
+                        <label for="zone" class="form-label fw-semibold">Khu vực / Vị trí</label>
+                        <input type="text" class="form-control @error('zone') is-invalid @enderror" id="zone" name="zone" value="{{ old('zone', $ticketType->zone) }}" maxlength="100" placeholder="Ví dụ: Khu A, Khán đài VIP...">
+                        <div class="form-text small text-muted">Hiển thị cho khách khi chọn loại vé.</div>
+                    </div>
+
+                    <div class="col-md-7">
+                        <label for="description" class="form-label fw-semibold">Quyền lợi của loại vé</label>
+                        <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="2" maxlength="1000" placeholder="Ví dụ: Bao gồm nước uống, quà tặng và chỗ ngồi gần sân khấu.">{{ old('description', $ticketType->description) }}</textarea>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label for="price" class="form-label fw-semibold">Giá vé (VNĐ) <span class="text-danger">*</span></label>
                         <div class="input-group">
