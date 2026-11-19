@@ -136,6 +136,8 @@ Hệ thống đã chuẩn bị sẵn 8 tài khoản mẫu trong [`database/seede
 
 *(Lưu ý: Để kiểm thử tính năng chặn tài khoản bị khóa bởi Middleware `CheckActive`, đăng nhập bằng `admin@example.com`, vào mục **Quản Lý Người Dùng** khóa một tài khoản bất kỳ, sau đó đăng nhập lại bằng tài khoản đó.)*
 
+> **Dữ liệu Ticketbox:** `TicketboxEventSeeder` nạp thêm 14 sự kiện thật (kèm banner) và 14 tài khoản ban tổ chức tương ứng, email dạng `{ten-ban-to-chuc}@ticketbox.local`, mật khẩu cũng là `password`. Xem chi tiết tại [`database/data/ticketbox/README.md`](database/data/ticketbox/README.md).
+
 ---
 
 ## 6. CẤU TRÚC THƯ MỤC DỰ ÁN
@@ -155,9 +157,10 @@ DA_PMNM_NC/
 │   └── Services/                  # OrderService, TicketCheckinService
 ├── bootstrap/app.php              # Cấu hình Routing, Middleware alias
 ├── database/
+│   ├── data/ticketbox/            # Dữ liệu thật từ Ticketbox (14 sự kiện + banner) và script chuyển đổi
 │   ├── factories/                 # 8 Factory sinh dữ liệu test
 │   ├── migrations/                # 10 Migrations (3 hệ thống + 7 nghiệp vụ)
-│   └── seeders/                   # 6 Seeders (DatabaseSeeder + 5 entity seeders)
+│   └── seeders/                   # 7 Seeders (DatabaseSeeder + 5 entity seeders + TicketboxEventSeeder)
 ├── docs/                          # Tài liệu phân tích, thiết kế, báo cáo, sơ đồ & test
 │   ├── diagrams/                  # 8 sơ đồ PlantUML (.puml) & ảnh xuất PNG (images/*.png)
 │   └── testing/                   # Bảng test cases & kết quả chạy PHPUnit

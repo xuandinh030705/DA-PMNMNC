@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Support\TextFormatter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,8 +17,11 @@ class Event extends Model
     use HasFactory, SoftDeletes;
 
     public const STATUS_DRAFT = 'draft';
+
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_PUBLISHED = 'published';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
@@ -57,12 +62,25 @@ class Event extends Model
         $slug = $baseSlug;
         $count = 1;
 
-        while (static::withTrashed()->where('slug', $slug)->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+        while (static::withTrashed()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
             $slug = "{$baseSlug}-{$count}";
             $count++;
         }
 
         return $slug;
+    }
+
+    /**
+     * Mô tả đã chia đoạn để hiển thị dễ đọc (chỉ thêm chỗ ngắt đoạn,
+     * không thay đổi nội dung chữ).
+     *
+     * @return array<int, string>
+     */
+    protected function descriptionParagraphs(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => TextFormatter::paragraphs($this->description)
+        );
     }
 
     // Relationships
@@ -107,6 +125,7 @@ class Event extends Model
         if ($search) {
             return $query->where('title', 'like', "%{$search}%");
         }
+
         return $query;
     }
 
