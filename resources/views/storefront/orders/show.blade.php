@@ -204,8 +204,12 @@
                                     <small class="text-muted">Mã vé điện tử</small>
                                 </div>
 
-                                <div class="p-2 bg-white rounded border text-center my-2">
-                                    <span class="ticket-code-font fs-4 text-primary fw-bold letter-spacing-1">
+                                <div class="p-3 bg-white rounded border text-center my-2">
+                                    <div class="mb-2">
+                                        <img src="{{ ($qrTicketService ?? app(\App\Services\QrTicketService::class))->svgDataUri($ticket) }}" alt="QR Code {{ $ticket->ticket_code }}" class="img-fluid bg-white p-1 rounded border shadow-sm" style="max-width: 130px; aspect-ratio: 1/1;" />
+                                    </div>
+                                    <small class="text-muted d-block text-uppercase letter-spacing-1 mb-1" style="font-size: 0.75rem;">Mã vé điểm danh</small>
+                                    <span class="ticket-code-font fs-4 text-primary fw-bold letter-spacing-1 d-block">
                                         {{ $ticket->ticket_code }}
                                     </span>
                                 </div>
@@ -224,11 +228,20 @@
                                     <i class="bi bi-geo-alt me-1 text-danger"></i> {{ $ticketEvent->venue->name }}
                                 </div>
 
-                                @if ($ticket->isUsed())
-                                    <div class="mt-2 pt-2 border-top small text-info fw-semibold">
-                                        <i class="bi bi-check-all me-1"></i> Đã soát vé lúc: {{ $ticket->checked_in_at?->format('H:i d/m/Y') }}
-                                    </div>
-                                @endif
+                                <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                    @if ($ticket->isUsed())
+                                        <small class="text-info fw-semibold">
+                                            <i class="bi bi-check-all me-1"></i> Đã soát vé lúc: {{ $ticket->checked_in_at?->format('H:i d/m/Y') }}
+                                        </small>
+                                    @else
+                                        <small class="text-success fw-semibold">
+                                            <i class="bi bi-check2-circle me-1"></i> Sẵn sàng sử dụng
+                                        </small>
+                                    @endif
+                                    <a href="{{ route('tickets.pdf', $ticket) }}" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                        <i class="bi bi-file-earmark-pdf me-1"></i> Tải PDF
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     @endforeach

@@ -33,8 +33,11 @@
                                 <small class="text-muted">Đơn: <a href="{{ route('orders.show', $item->order->order_code) }}" class="text-decoration-none ticket-code-font">{{ $item->order->order_code }}</a></small>
                             </div>
 
-                            <!-- Ticket Code Monospace Box -->
+                            <!-- Ticket Code Monospace Box with QR -->
                             <div class="p-3 bg-light rounded-3 border text-center my-3">
+                                <div class="mb-2">
+                                    <img src="{{ ($qrTicketService ?? app(\App\Services\QrTicketService::class))->svgDataUri($ticket) }}" alt="QR Code {{ $ticket->ticket_code }}" class="img-fluid bg-white p-2 rounded border shadow-sm" style="max-width: 140px; aspect-ratio: 1/1;" />
+                                </div>
                                 <small class="text-muted d-block text-uppercase letter-spacing-1 mb-1">Mã Vé Điểm Danh / Check-in</small>
                                 <span class="ticket-code-font fs-3 text-primary fw-bold letter-spacing-2">
                                     {{ $ticket->ticket_code }}
@@ -55,18 +58,25 @@
                                 <div><i class="bi bi-person me-1 text-secondary"></i> Khách tham dự: <strong class="text-dark">{{ $item->order->customer_name }}</strong></div>
                             </div>
 
-                            @if ($ticket->isUsed())
-                                <div class="p-2 rounded bg-info bg-opacity-10 text-info small fw-semibold mt-auto">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Đã hoàn tất check-in lúc: {{ $ticket->checked_in_at?->format('H:i - d/m/Y') }}
-                                </div>
-                            @else
-                                <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                                    <small class="text-success"><i class="bi bi-check2-circle me-1"></i> Sẵn sàng sử dụng</small>
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="window.print()">
-                                        <i class="bi bi-printer me-1"></i> In thẻ vé
+                            <div class="mt-auto pt-3 border-top">
+                                @if ($ticket->isUsed())
+                                    <div class="p-2 rounded bg-info bg-opacity-10 text-info small fw-semibold mb-2">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Đã hoàn tất check-in lúc: {{ $ticket->checked_in_at?->format('H:i - d/m/Y') }}
+                                    </div>
+                                @else
+                                    <div class="mb-2">
+                                        <small class="text-success"><i class="bi bi-check2-circle me-1"></i> Sẵn sàng sử dụng</small>
+                                    </div>
+                                @endif
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ route('tickets.pdf', $ticket) }}" class="btn btn-sm btn-outline-danger rounded-pill px-3" title="Tải vé điện tử PDF khổ A5">
+                                        <i class="bi bi-file-earmark-pdf me-1"></i> Tải vé PDF
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="window.print()" title="In thẻ vé trên trình duyệt">
+                                        <i class="bi bi-printer me-1"></i> In vé
                                     </button>
                                 </div>
-                            @endif
+                            </div>
                         </div>
                     </div>
                 @endforeach

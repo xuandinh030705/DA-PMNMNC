@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\OrderStatus;
+use App\Mail\OrderPaidMail;
 use App\Models\Event;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -10,6 +11,7 @@ use App\Models\Ticket;
 use App\Models\TicketType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class OrderAndPaymentTest extends TestCase
@@ -126,11 +128,14 @@ class OrderAndPaymentTest extends TestCase
 
     public function test_customer_can_pay_order_and_tickets_are_generated(): void
     {
+        Mail::fake();
+
         $customer = User::factory()->customer()->create();
         $ticketType = TicketType::factory()->create(['price' => 150000]);
 
         $order = Order::factory()->pending()->create([
             'user_id' => $customer->id,
+            'customer_email' => $customer->email,
             'total_amount' => 300000,
         ]);
 
@@ -160,6 +165,68 @@ class OrderAndPaymentTest extends TestCase
             $this->assertTrue($ticket->hasValidQrSignature());
             $this->assertNull($ticket->checked_in_by);
         }
+
+        Mail::assertSent(OrderPaidMail::class, function (OrderPaidMail $mail) use ($order, $customer) {
+            return $mail->order->id === $order->id
+                && $mail->hasTo($customer->email);
+        });
+    }
+
+    public function test_order_paid_mail_builds_attachments_and_content(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $order = Order::factory()->paid()->create([
+            'user_id' => $customer->id,
+            'customer_email' => $customer->email,
+            'customer_name' => $customer->name,
+        ]);
+
+        $ticketType = TicketType::factory()->create();
+        $orderItem = OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 1,
+        ]);
+
+        Ticket::factory()->valid()->create([
+            'order_item_id' => $orderItem->id,
+        ]);
+
+        $mail = new OrderPaidMail($order);
+
+        $mail->assertHasSubject('Xác nhận đơn hàng #'.$order->order_code.' - Vé điện tử của bạn');
+        $this->assertCount(1, $mail->attachments());
+    }
+
+    public function test_storefront_tickets_and_order_show_render_qr_code_and_pdf_download(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $order = Order::factory()->paid()->create([
+            'user_id' => $customer->id,
+            'customer_email' => $customer->email,
+        ]);
+
+        $ticketType = TicketType::factory()->create(['zone' => 'Khu A VIP']);
+        $orderItem = OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 1,
+        ]);
+
+        $ticket = Ticket::factory()->valid()->create([
+            'order_item_id' => $orderItem->id,
+        ]);
+
+        $ticketsResponse = $this->actingAs($customer)->get(route('tickets.index'));
+        $ticketsResponse->assertOk();
+        $ticketsResponse->assertSee($ticket->ticket_code);
+        $ticketsResponse->assertSee('Tải vé PDF');
+        $ticketsResponse->assertSee(route('tickets.pdf', $ticket));
+
+        $orderResponse = $this->actingAs($customer)->get(route('orders.show', $order->order_code));
+        $orderResponse->assertOk();
+        $orderResponse->assertSee($ticket->ticket_code);
+        $orderResponse->assertSee(route('tickets.pdf', $ticket));
     }
 
     public function test_customer_can_cancel_pending_order_and_tickets_are_returned(): void

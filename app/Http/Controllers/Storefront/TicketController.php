@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Storefront;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
+use App\Services\QrTicketService;
 use App\Services\TicketPdfService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -15,7 +16,7 @@ class TicketController extends Controller
     /**
      * Display a list of all tickets purchased by the authenticated customer.
      */
-    public function index(Request $request): View
+    public function index(Request $request, QrTicketService $qrTicketService): View
     {
         $tickets = Ticket::whereHas('orderItem.order', function ($query) use ($request) {
             $query->where('user_id', $request->user()->id)
@@ -25,7 +26,7 @@ class TicketController extends Controller
             ->latest()
             ->paginate(12);
 
-        return view('storefront.tickets.index', compact('tickets'));
+        return view('storefront.tickets.index', compact('tickets', 'qrTicketService'));
     }
 
     /**
