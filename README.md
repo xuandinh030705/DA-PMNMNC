@@ -164,11 +164,11 @@ DA_PMNM_NC/
 ├── docs/                          # Tài liệu phân tích, thiết kế, báo cáo, sơ đồ & test
 │   ├── diagrams/                  # 8 sơ đồ PlantUML (.puml) & ảnh xuất PNG (images/*.png)
 │   └── testing/                   # Bảng test cases & kết quả chạy PHPUnit
-├── resources/views/               # Giao diện Blade (layouts/app, layouts/panel, auth, storefront, organizer, admin, errors)
+├── resources/views/               # Giao diện Blade (layouts/app, layouts/panel, auth, storefront, organizer, admin, pdf, errors)
 ├── routes/                        # web.php nạp auth.php, storefront.php, organizer.php, admin.php; console.php
 └── tests/
-    ├── Unit/                      # 2 Unit tests (DomainModelsTest)
-    └── Feature/                   # 35 Feature tests (6 file theo phân hệ)
+    ├── Unit/                      # Unit tests (DomainModelsTest, QrTicketServiceTest)
+    └── Feature/                   # Feature tests theo phân hệ (Auth, Admin, Organizer, Checkin, TicketPdf,...)
 ```
 
 ---

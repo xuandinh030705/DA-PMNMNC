@@ -24,7 +24,9 @@ class TicketPdfService
             'order' => $ticket->orderItem->order,
             'ticketType' => $ticketType,
             'event' => $ticketType->event,
-            'qrCodeDataUri' => $this->qrTicketService->pngDataUri($ticket),
+            'qrCodeDataUri' => extension_loaded('gd')
+                ? $this->qrTicketService->pngDataUri($ticket)
+                : $this->qrTicketService->svgDataUri($ticket),
         ])->setPaper('a5', 'portrait');
     }
 

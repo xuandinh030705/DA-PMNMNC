@@ -6,12 +6,16 @@ use App\Exceptions\BusinessException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\CheckoutRequest;
 use App\Http\Requests\Storefront\PayOrderRequest;
+use App\Mail\OrderPaidMail;
 use App\Models\Event;
 use App\Models\Order;
 use App\Services\OrderService;
+use App\Services\QrTicketService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Throwable;
 
 class OrderController extends Controller
 {
@@ -51,7 +55,7 @@ class OrderController extends Controller
     /**
      * Display a specific order with payment options or ticket codes.
      */
-    public function show(Order $order, OrderService $orderService): View
+    public function show(Order $order, OrderService $orderService, QrTicketService $qrTicketService): View
     {
         $this->authorize('view', $order);
 
@@ -60,7 +64,7 @@ class OrderController extends Controller
 
         $order->load(['orderItems.ticketType.event.venue', 'orderItems.tickets']);
 
-        return view('storefront.orders.show', compact('order'));
+        return view('storefront.orders.show', compact('order', 'qrTicketService'));
     }
 
     /**
@@ -73,8 +77,14 @@ class OrderController extends Controller
         try {
             $orderService->payOrder($order, $request->payment_method);
 
+            try {
+                Mail::to($order->customer_email)->send(new OrderPaidMail($order));
+            } catch (Throwable $e) {
+                report($e);
+            }
+
             return redirect()->route('orders.show', $order->order_code)
-                ->with('success', 'Thanh toán thành công! Vé điện tử của bạn đã được khởi tạo.');
+                ->with('success', 'Thanh toán thành công! Vé điện tử của bạn đã được khởi tạo và gửi tới email.');
         } catch (BusinessException $e) {
             return back()->with('error', $e->getMessage());
         }
