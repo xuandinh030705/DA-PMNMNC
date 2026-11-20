@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EventStatus;
 use App\Support\TextFormatter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -15,14 +16,6 @@ use Illuminate\Support\Str;
 class Event extends Model
 {
     use HasFactory, SoftDeletes;
-
-    public const STATUS_DRAFT = 'draft';
-
-    public const STATUS_PENDING = 'pending';
-
-    public const STATUS_PUBLISHED = 'published';
-
-    public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
         'organizer_id',
@@ -42,6 +35,7 @@ class Event extends Model
         return [
             'start_time' => 'datetime',
             'end_time' => 'datetime',
+            'status' => EventStatus::class,
         ];
     }
 
@@ -107,7 +101,7 @@ class Event extends Model
     // Scopes
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_PUBLISHED);
+        return $query->where('status', EventStatus::PUBLISHED);
     }
 
     public function scopeUpcoming(Builder $query): Builder
@@ -132,22 +126,22 @@ class Event extends Model
     // Helper status methods
     public function isDraft(): bool
     {
-        return $this->status === self::STATUS_DRAFT;
+        return $this->status === EventStatus::DRAFT;
     }
 
     public function isPending(): bool
     {
-        return $this->status === self::STATUS_PENDING;
+        return $this->status === EventStatus::PENDING;
     }
 
     public function isPublished(): bool
     {
-        return $this->status === self::STATUS_PUBLISHED;
+        return $this->status === EventStatus::PUBLISHED;
     }
 
     public function isCancelled(): bool
     {
-        return $this->status === self::STATUS_CANCELLED;
+        return $this->status === EventStatus::CANCELLED;
     }
 
     public function canBeEdited(): bool
@@ -164,23 +158,11 @@ class Event extends Model
 
     public function statusLabel(): string
     {
-        return match ($this->status) {
-            self::STATUS_DRAFT => 'Bản nháp',
-            self::STATUS_PENDING => 'Chờ duyệt',
-            self::STATUS_PUBLISHED => 'Đã duyệt / Công khai',
-            self::STATUS_CANCELLED => 'Đã hủy',
-            default => $this->status,
-        };
+        return $this->status?->label() ?? '';
     }
 
     public function statusBadgeClass(): string
     {
-        return match ($this->status) {
-            self::STATUS_DRAFT => 'bg-secondary',
-            self::STATUS_PENDING => 'bg-warning text-dark',
-            self::STATUS_PUBLISHED => 'bg-success',
-            self::STATUS_CANCELLED => 'bg-danger',
-            default => 'bg-secondary',
-        };
+        return $this->status?->badgeClass() ?? 'bg-secondary';
     }
 }

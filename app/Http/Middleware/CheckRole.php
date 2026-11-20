@@ -28,7 +28,9 @@ class CheckRole
             }
         }
 
-        if (! in_array($request->user()->role, $allowedRoles, true)) {
+        $userRole = $request->user()->role?->value;
+
+        if ($userRole === null || ! in_array($userRole, $allowedRoles, true)) {
             abort(403, 'Bạn không có quyền truy cập khu vực này.');
         }
 

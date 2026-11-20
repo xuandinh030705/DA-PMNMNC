@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\TicketStatus;
 use App\Models\OrderItem;
 use App\Models\Ticket;
 use App\Models\User;
@@ -22,7 +23,7 @@ class TicketFactory extends Factory
             'ticket_code' => $ticketCode,
             'qr_payload' => $qrPayload,
             'qr_signature' => Ticket::generateQrSignature($qrPayload),
-            'status' => Ticket::STATUS_VALID,
+            'status' => TicketStatus::VALID,
             'checked_in_at' => null,
             'checked_in_by' => null,
         ];
@@ -42,7 +43,7 @@ class TicketFactory extends Factory
     public function valid(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => Ticket::STATUS_VALID,
+            'status' => TicketStatus::VALID,
             'checked_in_at' => null,
             'checked_in_by' => null,
         ]);
@@ -51,7 +52,7 @@ class TicketFactory extends Factory
     public function used(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => Ticket::STATUS_USED,
+            'status' => TicketStatus::USED,
             'checked_in_at' => now(),
             'checked_in_by' => User::factory()->organizer(),
         ]);
@@ -60,7 +61,7 @@ class TicketFactory extends Factory
     public function cancelled(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => Ticket::STATUS_CANCELLED,
+            'status' => TicketStatus::CANCELLED,
         ]);
     }
 }

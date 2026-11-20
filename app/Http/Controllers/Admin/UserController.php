@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserUpdateRequest;
 use App\Models\User;
@@ -47,7 +48,7 @@ class UserController extends Controller
             if (! $request->boolean('is_active')) {
                 return back()->with('error', 'Bạn không thể tự khóa tài khoản quản trị viên của chính mình.');
             }
-            if ($request->role !== User::ROLE_ADMIN) {
+            if ($request->role !== UserRole::ADMIN->value) {
                 return back()->with('error', 'Bạn không thể tự hạ quyền quản trị viên của chính mình.');
             }
         }

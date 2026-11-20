@@ -191,8 +191,8 @@
                                     </div>
                                     <div class="d-none d-md-block text-start lh-1">
                                         <span class="d-block fw-semibold text-truncate" style="max-width: 130px;">{{ Auth::user()->name }}</span>
-                                        <small class="badge badge-role badge-role-{{ Auth::user()->role }} mt-1">
-                                            {{ Auth::user()->role === 'admin' ? 'Quản trị' : (Auth::user()->role === 'organizer' ? 'Ban tổ chức' : 'Khách hàng') }}
+                                        <small class="badge badge-role {{ Auth::user()->roleBadgeClass() }} mt-1">
+                                            {{ Auth::user()->roleLabel() }}
                                         </small>
                                     </div>
                                 </a>

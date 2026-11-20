@@ -160,7 +160,7 @@ DA_PMNM_NC/
 │   ├── data/ticketbox/            # Dữ liệu thật từ Ticketbox (14 sự kiện + banner) và script chuyển đổi
 │   ├── factories/                 # 8 Factory sinh dữ liệu test
 │   ├── migrations/                # 10 Migrations (3 hệ thống + 7 nghiệp vụ)
-│   └── seeders/                   # Seeders (DatabaseSeeder, entity seeders & TicketboxEventSeeder)
+│   └── seeders/                   # 7 Seeders (DatabaseSeeder + 5 entity seeders + TicketboxEventSeeder)
 ├── docs/                          # Tài liệu phân tích, thiết kế, báo cáo, sơ đồ & test
 │   ├── diagrams/                  # 8 sơ đồ PlantUML (.puml) & ảnh xuất PNG (images/*.png)
 │   └── testing/                   # Bảng test cases & kết quả chạy PHPUnit

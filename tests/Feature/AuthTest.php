@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -24,7 +25,7 @@ class AuthTest extends TestCase
         $this->assertAuthenticated();
         $this->assertDatabaseHas('users', [
             'email' => 'testuser@example.com',
-            'role' => User::ROLE_CUSTOMER,
+            'role' => UserRole::CUSTOMER->value,
             'is_active' => true,
         ]);
     }
@@ -85,6 +86,9 @@ class AuthTest extends TestCase
             'name' => 'Tên Ban Đầu',
             'phone' => '0911111111',
         ]);
+
+        $this->actingAs($user)->get(route('home'))->assertStatus(200);
+        $this->actingAs($user)->get(route('profile.edit'))->assertStatus(200);
 
         $response = $this->actingAs($user)->put(route('profile.update'), [
             'name' => 'Tên Mới Sau Cập Nhật',

@@ -84,11 +84,7 @@
 
         <!-- Checkin Result Card if Success -->
         @if (session('success_ticket'))
-            @php
-                $ticket = session('success_ticket');
-                $item = $ticket->orderItem;
-                $event = $item->ticketType->event;
-            @endphp
+            @php($ticket = session('success_ticket'))
             <div class="card border-success border-2 shadow-sm rounded-3 p-4 mb-4 bg-success bg-opacity-10">
                 <div class="d-flex align-items-start gap-3">
                     <div class="text-success fs-1">
@@ -96,36 +92,36 @@
                     </div>
                     <div class="flex-grow-1">
                         <span class="badge bg-success fs-6 px-3 py-1 mb-2">HỢP LỆ & CHECK-IN THÀNH CÔNG</span>
-                        <h4 class="fw-bold text-dark mb-1">{{ $event->title }}</h4>
+                        <h4 class="fw-bold text-dark mb-1">{{ $ticket['event_title'] }}</h4>
 
                         <div class="p-3 bg-white rounded-3 border my-3">
                             <div class="row g-2 small">
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block">Mã vé:</span>
-                                    <span class="ticket-code-font fs-5 text-primary fw-bold">{{ $ticket->ticket_code }}</span>
+                                    <span class="ticket-code-font fs-5 text-primary fw-bold">{{ $ticket['ticket_code'] }}</span>
                                 </div>
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block">Loại vé:</span>
-                                    <strong class="text-dark fs-6">{{ $item->ticketType->name }}</strong>
-                                    @if ($item->ticketType->zone)
-                                        <span class="badge bg-secondary-subtle text-secondary-emphasis border ms-1">{{ $item->ticketType->zone }}</span>
+                                    <strong class="text-dark fs-6">{{ $ticket['ticket_type_name'] }}</strong>
+                                    @if ($ticket['zone'])
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis border ms-1">{{ $ticket['zone'] }}</span>
                                     @endif
                                 </div>
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block">Người tham dự:</span>
-                                    <strong class="text-dark">{{ $item->order->customer_name }}</strong> ({{ $item->order->customer_phone ?: 'N/A' }})
+                                    <strong class="text-dark">{{ $ticket['customer_name'] }}</strong> ({{ $ticket['customer_phone'] ?: 'N/A' }})
                                 </div>
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block">Thời điểm soát vé:</span>
-                                    <span class="text-success fw-bold">{{ $ticket->checked_in_at?->format('H:i:s - d/m/Y') }}</span>
+                                    <span class="text-success fw-bold">{{ $ticket['checked_in_at'] }}</span>
                                 </div>
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block">Nhân viên soát vé:</span>
-                                    <strong class="text-dark">{{ $ticket->checkedInBy?->name ?? 'Không xác định' }}</strong>
+                                    <strong class="text-dark">{{ $ticket['checked_in_by'] }}</strong>
                                 </div>
                                 <div class="col-sm-6">
                                     <span class="text-muted d-block">Chữ ký QR:</span>
-                                    @if ($ticket->hasValidQrSignature())
+                                    @if ($ticket['qr_signature_valid'])
                                         <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">
                                             <i class="bi bi-shield-check me-1"></i>HMAC-SHA256 hợp lệ
                                         </span>
@@ -138,7 +134,7 @@
                             </div>
                         </div>
 
-                        <small class="text-muted">Đơn hàng liên quan: <code>{{ $item->order->order_code }}</code> - Đã thanh toán</small>
+                        <small class="text-muted">Đơn hàng liên quan: <code>{{ $ticket['order_code'] }}</code> - Đã thanh toán</small>
                     </div>
                 </div>
             </div>

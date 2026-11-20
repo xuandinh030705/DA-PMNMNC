@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,11 +14,6 @@ class Order extends Model
 {
     use HasFactory;
 
-    public const STATUS_PENDING = 'pending';
-
-    public const STATUS_PAID = 'paid';
-
-    public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
         'user_id',
@@ -36,6 +32,7 @@ class Order extends Model
     {
         return [
             'total_amount' => 'decimal:0',
+            'status' => OrderStatus::class,
             'paid_at' => 'datetime',
             'expires_at' => 'datetime',
         ];
@@ -67,17 +64,17 @@ class Order extends Model
 
     public function isPending(): bool
     {
-        return $this->status === self::STATUS_PENDING;
+        return $this->status === OrderStatus::PENDING;
     }
 
     public function isPaid(): bool
     {
-        return $this->status === self::STATUS_PAID;
+        return $this->status === OrderStatus::PAID;
     }
 
     public function isCancelled(): bool
     {
-        return $this->status === self::STATUS_CANCELLED;
+        return $this->status === OrderStatus::CANCELLED;
     }
 
     public function isExpired(): bool
@@ -87,21 +84,11 @@ class Order extends Model
 
     public function statusLabel(): string
     {
-        return match ($this->status) {
-            self::STATUS_PENDING => 'Chờ thanh toán',
-            self::STATUS_PAID => 'Đã thanh toán',
-            self::STATUS_CANCELLED => 'Đã hủy',
-            default => $this->status,
-        };
+        return $this->status?->label() ?? '';
     }
 
     public function statusBadgeClass(): string
     {
-        return match ($this->status) {
-            self::STATUS_PENDING => 'bg-warning text-dark',
-            self::STATUS_PAID => 'bg-success',
-            self::STATUS_CANCELLED => 'bg-danger',
-            default => 'bg-secondary',
-        };
+        return $this->status?->badgeClass() ?? 'bg-secondary';
     }
 }

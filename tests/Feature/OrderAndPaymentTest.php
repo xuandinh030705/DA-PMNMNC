@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\OrderStatus;
 use App\Models\Event;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -50,7 +51,7 @@ class OrderAndPaymentTest extends TestCase
         // Check order created with pending status and 15 min expiration
         $this->assertDatabaseHas('orders', [
             'user_id' => $customer->id,
-            'status' => Order::STATUS_PENDING,
+            'status' => OrderStatus::PENDING->value,
             'total_amount' => 400000,
         ]);
     }
@@ -147,7 +148,7 @@ class OrderAndPaymentTest extends TestCase
 
         $response->assertSessionHas('success');
 
-        $this->assertEquals(Order::STATUS_PAID, $order->fresh()->status);
+        $this->assertSame(OrderStatus::PAID, $order->fresh()->status);
         $this->assertNotNull($order->fresh()->paid_at);
 
         $tickets = Ticket::where('order_item_id', $orderItem->id)->get();
@@ -179,7 +180,7 @@ class OrderAndPaymentTest extends TestCase
         $response = $this->actingAs($customer)->post(route('orders.cancel', $order->order_code));
 
         $response->assertSessionHas('success');
-        $this->assertEquals(Order::STATUS_CANCELLED, $order->fresh()->status);
+        $this->assertSame(OrderStatus::CANCELLED, $order->fresh()->status);
         // 5 - 3 = 2 sold remaining
         $this->assertEquals(2, $ticketType->fresh()->sold);
     }
@@ -192,7 +193,7 @@ class OrderAndPaymentTest extends TestCase
         $response = $this->actingAs($customer)->post(route('orders.cancel', $order->order_code));
 
         $response->assertStatus(403);
-        $this->assertEquals(Order::STATUS_PAID, $order->fresh()->status);
+        $this->assertSame(OrderStatus::PAID, $order->fresh()->status);
     }
 
     public function test_artisan_command_expires_pending_orders_and_returns_sold_tickets(): void
@@ -215,7 +216,7 @@ class OrderAndPaymentTest extends TestCase
 
         $this->artisan('orders:expire-pending')->assertSuccessful();
 
-        $this->assertEquals(Order::STATUS_CANCELLED, $expiredOrder->fresh()->status);
+        $this->assertSame(OrderStatus::CANCELLED, $expiredOrder->fresh()->status);
         $this->assertEquals(6, $ticketType->fresh()->sold); // 10 - 4 = 6
     }
 
@@ -246,7 +247,7 @@ class OrderAndPaymentTest extends TestCase
 
         $response->assertRedirect(route('orders.show', $expiredOrder->order_code));
         $response->assertSessionHas('error');
-        $this->assertEquals(Order::STATUS_CANCELLED, $expiredOrder->fresh()->status);
+        $this->assertSame(OrderStatus::CANCELLED, $expiredOrder->fresh()->status);
         $this->assertEquals(2, $ticketType->fresh()->sold);
     }
 }

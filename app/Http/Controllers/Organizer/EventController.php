@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Organizer;
 
+use App\Enums\EventStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Organizer\EventRequest;
 use App\Models\Category;
@@ -45,7 +46,7 @@ class EventController extends Controller
     {
         $data = $request->validated();
         $data['organizer_id'] = $request->user()->id;
-        $data['status'] = Event::STATUS_DRAFT;
+        $data['status'] = EventStatus::DRAFT;
 
         if ($request->hasFile('banner')) {
             $data['banner_path'] = $request->file('banner')->store('banners', 'public');
@@ -133,7 +134,7 @@ class EventController extends Controller
             return back()->with('error', 'Sự kiện phải có ít nhất 01 loại vé và thời gian bắt đầu phải trong tương lai để gửi duyệt.');
         }
 
-        $event->status = Event::STATUS_PENDING;
+        $event->status = EventStatus::PENDING;
         $event->save();
 
         return back()->with('success', 'Đã gửi duyệt sự kiện thành công! Quản trị viên sẽ sớm xem xét và phê duyệt.');

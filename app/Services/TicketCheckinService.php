@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\TicketStatus;
 use App\Exceptions\BusinessException;
-use App\Models\Order;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +42,7 @@ class TicketCheckinService
             $event = $ticket->orderItem->ticketType->event;
 
             // 3. Order paid check
-            if ($order->status !== Order::STATUS_PAID) {
+            if (! $order->isPaid()) {
                 throw new BusinessException("Đơn hàng của vé này ({$order->order_code}) chưa hoàn tất thanh toán (trạng thái: {$order->statusLabel()}).");
             }
 
@@ -63,7 +63,7 @@ class TicketCheckinService
             }
 
             // Successfully check-in
-            $ticket->status = Ticket::STATUS_USED;
+            $ticket->status = TicketStatus::USED;
             $ticket->checked_in_at = now();
             $ticket->checked_in_by = $organizer->id;
             $ticket->save();
