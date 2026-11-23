@@ -106,7 +106,7 @@
                                     @endif
 
                                     @if (! $event->isCancelled())
-                                        <form method="POST" action="{{ route('admin.events.cancel', $event) }}" class="d-inline" onsubmit="return confirm('CẢNH BÁO: Bạn có chắc chắn muốn HỦY sự kiện này không?');">
+                                        <form method="POST" action="{{ route('admin.events.cancel', $event) }}" class="d-inline" onsubmit="return confirm('CẢNH BÁO: Hủy sự kiện sẽ tự động hủy các đơn hàng chờ thanh toán (hoàn vé) và vô hiệu hóa toàn bộ vé hợp lệ đã phát hành. Bạn có chắc chắn muốn HỦY sự kiện này không?');">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Hủy sự kiện">
                                                 <i class="bi bi-slash-circle"></i>

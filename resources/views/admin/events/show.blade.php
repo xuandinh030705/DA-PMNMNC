@@ -34,7 +34,7 @@
         @endif
 
         @if (! $event->isCancelled())
-            <form method="POST" action="{{ route('admin.events.cancel', $event) }}" onsubmit="return confirm('CẢNH BÁO: Hủy sự kiện sẽ chuyển trạng thái sang Đã Hủy. Bạn có chắc không?');">
+            <form method="POST" action="{{ route('admin.events.cancel', $event) }}" onsubmit="return confirm('CẢNH BÁO: Hủy sự kiện sẽ tự động hủy các đơn hàng chờ thanh toán (hoàn vé) và vô hiệu hóa toàn bộ vé hợp lệ đã phát hành. Bạn có chắc chắn không?');">
                 @csrf
                 <button type="submit" class="btn btn-outline-danger">
                     <i class="bi bi-slash-circle me-1"></i> Hủy Sự Kiện
@@ -85,6 +85,7 @@
                         <thead class="table-light small">
                             <tr>
                                 <th>Tên loại vé</th>
+                                <th>Khu vực</th>
                                 <th>Giá bán</th>
                                 <th class="text-center">Số lượng</th>
                                 <th class="text-center">Đã bán</th>
@@ -97,15 +98,29 @@
                                 <tr>
                                     <td>
                                         <div class="fw-bold text-dark">{{ $type->name }}</div>
-                                        <small class="text-muted">Max: {{ $type->max_per_order }} vé/đơn</small>
+                                        <small class="text-muted">Tối đa: {{ $type->max_per_order }} vé/đơn</small>
+                                        @if ($type->description)
+                                            <div class="small text-secondary mt-1">
+                                                <i class="bi bi-info-circle me-1 text-primary"></i>{{ $type->description }}
+                                            </div>
+                                        @endif
                                     </td>
-                                    <td class="fw-bold text-primary">
+                                    <td>
+                                        @if ($type->zone)
+                                            <span class="badge bg-secondary-subtle text-secondary-emphasis border">
+                                                <i class="bi bi-geo-alt me-1"></i>{{ $type->zone }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted small">—</span>
+                                        @endif
+                                    </td>
+                                    <td class="fw-bold text-primary text-nowrap">
                                         {{ number_format($type->price, 0, ',', '.') }} đ
                                     </td>
                                     <td class="text-center fw-semibold">{{ number_format($type->quantity) }}</td>
                                     <td class="text-center text-success fw-semibold">{{ number_format($type->sold) }}</td>
                                     <td class="text-center text-secondary fw-semibold">{{ number_format($type->remaining) }}</td>
-                                    <td class="small text-muted">
+                                    <td class="small text-muted text-nowrap">
                                         {{ $type->sale_start->format('d/m/Y') }} - {{ $type->sale_end->format('d/m/Y') }}
                                     </td>
                                 </tr>
