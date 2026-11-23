@@ -15,14 +15,17 @@ Dự án nhằm xây dựng một nền tảng web hiện đại, tin cậy và 
   - Xem, tìm kiếm theo tiêu đề, lọc theo danh mục/thành phố/khoảng thời gian, sắp xếp theo thời gian hoặc giá vé.
   - Quản lý xác thực: Đăng ký, đăng nhập (giới hạn tần suất throttle), đăng xuất, cập nhật hồ sơ cá nhân, phân quyền đa vai trò (Admin, Organizer, Customer).
   - Quy trình đặt vé: Giữ chỗ trong 15 phút, giao dịch nguyên tử (Database Transaction + Lock For Update), chống bán vượt số lượng vé (overbooking).
-  - Thanh toán giả lập (Mock Payment) qua Chuyển khoản ngân hàng, Ví MoMo, Thẻ quốc tế/nội địa; tự động kích hoạt vé và sinh mã vé duy nhất.
+  - Thanh toán giả lập (Mock Payment) qua Chuyển khoản ngân hàng, Ví MoMo, Thẻ quốc tế/nội địa; tự động kích hoạt vé, sinh mã vé duy nhất và mã QR có chữ ký số HMAC-SHA256.
+  - Tự động gửi Email xác nhận thanh toán (`OrderPaidMail`) đính kèm vé PDF tạo động trong bộ nhớ RAM qua Mailpit / Log.
+  - Tải vé điện tử định dạng PDF khổ A5 on-the-fly (`barryvdh/laravel-dompdf`), bảo vệ quyền sở hữu qua `OrderPolicy`.
   - Hủy đơn và xử lý hoàn trả số lượng vé khi đơn hết hạn (Lazy check hoặc Schedule Command).
-  - Quản lý sự kiện: Tạo nháp (draft), gửi duyệt (pending), phê duyệt/từ chối/hủy sự kiện; quản lý loại vé.
-  - Soát vé (Check-in) theo mã vé độc nhất, kiểm tra tính hợp lệ và cập nhật thời gian soát vé.
+  - Quản lý sự kiện: Tạo nháp (draft), gửi duyệt (pending), phê duyệt/từ chối/hủy sự kiện; quản lý loại vé kèm khu vực khán đài (`zone`) và quyền lợi (`description`).
+  - Soát vé (Check-in) linh hoạt tại cổng: Quét mã QR bằng Camera (webcam/điện thoại qua thư viện `html5-qrcode` chạy offline) kết hợp ô nhập tay dự phòng; xác thực chữ ký số HMAC-SHA256 chống làm giả vé và ghi nhận nhân viên soát vé (`checked_in_by`).
+  - Quản trị viên hủy sự kiện có cơ chế cascade tự động hủy các đơn hàng Pending hoàn vé và chuyển trạng thái vé Valid sang Cancelled.
   - Bảng điều khiển thống kê (Dashboard) trực quan cho Organizer và Admin.
 - **Ngoài phạm vi (Out-of-Scope)**:
-  - Tích hợp cổng thanh toán thực tế với ngân hàng (chỉ mô phỏng quy trình thanh toán).
-  - Quét mã QR bằng Camera phần cứng (hệ thống cung cấp mã vé monospace chuẩn hoá để nhập soát vé và in thẻ vé).
+  - Tích hợp cổng thanh toán thực tế với ngân hàng (chỉ mô phỏng quy trình thanh toán giả lập nhằm phục vụ kiểm thử và bảo vệ đồ án).
+  - Thiết bị máy quét mã vạch chuyên dụng phần cứng đắt tiền (hệ thống tận dụng camera webcam/điện thoại có sẵn qua trình duyệt web).
 
 ---
 
@@ -42,10 +45,10 @@ Dự án nhằm xây dựng một nền tảng web hiện đại, tin cậy và 
 2. **Danh mục sự kiện (Categories)**: Tên danh mục, Đường dẫn thân thiện (Slug duy nhất), Mô tả.
 3. **Địa điểm tổ chức (Venues)**: Tên địa điểm, Địa chỉ chi tiết, Tỉnh/Thành phố, Sức chứa tối đa (Capacity).
 4. **Sự kiện (Events)**: Người tổ chức (FK), Danh mục (FK), Địa điểm (FK), Tiêu đề, Slug duy nhất, Mô tả chi tiết, Ảnh banner, Thời gian bắt đầu, Thời gian kết thúc, Trạng thái (draft, pending, published, cancelled), Thời gian xóa mềm (soft delete).
-5. **Loại vé (Ticket Types)**: Sự kiện (FK), Tên loại vé (VIP, Standard, Early Bird...), Giá bán (VNĐ), Tổng số lượng phát hành, Số lượng đã bán/đang giữ chỗ, Thời gian mở bán, Thời gian kết thúc bán, Giới hạn tối đa trên 1 đơn hàng (max_per_order).
+5. **Loại vé (Ticket Types)**: Sự kiện (FK), Tên loại vé (VIP, Standard, Early Bird...), Khu vực/Vị trí ngồi (`zone`), Quyền lợi mô tả (`description`), Giá bán (VNĐ), Tổng số lượng phát hành, Số lượng đã bán/đang giữ chỗ, Thời gian mở bán, Thời gian kết thúc bán, Giới hạn tối đa trên 1 đơn hàng (max_per_order).
 6. **Đơn hàng (Orders)**: Khách hàng (FK), Mã đơn hàng duy nhất (ORD-XXXXXXXX), Tên khách hàng, Email, Số điện thoại, Tổng tiền (VNĐ), Trạng thái đơn (pending, paid, cancelled), Phương thức thanh toán, Thời điểm thanh toán, Thời điểm hết hạn giữ chỗ (expires_at).
 7. **Chi tiết đơn hàng (Order Items)**: Đơn hàng (FK), Loại vé (FK), Số lượng đặt, Đơn giá tại thời điểm mua, Thành tiền.
-8. **Vé điện tử (Tickets)**: Chi tiết đơn hàng (FK), Mã vé duy nhất (TKT-XXXXXXXXXX), Trạng thái vé (valid, used, cancelled), Thời điểm check-in (checked_in_at).
+8. **Vé điện tử (Tickets)**: Chi tiết đơn hàng (FK), Mã vé duy nhất (TKT-XXXXXXXXXX), Chuỗi payload QR (`qr_payload`), Chữ ký số HMAC-SHA256 (`qr_signature`), Trạng thái vé (valid, used, cancelled), Thời điểm check-in (`checked_in_at`), Người soát vé (`checked_in_by` trỏ tới users.id).
 
 ---
 
@@ -62,18 +65,22 @@ Dự án nhằm xây dựng một nền tảng web hiện đại, tin cậy và 
 | **FR-07** | Thanh toán giả lập | Customer | Chọn phương thức thanh toán (bank_transfer, momo, card). Chuyển đơn sang `paid`, ghi nhận `paid_at`, tự động sinh mã vé duy nhất cho từng vé trong đơn. |
 | **FR-08** | Hủy đơn hàng | Customer | Cho phép khách hàng chủ động hủy đơn Pending. Hoàn trả số lượng `sold` về kho vé và chuyển đơn thành `cancelled`. Đơn `paid` không được phép hủy. |
 | **FR-09** | Xử lý đơn hết hạn | Hệ thống / Customer | Tự động hoàn trả vé và chuyển trạng thái cancelled khi đơn pending quá 15 phút (kiểm tra lazy khi xem đơn hoặc qua lệnh artisan `orders:expire-pending`). |
-| **FR-10** | Quản lý vé của tôi | Customer | Xem danh sách vé đã mua, xem chi tiết từng vé có mã vé monospace và nút in thẻ vé. |
+| **FR-10** | Quản lý vé của tôi | Customer | Xem danh sách vé đã mua, hiển thị ảnh mã QR ký số HMAC, mã vé monospace, nút in vé và nút tải vé PDF. |
 | **FR-11** | CRUD Sự kiện | Organizer | Tạo mới, xem, sửa sự kiện của mình. Upload ảnh banner sự kiện (kiểm tra kích thước, định dạng). Chỉ được chỉnh sửa sự kiện khi ở trạng thái `draft`. |
-| **FR-12** | Quản lý Loại vé | Organizer | Thêm, sửa, xóa loại vé thuộc sự kiện của mình. Ràng buộc thời gian bán, số lượng vé không nhỏ hơn số lượng đã bán. |
+| **FR-12** | Quản lý Loại vé | Organizer | Thêm, sửa, xóa loại vé thuộc sự kiện của mình; hỗ trợ nhập khu vực (`zone`) và quyền lợi (`description`). Ràng buộc thời gian bán, số lượng vé không nhỏ hơn số lượng đã bán. |
 | **FR-13** | Gửi duyệt sự kiện | Organizer | Chuyển trạng thái sự kiện từ `draft` sang `pending`. Điều kiện: có ít nhất 1 loại vé và thời gian bắt đầu sự kiện phải trong tương lai. |
 | **FR-14** | Quản lý đơn hàng sự kiện | Organizer | Xem danh sách các đơn hàng và vé đã mua thuộc sự kiện do mình tổ chức. |
-| **FR-15** | Soát vé (Check-in) | Organizer | Nhập mã vé để kiểm tra tính hợp lệ. Xử lý các tình huống: vé không tồn tại, đơn chưa thanh toán, vé đã dùng, vé bị hủy, vé không thuộc sự kiện của organizer. Cập nhật `used` và ghi nhận `checked_in_at`. |
+| **FR-15** | Soát vé (Check-in) | Organizer | Soát vé qua 2 phương thức: quét mã QR bằng Camera (webcam/điện thoại qua thư viện `html5-qrcode` offline) hoặc nhập mã vé bằng tay. Thực hiện 6 bước kiểm tra: mã vé tồn tại, chữ ký HMAC hợp lệ, đơn đã paid, thuộc sự kiện của mình, vé chưa hủy, vé chưa từng check-in. Cập nhật `used`, lưu `checked_in_at` và `checked_in_by`. |
 | **FR-16** | Dashboard Ban tổ chức | Organizer | Thống kê số lượng sự kiện, tổng số vé đã bán, tổng doanh thu theo sự kiện, tối ưu truy vấn tránh N+1. |
 | **FR-17** | Quản lý Danh mục & Địa điểm | Admin | CRUD danh mục và địa điểm tổ chức. Kiểm tra ràng buộc toàn vẹn: Không cho phép xóa danh mục hoặc địa điểm đang có sự kiện liên kết. |
 | **FR-18** | Quản lý Người dùng | Admin | Xem danh sách, tìm kiếm, lọc theo vai trò. Khóa/mở khóa tài khoản người dùng (`is_active`). Thay đổi vai trò người dùng (không được tự khóa hoặc hạ quyền chính mình). |
-| **FR-19** | Phê duyệt Sự kiện | Admin | Xem chi tiết sự kiện chờ duyệt. Thực hiện Duyệt (`published`), Từ chối (`draft`), hoặc Hủy bỏ (`cancelled`). |
-| **FR-20** | Quản trị Đơn hàng toàn hệ thống | Admin | Xem toàn bộ đơn hàng trong hệ thống, lọc theo trạng thái (pending, paid, cancelled), phân trang. |
+| **FR-19** | Phê duyệt Sự kiện | Admin | Xem chi tiết sự kiện chờ duyệt. Thực hiện Duyệt (`published`), Từ chối (`draft`), hoặc Hủy bỏ (`cancelled`). Khi hủy sự kiện, tự động cascade hủy các đơn `pending` hoàn vé và hủy vé `valid`. |
+| **FR-20** | Quản trị Đơn hàng toàn hệ thống | Admin | Xem toàn bộ đơn hàng trong hệ thống, lọc theo trạng thái (pending, paid, cancelled), hiển thị thông tin nhân viên đã soát vé, phân trang. |
 | **FR-21** | Dashboard Quản trị viên | Admin | Thống kê tổng số người dùng theo vai trò, sự kiện theo trạng thái, tổng doanh thu toàn sàn từ đơn `paid`, top sự kiện bán chạy nhất. |
+| **FR-22** | Xuất vé điện tử PDF động | Customer | Tải vé PDF khổ A5 sinh động trong bộ nhớ RAM qua `barryvdh/laravel-dompdf`, tích hợp ảnh QR code, font DejaVu Sans Unicode tiếng Việt; bảo vệ truy cập qua `OrderPolicy`. |
+| **FR-23** | Gửi email xác nhận kèm vé | Hệ thống | Tự động kích hoạt Mailable `OrderPaidMail` gửi email thông báo thanh toán thành công kèm toàn bộ file vé PDF tạo động trong RAM; tích hợp Mailpit và fallback ghi Log. |
+| **FR-24** | Quét QR bằng Camera | Organizer | Nhúng khung camera quét mã trực tiếp trên trình duyệt bằng thư viện JS local (`html5-qrcode.min.js`), tự động submit form soát vé không cần thao tác gõ phím. |
+| **FR-25** | Cascade Hủy sự kiện | Admin | Trong transaction có khóa `lockForUpdate()`, khi Admin hủy sự kiện sẽ tự động hủy các đơn hàng `pending` (trả lại số lượng `sold` cho các loại vé) và chuyển tất cả vé `valid` sang `cancelled`. |
 
 ---
 
@@ -234,3 +241,7 @@ Dự án nhằm xây dựng một nền tảng web hiện đại, tin cậy và 
 | FR-19 | Phê duyệt sự kiện | `admin.events.approve/reject/cancel` | `Admin\EventController` | `resources/views/admin/events/*` |
 | FR-20 | Quản lý mọi đơn hàng | `admin.orders.*` | `Admin\OrderController` | `resources/views/admin/orders/*` |
 | FR-21 | Dashboard Admin | `admin.dashboard` | `Admin\DashboardController@index` | `resources/views/admin/dashboard.blade.php` |
+| FR-22 | Xuất vé PDF | `tickets.pdf` | `Storefront\TicketController@downloadPdf` | `resources/views/pdf/ticket.blade.php` |
+| FR-23 | Email vé & đơn hàng | Mailable | `OrderPaidMail` (gọi tại `OrderController@pay`) | `resources/views/emails/order-paid.blade.php` |
+| FR-24 | Soát vé Camera QR | `organizer.checkin.*` | `Organizer\CheckinController` + `TicketCheckinService` | `resources/views/organizer/checkin/form.blade.php` |
+| FR-25 | Cascade Hủy sự kiện | `admin.events.cancel` | `Admin\EventController@cancel` | `resources/views/admin/events/show.blade.php` |

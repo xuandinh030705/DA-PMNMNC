@@ -3,7 +3,7 @@
 
 - **Mã tài liệu**: DDD-ETMS-v1.0 (Final Release)
 - **Nền tảng**: Laravel 13 (PHP 8.3+)
-- **Hệ quản trị CSDL**: SQLite (Mặc định) / Hỗ trợ MySQL 8.0+ (InnoDB)
+- **Hệ quản trị CSDL**: MySQL 8.0+ Community Server (Mặc định) / Hỗ trợ SQLite dự phòng
 - **Chuẩn hóa**: Dạng chuẩn 3 (Third Normal Form - 3NF)
 - **File Word đính kèm**: [02_thiet_ke_co_so_du_lieu.docx](./02_thiet_ke_co_so_du_lieu.docx)
 - **Sơ đồ ERD ảnh PNG**: [05_erd.png](./diagrams/images/05_erd.png)
@@ -147,6 +147,8 @@ Quản lý các hạng vé, giá bán, tổng số lượng phát hành và số
 | `id` | BIGINT UNSIGNED | PK | No | Auto Increment | Khóa chính duy nhất. |
 | `event_id` | BIGINT UNSIGNED | FK | No | - | Khóa ngoại trỏ về `events.id`. |
 | `name` | VARCHAR(255) | - | No | - | Tên hạng vé (Ví dụ: 'VIP', 'Standard'). |
+| `zone` | VARCHAR(100) | - | Yes | NULL | Khu vực khán đài / vị trí ngồi (Ví dụ: 'Khu A', 'Khán đài VIP'). |
+| `description` | TEXT | - | Yes | NULL | Quyền lợi và mô tả chi tiết của loại vé. |
 | `price` | DECIMAL(12,0) | - | No | - | Đơn giá vé tính bằng VNĐ. |
 | `quantity` | INT UNSIGNED | - | No | - | Tổng số lượng vé phát hành. |
 | `sold` | INT UNSIGNED | - | No | 0 | Số lượng vé đã đặt/bán. |
@@ -190,15 +192,18 @@ Lưu chi tiết các loại vé trong đơn hàng kèm đơn giá tại thời �
 | `updated_at` | TIMESTAMP | - | Yes | CURRENT_TIMESTAMP | Thời điểm cập nhật. |
 
 #### 3.8. Bảng `tickets`
-Lưu trữ vé điện tử với mã vé duy nhất phục vụ Check-in tại cổng.
+Lưu trữ vé điện tử với mã vé duy nhất phục vụ Check-in tại cổng kèm chữ ký số HMAC-SHA256.
 
 | Tên Cột | Kiểu Dữ Liệu | Khóa | Null? | Mặc Định | Ý Nghĩa Nghiệp Vụ |
 |---|---|---|---|---|---|
 | `id` | BIGINT UNSIGNED | PK | No | Auto Increment | Khóa chính duy nhất. |
 | `order_item_id` | BIGINT UNSIGNED | FK | No | - | Khóa ngoại trỏ về `order_items.id`. |
 | `ticket_code` | VARCHAR(50) | UK | No | - | Mã tra cứu vé độc nhất (`TKT-XXXXXXXXXX`). |
+| `qr_payload` | TEXT | - | Yes | NULL | Chuỗi JSON sinh mã QR `{"v":1,"ticket_code":"TKT-..."}`. |
+| `qr_signature` | VARCHAR(64) | - | Yes | NULL | Chữ ký số HMAC-SHA256 ký payload bằng APP_KEY để chống giả mạo mã QR. |
 | `status` | VARCHAR(50) | - | No | 'valid' | Trạng thái: `valid` (hợp lệ), `used` (đã dùng), `cancelled`. |
 | `checked_in_at` | DATETIME | - | Yes | NULL | Thời điểm quét mã check-in vào cửa. |
+| `checked_in_by` | BIGINT UNSIGNED | FK | Yes | NULL | Khóa ngoại trỏ về `users.id` (nhân viên đã soát vé). |
 | `created_at` | TIMESTAMP | - | Yes | CURRENT_TIMESTAMP | Thời điểm sinh vé điện tử. |
 | `updated_at` | TIMESTAMP | - | Yes | CURRENT_TIMESTAMP | Thời điểm cập nhật trạng thái vé. |
 
