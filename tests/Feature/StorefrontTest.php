@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Event;
+use App\Models\TicketType;
 use App\Models\Venue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -79,5 +80,32 @@ class StorefrontTest extends TestCase
         $response = $this->get(route('events.show', $draftEvent->slug));
 
         $response->assertStatus(404);
+    }
+
+    public function test_can_view_published_event_details_and_displays_ticket_type_zone_and_description(): void
+    {
+        $event = Event::factory()->published()->create([
+            'title' => 'Đại Nhạc Hội Mùa Đông 2026',
+        ]);
+
+        TicketType::factory()->create([
+            'event_id' => $event->id,
+            'name' => 'Vé VIP Khán Đài A',
+            'zone' => 'Khu A - Tầng 1',
+            'description' => 'Bao gồm nước uống và quà lưu niệm',
+            'price' => 500000,
+            'quantity' => 100,
+            'sold' => 0,
+            'sale_start' => now()->subDay(),
+            'sale_end' => now()->addDays(5),
+        ]);
+
+        $response = $this->get(route('events.show', $event->slug));
+
+        $response->assertStatus(200);
+        $response->assertSee('Đại Nhạc Hội Mùa Đông 2026');
+        $response->assertSee('Vé VIP Khán Đài A');
+        $response->assertSee('Khu A - Tầng 1');
+        $response->assertSee('Bao gồm nước uống và quà lưu niệm');
     }
 }
