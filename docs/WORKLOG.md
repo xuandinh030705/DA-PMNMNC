@@ -86,3 +86,33 @@
   - Bổ sung `tests/Unit/DomainModelsTest.php` (giải quyết lỗi thiếu thư mục `tests/Unit` khi chạy `php artisan test`), bổ sung test quá hạn thanh toán trong `OrderAndPaymentTest.php` và kiểm tra Dashboard/CRUD trong `AdminManagementTest.php`.
   - Đồng bộ lại `README.md`, `docs/01_*` đến `06_*`, `docs/testing/test-cases.md`, `docs/testing/test-output.txt` và xuất lại toàn bộ các file `.docx`.
   - Kết quả kiểm thử sau chỉnh sửa cuối cùng: **37/37 tests PASSED (104 assertions, 0 failures)**.
+
+### Ngày 15/11/2026 (Khởi động Kế hoạch nâng cấp 1 tháng - 4 tuần)
+- **Lập kế hoạch tổng thể (`KE_HOACH_NANG_CAP_1_THANG.md`)**:
+  - Thống nhất mục tiêu nâng cấp: Chuyển CSDL chính sang **MySQL 8.0 Community**, vé QR ký số **HMAC-SHA256**, **Camera Check-in** offline qua `html5-qrcode`, **Xuất vé PDF động khổ A5**, **Email Mailpit** và **GitHub Actions CI**.
+  - Phân chia vai trò rõ ràng giữa 3 thành viên theo phân hệ (Quang: Storefront + Email + MySQL/Git; Định: QR + PDF + Camera Checkin + Organizer; Quý: Admin + Enum + CI/CD + Tests & Sơ đồ).
+
+### Ngày 16/11 - 19/11/2026 (Hoàn thành Tuần 1 & Tuần 2)
+- **Hạ tầng & Dịch vụ lõi (Tuần 1)**:
+  - Cấu hình MySQL 8 mặc định trong `.env.example`, hỗ trợ `utf8mb4_unicode_ci`.
+  - Cài đặt `endroid/qr-code` và `barryvdh/laravel-dompdf`, tạo `QrTicketService` và `TicketPdfService`.
+  - Thiết lập GitHub Actions CI (`.github/workflows/ci.yml`) với container `mysql:8.0`, PHP 8.5, kiểm tra Pint và PHPUnit.
+  - Đồng bộ Enum casts (`EventStatus`, `OrderStatus`, `TicketStatus`, `UserRole`) trên các Eloquent Models.
+  - Chạy 2 migration bổ sung 5 cột: `tickets.qr_payload`, `tickets.qr_signature`, `tickets.checked_in_by`, `ticket_types.zone`, `ticket_types.description`.
+- **Hoàn thiện tính năng & Giao diện (Tuần 2)**:
+  - **Quang**: Cập nhật Storefront hiển thị `zone`, `description`, ảnh QR và nút Tải vé PDF; xây dựng `OrderPaidMail` gửi email đính kèm vé PDF tạo động trong RAM; tích hợp gửi mail tự động trong `OrderController@pay`.
+  - **Định**: Xây dựng route & action `TicketController@downloadPdf` bảo vệ qua `OrderPolicy`; lưu local thư viện `public/js/html5-qrcode.min.js`; tích hợp camera quét QR vào `organizer/checkin/form.blade.php`; nâng cấp `TicketCheckinService` xác thực chữ ký HMAC và lưu `checked_in_by`.
+  - **Quý**: Hoàn thiện logic Admin hủy sự kiện cascade trong transaction tự hủy đơn pending hoàn vé và hủy vé valid; cập nhật view Admin hiển thị khu vực, quyền lợi và nhân viên soát vé.
+
+### Ngày 20/11 - 23/11/2026 (Triển khai Tuần 3 - Rà soát, QA & Hoàn thiện tài liệu)
+- **Kiểm thử & Rà soát hiệu năng**:
+  - Rà soát toàn bộ truy vấn Storefront, đảm bảo Eager Loading đầy đủ chống N+1 Query.
+  - Bổ sung Feature Test cho Storefront hiển thị `zone` và `description` trong `tests/Feature/StorefrontTest.php`.
+  - Toàn bộ test suite PHPUnit đạt **68 tests, 254 assertions passed 100%**.
+  - Chạy Laravel Pint định dạng code sạch sẽ 100% (`vendor/bin/pint --test` passed).
+- **Đồng bộ toàn diện tài liệu & Dọn dẹp dự án**:
+  - Cập nhật chi tiết [README.md](../README.md): MySQL 8, bật `extension=gd`, Mailpit, Camera QR offline, bảng thống kê 68 tests và GitHub Actions CI.
+  - Cập nhật [docs/01_phan_tich_yeu_cau.md](./01_phan_tich_yeu_cau.md), [docs/SPEC.md](./SPEC.md) bổ sung đầy đủ các luồng QR, PDF, Email, Camera, 5 cột DB mới và bỏ ghi chú out-of-scope cũ.
+  - Cập nhật [docs/02_thiet_ke_co_so_du_lieu.md](./02_thiet_ke_co_so_du_lieu.md) bổ sung từ điển dữ liệu cho 5 cột mới và cập nhật MySQL 8.
+  - Cập nhật [docs/testing/test-cases.md](./testing/test-cases.md) và [docs/testing/test-output.txt](./testing/test-output.txt) lên đầy đủ 68 ca kiểm thử.
+  - Xóa bỏ các file trùng lặp thừa (`thiet_ke_co_so_du_lieu.docx`, `Tuan1_bao_cao_tieu_chi_do_an.docx`).

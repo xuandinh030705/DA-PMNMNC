@@ -1,60 +1,94 @@
 ﻿PHPUnit 12.5.40 by Sebastian Bergmann and contributors.
 
 Runtime:       PHP 8.5.9
-Configuration: C:\Users\Quang\Desktop\DA_PMNM_NC\phpunit.xml
+Configuration: C:\Users\Quang\Desktop\DA-PMNMNC\phpunit.xml
 
-Time: 00:02.343, Memory: 62.00 MB
+Admin Management (Tests\Feature\AdminManagement)
+ [x] Admin can approve pending event
+ [x] Admin can reject pending event back to draft
+ [x] Admin can cancel event
+ [x] Admin cancelling event cascades to pending orders restores sold and cancels valid tickets
+ [x] Admin cancelling event blocks checkin and payment and guards sold underflow
+ [x] Admin cannot cancel already cancelled event
+ [x] Admin event show displays ticket type zone and description
+ [x] Admin order show displays zone description and checked in staff
+ [x] Admin cannot delete category with existing events
+ [x] Admin can toggle user lock status
+ [x] Admin can access dashboard and manage categories and venues
 
-[4mAdmin Management (Tests\Feature\AdminManagement)[0m
-[32m Γ£ö [0mAdmin can approve pending event
-[32m Γ£ö [0mAdmin can reject pending event back to draft
-[32m Γ£ö [0mAdmin can cancel event
-[32m Γ£ö [0mAdmin cannot delete category with existing events
-[32m Γ£ö [0mAdmin can toggle user lock status
-[32m Γ£ö [0mAdmin can access dashboard and manage categories and venues
+Auth (Tests\Feature\Auth)
+ [x] User can register successfully
+ [x] User can login with valid credentials
+ [x] User cannot login with invalid credentials
+ [x] Locked user is prevented from login
+ [x] Authenticated user can update profile
+ [x] User can logout safely
 
-[4mAuth (Tests\Feature\Auth)[0m
-[32m Γ£ö [0mUser can register successfully
-[32m Γ£ö [0mUser can login with valid credentials
-[32m Γ£ö [0mUser cannot login with invalid credentials
-[32m Γ£ö [0mLocked user is prevented from login
-[32m Γ£ö [0mAuthenticated user can update profile
-[32m Γ£ö [0mUser can logout safely
+Authorization (Tests\Feature\Authorization)
+ [x] Customer cannot access admin dashboard returns 403
+ [x] Customer cannot access organizer dashboard returns 403
+ [x] Organizer cannot edit other organizer event returns 403
+ [x] Customer cannot view other customer order returns 403
+ [x] Admin cannot self lock or self demote
 
-[4mAuthorization (Tests\Feature\Authorization)[0m
-[32m Γ£ö [0mCustomer cannot access admin dashboard returns 403
-[32m Γ£ö [0mCustomer cannot access organizer dashboard returns 403
-[32m Γ£ö [0mOrganizer cannot edit other organizer event returns 403
-[32m Γ£ö [0mCustomer cannot view other customer order returns 403
-[32m Γ£ö [0mAdmin cannot self lock or self demote
+Checkin (Tests\Feature\Checkin)
+ [x] Organizer can checkin valid paid ticket successfully
+ [x] Checkin fails when ticket code does not exist
+ [x] Checkin fails when order is not paid
+ [x] Checkin fails when ticket is already used
+ [x] Checkin fails when ticket belongs to another organizer
+ [x] Checkin accepts a signed qr payload
+ [x] Checkin rejects a qr payload with tampered signature
+ [x] Checkin rejects malformed qr json
+ [x] Checkin accepts lowercase typed ticket code
+ [x] Checkin form provides camera scanner and manual input
+ [x] Checkin success card renders the flashed summary
 
-[4mCheckin (Tests\Feature\Checkin)[0m
-[32m Γ£ö [0mOrganizer can checkin valid paid ticket successfully
-[32m Γ£ö [0mCheckin fails when ticket code does not exist
-[32m Γ£ö [0mCheckin fails when order is not paid
-[32m Γ£ö [0mCheckin fails when ticket is already used
-[32m Γ£ö [0mCheckin fails when ticket belongs to another organizer
+Domain Models (Tests\Unit\DomainModels)
+ [x] Ticket type remaining accessor never returns negative
+ [x] User role helpers and enum alignment
 
-[4mDomain Models (Tests\Unit\DomainModels)[0m
-[32m Γ£ö [0mTicket type remaining accessor never returns negative
-[32m Γ£ö [0mUser role helpers and enum alignment
+Order And Payment (Tests\Feature\OrderAndPayment)
+ [x] Customer can checkout tickets and create pending order
+ [x] Checkout fails when no tickets selected
+ [x] Checkout fails when quantity exceeds max per order
+ [x] Checkout fails when quantity exceeds available remaining
+ [x] Customer can pay order and tickets are generated
+ [x] Order paid mail builds attachments and content
+ [x] Storefront tickets and order show render qr code and pdf download
+ [x] Customer can cancel pending order and tickets are returned
+ [x] Customer cannot cancel paid order
+ [x] Artisan command expires pending orders and returns sold tickets
+ [x] Paying expired order cancels order and restores tickets
 
-[4mOrder And Payment (Tests\Feature\OrderAndPayment)[0m
-[32m Γ£ö [0mCustomer can checkout tickets and create pending order
-[32m Γ£ö [0mCheckout fails when no tickets selected
-[32m Γ£ö [0mCheckout fails when quantity exceeds max per order
-[32m Γ£ö [0mCheckout fails when quantity exceeds available remaining
-[32m Γ£ö [0mCustomer can pay order and tickets are generated
-[32m Γ£ö [0mCustomer can cancel pending order and tickets are returned
-[32m Γ£ö [0mCustomer cannot cancel paid order
-[32m Γ£ö [0mArtisan command expires pending orders and returns sold tickets
-[32m Γ£ö [0mPaying expired order cancels order and restores tickets
+Organizer Ticket Type (Tests\Feature\OrganizerTicketType)
+ [x] Create form contains zone and description inputs
+ [x] Organizer can store zone and description
+ [x] Event page displays zone and description of each ticket type
+ [x] Edit form prefills zone and description
 
-[4mStorefront (Tests\Feature\Storefront)[0m
-[32m Γ£ö [0mCan browse published events on home page
-[32m Γ£ö [0mCan search events by title keyword
-[32m Γ£ö [0mCan filter events by category and city
-[32m Γ£ö [0mUnpublished event returns 404 on storefront
+Qr Ticket Service (Tests\Unit\QrTicketService)
+ [x] Payload is built from ticket code when missing
+ [x] Png data uri contains a valid png image
+ [x] Svg output contains svg markup
+ [x] Signature is valid for untampered payload
+ [x] Signature is rejected when payload is tampered
+ [x] Signature is rejected when empty
+ [x] Ticket signature helper matches service verification
+ [x] Decode payload rejects plain ticket code
 
-[30;42mOK (37 tests, 104 assertions)[0m
-{"tool":"phpunit","result":"passed","tests":37,"passed":37,"assertions":104,"duration_ms":2344}
+Storefront (Tests\Feature\Storefront)
+ [x] Can browse published events on home page
+ [x] Can search events by title keyword
+ [x] Can filter events by category and city
+ [x] Unpublished event returns 404 on storefront
+ [x] Can view published event details and displays ticket type zone and description
+
+Ticket Pdf (Tests\Feature\TicketPdf)
+ [x] Ticket pdf is rendered in memory
+ [x] Pdf filename uses ticket code
+ [x] Ticket owner can download the ticket pdf
+ [x] Customer cannot download someone elses ticket pdf
+ [x] Guest is redirected to login when downloading ticket pdf
+
+OK (68 tests, 254 assertions)

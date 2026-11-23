@@ -42,11 +42,11 @@ Hệ thống xác định rõ 4 đối tượng tác tử tham gia vào quy trì
 
 #### 1.3. Các Quy trình Nghiệp vụ Trọng yếu
 - **Quy trình 1: Vòng đời Sự kiện**: Ban tổ chức tạo bản nháp (`draft`) -> Thiết lập các loại vé -> Nhấn gửi duyệt (`pending`) -> Admin kiểm duyệt: phê duyệt (`published`) để công khai lên Storefront, từ chối (`draft`) hoặc hủy (`cancelled`).
-- **Quy trình 2: Đặt vé, Giữ chỗ và Thanh toán**: Khách hàng chọn vé -> Giao dịch `DB::transaction()` kết hợp khóa bi quan `lockForUpdate()` trên `ticket_types` -> Sinh mã đơn `ORD-XXXXXXXX`, tăng tạm thời số `sold` và cho giữ chỗ 15 phút -> Khách thanh toán -> Đơn chuyển sang `paid`, sinh các vé điện tử `TKT-XXXXXXXXXX`. Nếu quá hạn 15 phút hoặc khách hủy, đơn chuyển sang `cancelled` và hoàn trả `sold`.
-- **Quy trình 3: Soát vé Check-in 5 bước**: Ban tổ chức nhập mã vé tại `/organizer/checkin` -> `TicketCheckinService` thực thi 5 bước kiểm tra: (1) Tồn tại mã vé? (2) Đơn hàng đã thanh toán (`paid`)? (3) Vé có thuộc sự kiện của Organizer này không? (4) Vé đã bị hủy chưa? (5) Vé đã được check-in trước đó chưa? -> Hợp lệ cập nhật `status = 'used'` và `checked_in_at = now()`.
+- **Quy trình 2: Đặt vé, Giữ chỗ và Thanh toán**: Khách hàng chọn vé -> Giao dịch `DB::transaction()` kết hợp khóa bi quan `lockForUpdate()` trên `ticket_types` -> Sinh mã đơn `ORD-XXXXXXXX`, tăng tạm thời số `sold` và cho giữ chỗ 15 phút -> Khách thanh toán -> Đơn chuyển sang `paid`, sinh các vé điện tử `TKT-XXXXXXXXXX` kèm chuỗi JSON `qr_payload` và chữ ký số HMAC-SHA256 `qr_signature`, gửi email xác nhận `OrderPaidMail` kèm vé PDF đính kèm. Nếu quá hạn 15 phút hoặc khách hủy, đơn chuyển sang `cancelled` và hoàn trả `sold`.
+- **Quy trình 3: Soát vé Check-in 6 bước**: Ban tổ chức quét mã QR bằng camera (thư viện `html5-qrcode` offline) hoặc nhập mã vé tại `/organizer/checkin` -> `TicketCheckinService` thực thi 6 bước kiểm tra: (1) Tồn tại mã vé? (2) Chữ ký số HMAC-SHA256 của mã QR hợp lệ? (3) Đơn hàng đã thanh toán (`paid`)? (4) Vé có thuộc sự kiện của Organizer này không? (5) Vé đã bị hủy chưa? (6) Vé đã được check-in trước đó chưa? -> Hợp lệ cập nhật `status = 'used'`, `checked_in_at = now()` và lưu ID người soát vé `checked_in_by`.
 
 #### 1.4. Phạm vi & Ràng buộc Nghiệp vụ
-- **Phạm vi**: Hoàn chỉnh toàn bộ các chức năng quản lý, phân quyền, giữ chỗ an toàn và soát vé; sử dụng Mock Payment Gateway mô phỏng cổng thanh toán và thẻ vé mã monospace kèm nút in (không dùng camera quét QR phần cứng).
+- **Phạm vi**: Hoàn chỉnh toàn bộ các chức năng quản lý, phân quyền, giữ chỗ an toàn và soát vé; sử dụng Mock Payment Gateway mô phỏng cổng thanh toán, phát hành vé điện tử có mã QR ký số HMAC-SHA256, hỗ trợ quét camera trực tiếp trên trình duyệt hoặc nhập tay, xuất vé PDF động khổ A5 on-the-fly và gửi email Mailpit/Log.
 - **Ràng buộc nghiệp vụ (Business Rules)**:
   - *BR-01*: Email, slug, mã đơn `ORD-`, mã vé `TKT-` duy nhất 100%.
   - *BR-02*: `end_time > start_time > now()`; thời gian mở bán trước thời gian đóng bán; giữ chỗ cố định 15 phút.
@@ -78,8 +78,8 @@ Cơ sở dữ liệu đạt chuẩn 3NF với 8 bảng nghiệp vụ:
 
 ### TIÊU CHÍ 3 (MỤC 2 - PLO2): SỬ DỤNG MIGRATION, MODEL VÀ RELATIONSHIP ĐÚNG CHUẨN LARAVEL
 
-#### 3.1. Migrations Chuẩn mực (10 Files: 3 core + 7 nghiệp vụ)
-Khai báo bằng anonymous class với kiểu dữ liệu chặt chẽ và ràng buộc khóa ngoại rõ ràng (`2026_10_25_000001` đến `000007`).
+#### 3.1. Migrations Chuẩn mực (12 Files: 3 core + 7 nghiệp vụ + 2 nâng cấp QR/zone)
+Khai báo bằng anonymous class với kiểu dữ liệu chặt chẽ và ràng buộc khóa ngoại rõ ràng (`2026_10_25_000001` đến `000007`, bổ sung `2026_11_12_210058` và `210059`).
 
 #### 3.2. Eloquent Models & Quan hệ Hai Chiều
 8 Models trong `app/Models/` định nghĩa đầy đủ `$fillable`, `casts()`, Accessors, Scopes và Relationships:
