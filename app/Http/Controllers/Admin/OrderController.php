@@ -34,7 +34,12 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
-        $order->load(['user', 'orderItems.ticketType.event.venue', 'orderItems.tickets']);
+        $order->load([
+            'user',
+            'orderItems.ticketType.event.venue',
+            'tickets.orderItem.ticketType',
+            'tickets.checkedInBy',
+        ]);
 
         return view('admin.orders.show', compact('order'));
     }
