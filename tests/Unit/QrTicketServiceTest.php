@@ -92,4 +92,77 @@ class QrTicketServiceTest extends TestCase
         $this->assertNull($this->qrTicketService->decodePayload('{"v":1}'));
         $this->assertNull($this->qrTicketService->decodePayload('not-json'));
     }
+
+    public function test_payload_uses_existing_stored_qr_payload_when_present(): void
+    {
+        $storedPayload = '{"v":1,"ticket_code":"TKT-STORED1234"}';
+        $ticket = new Ticket([
+            'ticket_code' => 'TKT-IGNORED123',
+            'qr_payload' => $storedPayload,
+        ]);
+
+        $this->assertSame($storedPayload, $this->qrTicketService->payloadFor($ticket));
+    }
+
+    public function test_png_and_svg_data_uri_outputs_are_valid(): void
+    {
+        $ticket = new Ticket(['ticket_code' => 'TKT-FORMAT1234']);
+
+        $pngBinary = $this->qrTicketService->png($ticket);
+        $this->assertSame("\x89PNG", substr($pngBinary, 0, 4));
+
+        $svgDataUri = $this->qrTicketService->svgDataUri($ticket);
+        $this->assertStringStartsWith('data:image/svg+xml;base64,', $svgDataUri);
+
+        $decodedSvg = base64_decode(substr($svgDataUri, strlen('data:image/svg+xml;base64,')), true);
+        $this->assertNotFalse($decodedSvg);
+        $this->assertStringContainsString('<svg', $decodedSvg);
+        $this->assertStringContainsString('</svg>', $decodedSvg);
+    }
+
+    public function test_signature_is_rejected_when_app_key_changes(): void
+    {
+        $payload = Ticket::buildQrPayload('TKT-KEYROTATE1');
+        $signature = Ticket::generateQrSignature($payload);
+
+        $originalKey = config('app.key');
+
+        try {
+            config(['app.key' => 'base64:'.base64_encode(str_repeat('x', 32))]);
+
+            $this->assertFalse($this->qrTicketService->verifySignature($payload, $signature));
+        } finally {
+            config(['app.key' => $originalKey]);
+        }
+    }
+
+    public function test_has_valid_signature_returns_false_when_payload_or_signature_is_missing(): void
+    {
+        $missingSignature = new Ticket([
+            'ticket_code' => 'TKT-NOSIG12345',
+            'qr_payload' => Ticket::buildQrPayload('TKT-NOSIG12345'),
+            'qr_signature' => null,
+        ]);
+
+        $missingPayload = new Ticket([
+            'ticket_code' => 'TKT-NOPAY12345',
+            'qr_payload' => null,
+            'qr_signature' => str_repeat('a', 64),
+        ]);
+
+        $this->assertFalse($this->qrTicketService->hasValidSignature($missingSignature));
+        $this->assertFalse($this->qrTicketService->hasValidSignature($missingPayload));
+    }
+
+    public function test_decode_payload_handles_whitespace_and_rejects_non_string_ticket_code(): void
+    {
+        $this->assertSame(
+            ['v' => 1, 'ticket_code' => 'TKT-TRIMMED123'],
+            $this->qrTicketService->decodePayload("  {\"ticket_code\":\"TKT-TRIMMED123\"} \n "),
+        );
+
+        $this->assertNull($this->qrTicketService->decodePayload('{"v":1,"ticket_code":123456}'));
+        $this->assertNull($this->qrTicketService->decodePayload('{"v":1,"ticket_code":["TKT-ARRAY"]}'));
+        $this->assertNull($this->qrTicketService->decodePayload('"TKT-SCALAR123"'));
+    }
 }
