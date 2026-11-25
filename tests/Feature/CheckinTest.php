@@ -128,15 +128,26 @@ class CheckinTest extends TestCase
 
     public function test_checkin_accepts_a_signed_qr_payload(): void
     {
-        $organizer = User::factory()->organizer()->create();
-        $ticket = $this->createTicketFor($organizer, 'TKT-QRVALID123');
+        $organizer = User::factory()->organizer()->create(['name' => 'Tống Xuân Định']);
+        $ticket = $this->createTicketFor($organizer, 'TKT-QRVALID123', 'Khu VIP A');
 
         $response = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
             'ticket_code' => $ticket->qr_payload,
         ]);
 
         $response->assertSessionHas('success');
-        $this->assertSame(TicketStatus::USED, $ticket->fresh()->status);
+        $response->assertSessionHas('success_ticket', function ($summary) use ($organizer): bool {
+            return is_array($summary)
+                && $summary['ticket_code'] === 'TKT-QRVALID123'
+                && $summary['zone'] === 'Khu VIP A'
+                && $summary['checked_in_by'] === $organizer->name
+                && $summary['qr_signature_valid'] === true;
+        });
+
+        $freshTicket = $ticket->fresh();
+        $this->assertSame(TicketStatus::USED, $freshTicket->status);
+        $this->assertNotNull($freshTicket->checked_in_at);
+        $this->assertSame($organizer->id, $freshTicket->checked_in_by);
     }
 
     public function test_checkin_rejects_a_qr_payload_with_tampered_signature(): void
@@ -152,7 +163,9 @@ class CheckinTest extends TestCase
         ]);
 
         $response->assertSessionHas('error');
+        $response->assertSessionMissing('_old_input');
         $this->assertSame(TicketStatus::VALID, $ticket->fresh()->status);
+        $this->assertNull($ticket->fresh()->checked_in_by);
     }
 
     public function test_checkin_rejects_malformed_qr_json(): void
@@ -165,6 +178,153 @@ class CheckinTest extends TestCase
 
         $response->assertSessionHas('error');
         $response->assertSessionMissing('success_ticket');
+        $response->assertSessionMissing('_old_input');
+    }
+
+    public function test_checkin_fails_when_ticket_is_cancelled_via_manual_code_and_qr_payload(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $event = Event::factory()->create(['organizer_id' => $organizer->id]);
+        $ticketType = TicketType::factory()->create(['event_id' => $event->id]);
+        $order = Order::factory()->paid()->create();
+        $orderItem = OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => $ticketType->id,
+        ]);
+        $ticket = Ticket::factory()->cancelled()->create([
+            'order_item_id' => $orderItem->id,
+            'ticket_code' => 'TKT-CANCEL0001',
+        ]);
+
+        $this->actingAs($organizer)
+            ->post(route('organizer.checkin.store'), ['ticket_code' => 'TKT-CANCEL0001'])
+            ->assertSessionHas('error');
+
+        $this->actingAs($organizer)
+            ->post(route('organizer.checkin.store'), ['ticket_code' => $ticket->qr_payload])
+            ->assertSessionHas('error');
+
+        $freshTicket = $ticket->fresh();
+        $this->assertSame(TicketStatus::CANCELLED, $freshTicket->status);
+        $this->assertNull($freshTicket->checked_in_at);
+        $this->assertNull($freshTicket->checked_in_by);
+    }
+
+    public function test_checkin_with_qr_payload_fails_when_order_is_not_paid(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $event = Event::factory()->create(['organizer_id' => $organizer->id]);
+        $ticketType = TicketType::factory()->create(['event_id' => $event->id]);
+        $pendingOrder = Order::factory()->pending()->create();
+        $orderItem = OrderItem::factory()->create([
+            'order_id' => $pendingOrder->id,
+            'ticket_type_id' => $ticketType->id,
+        ]);
+        $ticket = Ticket::factory()->valid()->create([
+            'order_item_id' => $orderItem->id,
+            'ticket_code' => 'TKT-QRPEND0001',
+        ]);
+
+        $response = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => $ticket->qr_payload,
+        ]);
+
+        $response->assertSessionHas('error');
+        $response->assertSessionMissing('_old_input');
+        $this->assertSame(TicketStatus::VALID, $ticket->fresh()->status);
+        $this->assertNull($ticket->fresh()->checked_in_by);
+    }
+
+    public function test_checkin_with_qr_payload_fails_when_ticket_is_already_used(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $ticket = $this->createTicketFor($organizer, 'TKT-QRUSED0001');
+
+        $this->actingAs($organizer)
+            ->post(route('organizer.checkin.store'), ['ticket_code' => $ticket->qr_payload])
+            ->assertSessionHas('success');
+
+        $firstCheckinAt = $ticket->fresh()->checked_in_at;
+
+        $secondResponse = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => $ticket->qr_payload,
+        ]);
+
+        $secondResponse->assertSessionHas('error');
+        $this->assertSame($organizer->id, $ticket->fresh()->checked_in_by);
+        $this->assertTrue($firstCheckinAt->equalTo($ticket->fresh()->checked_in_at));
+    }
+
+    public function test_checkin_with_qr_payload_fails_when_ticket_belongs_to_another_organizer(): void
+    {
+        $organizer1 = User::factory()->organizer()->create();
+        $organizer2 = User::factory()->organizer()->create();
+        $ticket = $this->createTicketFor($organizer2, 'TKT-QRORG20001');
+
+        $response = $this->actingAs($organizer1)->post(route('organizer.checkin.store'), [
+            'ticket_code' => $ticket->qr_payload,
+        ]);
+
+        $response->assertSessionHas('error');
+        $this->assertSame(TicketStatus::VALID, $ticket->fresh()->status);
+        $this->assertNull($ticket->fresh()->checked_in_by);
+    }
+
+    public function test_checkin_with_qr_payload_fails_when_stored_signature_is_corrupted(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $ticket = $this->createTicketFor($organizer, 'TKT-QRCORRUPT1');
+
+        Ticket::whereKey($ticket->id)->update([
+            'qr_signature' => str_repeat('f', 64),
+        ]);
+
+        $response = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => $ticket->qr_payload,
+        ]);
+
+        $response->assertSessionHas('error');
+        $this->assertSame(TicketStatus::VALID, $ticket->fresh()->status);
+        $this->assertNull($ticket->fresh()->checked_in_by);
+    }
+
+    public function test_checkin_with_qr_payload_fails_when_ticket_does_not_exist(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $ghostPayload = Ticket::buildQrPayload('TKT-GHOST99999');
+
+        $response = $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => $ghostPayload,
+        ]);
+
+        $response->assertSessionHas('error');
+        $response->assertSessionMissing('_old_input');
+    }
+
+    public function test_checkin_rejects_empty_and_whitespace_only_input(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+
+        $this->actingAs($organizer)
+            ->post(route('organizer.checkin.store'), ['ticket_code' => ''])
+            ->assertSessionHasErrors('ticket_code');
+
+        $this->actingAs($organizer)
+            ->post(route('organizer.checkin.store'), ['ticket_code' => '   '])
+            ->assertSessionHasErrors('ticket_code');
+    }
+
+    public function test_customer_cannot_access_organizer_checkin_routes(): void
+    {
+        $customer = User::factory()->customer()->create();
+
+        $this->actingAs($customer)
+            ->get(route('organizer.checkin.form'))
+            ->assertForbidden();
+
+        $this->actingAs($customer)
+            ->post(route('organizer.checkin.store'), ['ticket_code' => 'TKT-ANY1234567'])
+            ->assertForbidden();
     }
 
     public function test_checkin_accepts_lowercase_typed_ticket_code(): void
@@ -211,10 +371,13 @@ class CheckinTest extends TestCase
             ->assertSee('Nhân viên soát vé');
     }
 
-    private function createTicketFor(User $organizer, string $ticketCode): Ticket
+    private function createTicketFor(User $organizer, string $ticketCode, ?string $zone = null): Ticket
     {
         $event = Event::factory()->create(['organizer_id' => $organizer->id]);
-        $ticketType = TicketType::factory()->create(['event_id' => $event->id]);
+        $ticketType = TicketType::factory()->create([
+            'event_id' => $event->id,
+            'zone' => $zone,
+        ]);
         $order = Order::factory()->paid()->create();
         $orderItem = OrderItem::factory()->create([
             'order_id' => $order->id,
