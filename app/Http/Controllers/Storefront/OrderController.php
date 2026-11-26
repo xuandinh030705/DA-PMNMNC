@@ -62,7 +62,10 @@ class OrderController extends Controller
         // Perform lazy expiration check
         $orderService->checkAndExpire($order);
 
-        $order->load(['orderItems.ticketType.event.venue', 'orderItems.tickets']);
+        $order->load([
+            'orderItems.ticketType.event.venue',
+            'tickets.orderItem.ticketType.event.venue',
+        ]);
 
         return view('storefront.orders.show', compact('order', 'qrTicketService'));
     }
@@ -75,15 +78,15 @@ class OrderController extends Controller
         $this->authorize('pay', $order);
 
         try {
-            $orderService->payOrder($order, $request->payment_method);
+            $paidOrder = $orderService->payOrder($order, $request->payment_method);
 
             try {
-                Mail::to($order->customer_email)->send(new OrderPaidMail($order));
+                Mail::to($paidOrder->customer_email)->send(new OrderPaidMail($paidOrder));
             } catch (Throwable $e) {
                 report($e);
             }
 
-            return redirect()->route('orders.show', $order->order_code)
+            return redirect()->route('orders.show', $paidOrder->order_code)
                 ->with('success', 'Thanh toán thành công! Vé điện tử của bạn đã được khởi tạo và gửi tới email.');
         } catch (BusinessException $e) {
             return back()->with('error', $e->getMessage());
