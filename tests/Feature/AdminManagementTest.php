@@ -13,6 +13,7 @@ use App\Models\OrderItem;
 use App\Models\Ticket;
 use App\Models\TicketType;
 use App\Models\User;
+use App\Models\Venue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -387,5 +388,59 @@ class AdminManagementTest extends TestCase
         ]);
         $venueResponse->assertRedirect(route('admin.venues.index'));
         $this->assertDatabaseHas('venues', ['name' => 'Trung Tâm Triển Lãm Mới']);
+    }
+
+    public function test_admin_cannot_delete_category_or_venue_referenced_by_soft_deleted_event(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $organizer = User::factory()->organizer()->create();
+        $category = Category::factory()->create(['name' => 'Danh Mục Đã Dùng']);
+        $venue = Venue::factory()->create(['name' => 'Địa Điểm Đã Dùng']);
+
+        $draftEvent = Event::factory()->draft()->create([
+            'organizer_id' => $organizer->id,
+            'category_id' => $category->id,
+            'venue_id' => $venue->id,
+        ]);
+
+        $this->actingAs($organizer)
+            ->delete(route('organizer.events.destroy', $draftEvent))
+            ->assertRedirect(route('organizer.events.index'));
+
+        $this->assertSoftDeleted('events', ['id' => $draftEvent->id]);
+
+        $this->actingAs($admin)
+            ->from(route('admin.categories.index'))
+            ->delete(route('admin.categories.destroy', $category))
+            ->assertRedirect(route('admin.categories.index'))
+            ->assertSessionHas('error');
+
+        $this->actingAs($admin)
+            ->from(route('admin.venues.index'))
+            ->delete(route('admin.venues.destroy', $venue))
+            ->assertRedirect(route('admin.venues.index'))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('categories', ['id' => $category->id]);
+        $this->assertDatabaseHas('venues', ['id' => $venue->id]);
+    }
+
+    public function test_admin_dashboard_top_events_ranks_events_with_sold_tickets_above_events_without_ticket_types(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $eventWithoutTiers = Event::factory()->published()->create(['title' => 'Sự Kiện Chưa Tạo Vé']);
+        $topSellingEvent = Event::factory()->published()->create(['title' => 'Sự Kiện Bán Chạy Số 1']);
+        TicketType::factory()->create([
+            'event_id' => $topSellingEvent->id,
+            'quantity' => 50,
+            'sold' => 15,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.dashboard'));
+
+        $response->assertOk();
+        $topEvents = $response->viewData('topEvents');
+        $this->assertSame($topSellingEvent->id, $topEvents->first()->id);
+        $this->assertSame(1, $topEvents->search(fn (Event $item): bool => $item->id === $eventWithoutTiers->id));
     }
 }

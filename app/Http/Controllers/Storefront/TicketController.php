@@ -36,7 +36,12 @@ class TicketController extends Controller
     {
         $ticket->loadMissing('orderItem.order');
 
-        $this->authorize('view', $ticket->orderItem->order);
+        $order = $ticket->orderItem?->order;
+        if (! $order) {
+            abort(404, 'Không tìm thấy đơn hàng của vé này.');
+        }
+
+        $this->authorize('view', $order);
 
         return $ticketPdfService->render($ticket)
             ->download($ticketPdfService->filenameFor($ticket));

@@ -32,6 +32,7 @@ class TicketTypePolicy
         }
 
         return $user->isOrganizer()
+            && $ticketType->event !== null
             && $user->id === $ticketType->event->organizer_id
             && $ticketType->event->isDraft();
     }
@@ -46,6 +47,7 @@ class TicketTypePolicy
         }
 
         return $user->isOrganizer()
+            && $ticketType->event !== null
             && $user->id === $ticketType->event->organizer_id
             && $ticketType->event->isDraft()
             && $ticketType->sold === 0;

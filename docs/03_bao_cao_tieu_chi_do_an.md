@@ -1,8 +1,8 @@
 # BÁO CÁO NGHIỆM THU ĐỒ ÁN - MỤC 1 & MỤC 2 (PLO1, PLO2)
 ## HỆ THỐNG QUẢN LÝ BÁN VÉ SỰ KIỆN (EVENT TICKET MANAGEMENT SYSTEM)
 
-- **Mã tài liệu**: CRIT-ETMS-v1.1
-- **Nền tảng**: Laravel 13 (PHP 8.3+) / SQLite & MySQL
+- **Mã tài liệu**: CRIT-ETMS-v2.0
+- **Nền tảng**: Laravel 13 (PHP 8.3+, kiểm thử trên PHP 8.5.9) / MySQL 8.0 (InnoDB) & SQLite dự phòng
 - **File Word đính kèm**: [03_bao_cao_tieu_chi_do_an.docx](./03_bao_cao_tieu_chi_do_an.docx)
 - **Đối chiếu**: Bám sát đầy đủ 6 tiêu chí của Mục 1 (PLO1) và Mục 2 (PLO2) trong rubric `tailieu/1.jpg`.
 
@@ -12,63 +12,58 @@
 
 | STT | Mục & PLO | Nội Dung Tiêu Chí Đánh Giá | Mức Độ Đạt Được | Minh Chứng Mã Nguồn & Tài Liệu |
 | :---: | :---: | :--- | :---: | :--- |
-| **1** | **Mục 1 (PLO1)** | Xác định đối tượng người dùng, vai trò, dữ liệu cần quản lý, quy trình nghiệp vụ, phạm vi và ràng buộc | **100% Hoàn thành** | [`docs/01_phan_tich_yeu_cau.md`](./01_phan_tich_yeu_cau.md), [`docs/SPEC.md`](./SPEC.md), `User::ROLE_*`, BR-01..04 |
-| **2** | **Mục 2 (PLO2)** | Thiết kế CSDL hợp lý, có ERD và quan hệ giữa các bảng | **100% Hoàn thành** | [`docs/diagrams/05_erd.puml`](./diagrams/05_erd.puml), [`05_erd.png`](./diagrams/images/05_erd.png), [`02_thiet_ke_co_so_du_lieu.md`](./02_thiet_ke_co_so_du_lieu.md) |
-| **3** | **Mục 2 (PLO2)** | Sử dụng migration, model và relationship đúng chuẩn Laravel | **100% Hoàn thành** | 10 Migrations (7 nghiệp vụ), 8 Eloquent Models, Eager Loading, Pessimistic Locking |
-| **4** | **Mục 2 (PLO2)** | Thiết kế phân quyền, vai trò người dùng nếu hệ thống cần | **100% Hoàn thành** | Middleware `CheckRole`, `CheckActive`, 3 Policies (`EventPolicy`, `TicketTypePolicy`, `OrderPolicy`) |
-| **5** | **Mục 2 (PLO2)** | Tổ chức route, controller, view rõ ràng, dễ bảo trì | **100% Hoàn thành** | 4 route files tách biệt (57 app routes), Service Layer, 11 FormRequests, 2 Master Blade layouts |
-| **6** | **Mục 2 (PLO2)** | Tài liệu/sơ đồ thiết kế: use case, ERD, sơ đồ chức năng | **100% Hoàn thành** | 8 file PlantUML (`.puml`) và 8 ảnh PNG tương ứng trong [`docs/diagrams/images/`](./diagrams/images/) |
+| **1** | **Mục 1 (PLO1)** | Xác định đối tượng người dùng, vai trò, dữ liệu cần quản lý, quy trình nghiệp vụ, phạm vi và ràng buộc | **100% Hoàn thành** | [`docs/01_phan_tich_yeu_cau.md`](./01_phan_tich_yeu_cau.md), [`docs/SPEC.md`](./SPEC.md), `UserRole` Enum, BR-01..05 |
+| **2** | **Mục 2 (PLO2)** | Thiết kế CSDL hợp lý, có ERD và quan hệ giữa các bảng | **100% Hoàn thành** | [`docs/02_thiet_ke_co_so_du_lieu.md`](./02_thiet_ke_co_so_du_lieu.md), [`docs/diagrams/05_erd.puml`](./diagrams/05_erd.puml), [`DRAWIO_UML_PROMPTS.md`](./diagrams/DRAWIO_UML_PROMPTS.md) |
+| **3** | **Mục 2 (PLO2)** | Sử dụng migration, model và relationship đúng chuẩn Laravel | **100% Hoàn thành** | **12 Migrations** (7 bảng nghiệp vụ + 2 nâng cấp QR/`zone`), **8 Eloquent Models**, **4 Enums**, Eager Loading, `lockForUpdate()` |
+| **4** | **Mục 2 (PLO2)** | Thiết kế phân quyền, vai trò người dùng nếu hệ thống cần | **100% Hoàn thành** | Middleware `CheckRole`, `CheckActive`, 3 Policies (`EventPolicy`, `TicketTypePolicy`, `OrderPolicy`) bảo vệ cả tải PDF |
+| **5** | **Mục 2 (PLO2)** | Tổ chức route, controller, view rõ ràng, dễ bảo trì | **100% Hoàn thành** | 4 route files tách biệt (**58 app routes**), 4 Services, `OrderPaidMail`, 11 FormRequests, 2 Master Blade layouts |
+| **6** | **Mục 2 (PLO2)** | Tài liệu/sơ đồ thiết kế: use case, ERD, sơ đồ chức năng | **Đầy đủ mã nguồn UML** | 8 file PlantUML chính + 6 sequence + 8 PNG + [`DRAWIO_UML_PROMPTS.md`](./diagrams/DRAWIO_UML_PROMPTS.md) |
 
 ---
 
 ### TIÊU CHÍ 1 (MỤC 1 - PLO1): XÁC ĐỊNH ĐỐI TƯỢNG NGƯỜI DÙNG, VAI TRÒ, DỮ LIỆU CẦN QUẢN LÝ, QUY TRÌNH NGHIỆP VỤ, PHẠM VI VÀ RÀNG BUỘC
 
 #### 1.1. Đối tượng Người dùng & Vai trò (User Roles)
-Hệ thống xác định rõ 4 đối tượng tác tử tham gia vào quy trình (quản lý qua `users.role` với các hằng số `User::ROLE_ADMIN`, `User::ROLE_ORGANIZER`, `User::ROLE_CUSTOMER` và enum [`app/Enums/UserRole.php`](../app/Enums/UserRole.php)):
-1. **Khách vãng lai (Guest)**: Người dùng chưa đăng nhập; xem danh sách sự kiện đang mở bán, tìm kiếm từ khóa, lọc theo danh mục/thành phố/ngày, xem chi tiết sự kiện và bảng giá các loại vé, đăng ký/đăng nhập.
-2. **Khách hàng (Customer - `role: customer`)**: Người mua vé; đặt vé giữ chỗ 15 phút, thanh toán giả lập (Chuyển khoản ngân hàng, MoMo, Thẻ), xem lịch sử đơn hàng, nhận thẻ vé điện tử với mã vé monospace `TKT-XXXXXXXXXX` và nút in vé cá nhân.
-3. **Ban tổ chức (Organizer - `role: organizer`)**: Đơn vị tổ chức sự kiện; Dashboard thống kê doanh thu, quản lý vòng đời sự kiện (Tạo nháp -> Thêm vé -> Gửi duyệt), theo dõi đơn hàng thuộc sự kiện của mình và soát vé (Check-in) tại cổng.
-4. **Quản trị viên (Admin - `role: admin`)**: Quản trị toàn hệ thống; Dashboard tổng quan doanh thu và đơn hàng, quản lý danh mục (Categories), địa điểm (Venues), quản lý người dùng (Khóa/Mở khóa tài khoản, đổi vai trò), phê duyệt/từ chối/hủy sự kiện.
+Hệ thống xác định rõ 4 đối tượng tác tử tham gia quy trình, quản lý chặt chẽ qua `users.role` và Backed Enum [`app/Enums/UserRole.php`](../app/Enums/UserRole.php):
+1. **Khách vãng lai (Guest)**: Xem danh sách sự kiện đang mở bán, tìm kiếm từ khóa (`q`), lọc theo danh mục/thành phố/ngày, sắp xếp theo thời gian/giá vé, xem chi tiết sự kiện kèm khu vực (`zone`) và quyền lợi (`description`), đăng ký/đăng nhập.
+2. **Khách hàng (Customer - `role: customer`)**: Đặt vé giữ chỗ 15 phút, thanh toán giả lập, nhận email xác nhận (`OrderPaidMail`) đính kèm PDF vé, xem lịch sử đơn hàng, nhận vé điện tử kèm **mã QR ký số HMAC-SHA256**, tải vé **PDF khổ A5**, tự hủy đơn `pending`, sửa hồ sơ.
+3. **Ban tổ chức (Organizer - `role: organizer`)**: Dashboard thống kê, quản lý vòng đời sự kiện (Tạo nháp → Thêm vé kèm `zone` & `description` → Gửi duyệt), theo dõi đơn hàng thuộc sự kiện của mình và **soát vé (Check-in) bằng Camera QR (`html5-qrcode` offline) hoặc nhập tay**.
+4. **Quản trị viên (Admin - `role: admin`)**: Dashboard toàn sàn, quản lý danh mục & địa điểm (ràng buộc `RESTRICT`), quản lý người dùng (khóa/mở khóa, đổi vai trò), phê duyệt/từ chối/hủy sự kiện (**cascade hủy đơn `pending` hoàn vé & hủy vé `valid`**), tra cứu mọi đơn hàng kèm nhân viên soát vé (`checkedInBy`).
 
 #### 1.2. Dữ liệu cần Quản lý (8 Thực thể cốt lõi)
-- `users`: Tài khoản, email duy nhất, mật khẩu mã hóa Bcrypt, vai trò, trạng thái kích hoạt `is_active`.
-- `categories`: Danh mục sự kiện, tên và slug URL duy nhất.
+- `users`: Tài khoản, email duy nhất, mật khẩu Bcrypt, vai trò (`UserRole`), trạng thái kích hoạt `is_active`.
+- `categories`: Danh mục sự kiện, tên và slug duy nhất.
 - `venues`: Địa điểm tổ chức, địa chỉ, thành phố, sức chứa tối đa.
-- `events`: Thông tin sự kiện, thời gian bắt đầu/kết thúc, trạng thái duyệt (`draft`, `pending`, `published`, `cancelled`), ảnh banner, soft delete.
-- `ticket_types`: Các hạng vé, giá bán, số lượng phát hành, số vé đã bán/giữ chỗ (`sold`), thời gian mở/đóng bán, giới hạn vé mỗi đơn.
-- `orders`: Đơn hàng, mã `ORD-XXXXXXXX` duy nhất, thông tin khách nhận vé, tổng tiền, phương thức thanh toán, trạng thái (`pending`, `paid`, `cancelled`), thời hạn giữ chỗ 15 phút (`expires_at`).
-- `order_items`: Chi tiết dòng vé đặt mua, đơn giá lúc mua, số lượng, thành tiền.
-- `tickets`: Vé điện tử phát hành sau thanh toán, mã tra cứu `TKT-XXXXXXXXXX` duy nhất, trạng thái (`valid`, `used`, `cancelled`), thời điểm check-in.
+- `events`: Sự kiện, thời gian bắt đầu/kết thúc, trạng thái duyệt (`EventStatus`), ảnh banner, xóa mềm (`SoftDeletes`).
+- `ticket_types`: Các hạng vé, khu vực (`zone`), mô tả quyền lợi (`description`), giá bán VNĐ, số lượng phát hành, số đã bán/giữ chỗ (`sold`), thời gian mở/đóng bán, giới hạn `max_per_order`.
+- `orders`: Đơn hàng, mã `ORD-XXXXXXXX` duy nhất, thông tin khách nhận vé, tổng tiền, phương thức thanh toán, trạng thái (`OrderStatus`), hạn giữ chỗ 15 phút (`expires_at`).
+- `order_items`: Chi tiết dòng vé đặt mua, đơn giá tại thời điểm đặt, số lượng, thành tiền.
+- `tickets`: Vé điện tử phát hành sau thanh toán, mã `TKT-XXXXXXXXXX` duy nhất, payload JSON `qr_payload`, chữ ký số HMAC-SHA256 `qr_signature`, trạng thái (`TicketStatus`), thời điểm check-in `checked_in_at`, khóa ngoại nhân viên soát vé `checked_in_by`.
 
 #### 1.3. Các Quy trình Nghiệp vụ Trọng yếu
-- **Quy trình 1: Vòng đời Sự kiện**: Ban tổ chức tạo bản nháp (`draft`) -> Thiết lập các loại vé -> Nhấn gửi duyệt (`pending`) -> Admin kiểm duyệt: phê duyệt (`published`) để công khai lên Storefront, từ chối (`draft`) hoặc hủy (`cancelled`).
-- **Quy trình 2: Đặt vé, Giữ chỗ và Thanh toán**: Khách hàng chọn vé -> Giao dịch `DB::transaction()` kết hợp khóa bi quan `lockForUpdate()` trên `ticket_types` -> Sinh mã đơn `ORD-XXXXXXXX`, tăng tạm thời số `sold` và cho giữ chỗ 15 phút -> Khách thanh toán -> Đơn chuyển sang `paid`, sinh các vé điện tử `TKT-XXXXXXXXXX` kèm chuỗi JSON `qr_payload` và chữ ký số HMAC-SHA256 `qr_signature`, gửi email xác nhận `OrderPaidMail` kèm vé PDF đính kèm. Nếu quá hạn 15 phút hoặc khách hủy, đơn chuyển sang `cancelled` và hoàn trả `sold`.
-- **Quy trình 3: Soát vé Check-in 6 bước**: Ban tổ chức quét mã QR bằng camera (thư viện `html5-qrcode` offline) hoặc nhập mã vé tại `/organizer/checkin` -> `TicketCheckinService` thực thi 6 bước kiểm tra: (1) Tồn tại mã vé? (2) Chữ ký số HMAC-SHA256 của mã QR hợp lệ? (3) Đơn hàng đã thanh toán (`paid`)? (4) Vé có thuộc sự kiện của Organizer này không? (5) Vé đã bị hủy chưa? (6) Vé đã được check-in trước đó chưa? -> Hợp lệ cập nhật `status = 'used'`, `checked_in_at = now()` và lưu ID người soát vé `checked_in_by`.
+- **Quy trình 1: Vòng đời Sự kiện & Cascade Hủy**: Organizer tạo `draft` → thêm loại vé (`zone`, `description`) → gửi duyệt (`pending`) → Admin duyệt (`published`), từ chối (`draft`) hoặc hủy (`cancelled`). Khi Admin hủy sự kiện, `Admin\EventController::cancel()` trong transaction sẽ tự động hủy đơn `pending` hoàn trả `sold` và chuyển vé `valid` sang `cancelled`.
+- **Quy trình 2: Đặt vé, Giữ chỗ 15 phút, Thanh toán, QR, PDF & Email**: `OrderService::createOrder()` dùng `DB::transaction() + lockForUpdate()` trên `ticket_types` → tạo đơn `pending` giữ chỗ 15 phút → thanh toán `payOrder()` sinh vé kèm `qr_payload` & `qr_signature` HMAC-SHA256 → `OrderController@pay` gửi `OrderPaidMail` đính kèm PDF khổ A5 tạo động trong RAM → khách xem QR và tải PDF qua `/my-tickets/{ticket}/pdf`.
+- **Quy trình 3: Soát vé Check-in 6 bước (Camera QR & Nhập tay)**: Organizer quét QR bằng camera (`public/js/html5-qrcode.min.js`) hoặc nhập tay tại `/organizer/checkin` → `TicketCheckinService` khóa dòng vé (`lockForUpdate()`) và kiểm tra 6 bước: (1) tồn tại mã vé → (2) chữ ký HMAC-SHA256 hợp lệ (`hash_equals`) khi quét QR → (3) đơn hàng đã `paid` → (4) thuộc sự kiện của Organizer → (5) vé chưa `cancelled` → (6) vé chưa `used` → cập nhật `used`, `checked_in_at` và `checked_in_by`.
 
 #### 1.4. Phạm vi & Ràng buộc Nghiệp vụ
-- **Phạm vi**: Hoàn chỉnh toàn bộ các chức năng quản lý, phân quyền, giữ chỗ an toàn và soát vé; sử dụng Mock Payment Gateway mô phỏng cổng thanh toán, phát hành vé điện tử có mã QR ký số HMAC-SHA256, hỗ trợ quét camera trực tiếp trên trình duyệt hoặc nhập tay, xuất vé PDF động khổ A5 on-the-fly và gửi email Mailpit/Log.
-- **Ràng buộc nghiệp vụ (Business Rules)**:
-  - *BR-01*: Email, slug, mã đơn `ORD-`, mã vé `TKT-` duy nhất 100%.
-  - *BR-02*: `end_time > start_time > now()`; thời gian mở bán trước thời gian đóng bán; giữ chỗ cố định 15 phút.
-  - *BR-03*: Chặn xóa danh mục/địa điểm đang có sự kiện (`RESTRICT`); sự kiện dùng `SoftDeletes`; chặn Admin tự khóa tài khoản hoặc tự hạ quyền chính mình.
-  - *BR-04*: Đơn vị tiền tệ VNĐ phân cách hàng nghìn bằng dấu chấm (`number_format(..., 0, ',', '.') . ' đ'`), múi giờ `Asia/Ho_Chi_Minh`, giao diện tiếng Việt UTF-8.
+- **Phạm vi**: Đầy đủ quy trình nghiệp vụ, bảo mật chống giả vé QR HMAC-SHA256, xuất vé PDF động trong RAM, gửi email qua Mailpit/Log và quét camera offline; dùng Mock Payment Gateway để đảm bảo chạy ổn định khi bảo vệ.
+- **Ràng buộc (BR-01..BR-05)**: Định danh duy nhất (`ORD-`, `TKT-`, email, slug) + chữ ký HMAC-SHA256 64 ký tự hex; `end_time > start_time > now()`, giữ chỗ 15 phút; `RESTRICT` trên danh mục/địa điểm, `SoftDeletes` trên sự kiện, Admin không tự khóa/tự hạ quyền; tiền tệ VNĐ, múi giờ `Asia/Ho_Chi_Minh`, tiếng Việt UTF-8; khóa bi quan cho đặt vé, thanh toán, check-in và hủy sự kiện.
 
 ---
 
 ### TIÊU CHÍ 2 (MỤC 2 - PLO2): THIẾT KẾ CSDL HỢP LÝ, CÓ ERD VÀ QUAN HỆ GIỮA CÁC BẢNG
 
 #### 2.1. Chuẩn hóa CSDL (3NF) & Sơ đồ ERD
-Cơ sở dữ liệu đạt chuẩn 3NF với 8 bảng nghiệp vụ:
-- Sơ đồ ERD: [`docs/diagrams/05_erd.puml`](./diagrams/05_erd.puml) và ảnh xuất [`docs/diagrams/images/05_erd.png`](./diagrams/images/05_erd.png).
-- **Mối quan hệ giữa các bảng**:
-  - `users` (1) ── (N) `events`: `organizer_id` (`CASCADE`)
-  - `categories` (1) ── (N) `events`: `category_id` (`RESTRICT`)
-  - `venues` (1) ── (N) `events`: `venue_id` (`RESTRICT`)
-  - `events` (1) ── (N) `ticket_types`: `event_id` (`CASCADE`)
-  - `users` (1) ── (N) `orders`: `user_id` (`CASCADE`)
-  - `orders` (1) ── (N) `order_items`: `order_id` (`CASCADE`)
-  - `ticket_types` (1) ── (N) `order_items`: `ticket_type_id` (`CASCADE`)
-  - `order_items` (1) ── (0..N) `tickets`: `order_item_id` (`CASCADE`)
+Cơ sở dữ liệu đạt chuẩn 3NF với 8 bảng nghiệp vụ (chi tiết tại [`docs/02_thiet_ke_co_so_du_lieu.md`](./02_thiet_ke_co_so_du_lieu.md) và [`DRAWIO_UML_PROMPTS.md`](./diagrams/DRAWIO_UML_PROMPTS.md)):
+- `users` (1) ── (N) `events`: `organizer_id` (`CASCADE`)
+- `categories` (1) ── (N) `events`: `category_id` (`RESTRICT`)
+- `venues` (1) ── (N) `events`: `venue_id` (`RESTRICT`)
+- `events` (1) ── (N) `ticket_types`: `event_id` (`CASCADE`)
+- `users` (1) ── (N) `orders`: `user_id` (`CASCADE`)
+- `orders` (1) ── (N) `order_items`: `order_id` (`CASCADE`)
+- `ticket_types` (1) ── (N) `order_items`: `ticket_type_id` (`CASCADE`)
+- `order_items` (1) ── (0..N) `tickets`: `order_item_id` (`CASCADE`)
+- `users` (1) ── (0..N) `tickets`: `checked_in_by` (`SET NULL`)
 
 #### 2.2. Chiến lược Đánh chỉ mục (Indexing Strategy)
 - **Unique Indexes**: `users(email)`, `categories(name)`, `categories(slug)`, `events(slug)`, `orders(order_code)`, `tickets(ticket_code)`.
@@ -78,53 +73,37 @@ Cơ sở dữ liệu đạt chuẩn 3NF với 8 bảng nghiệp vụ:
 
 ### TIÊU CHÍ 3 (MỤC 2 - PLO2): SỬ DỤNG MIGRATION, MODEL VÀ RELATIONSHIP ĐÚNG CHUẨN LARAVEL
 
-#### 3.1. Migrations Chuẩn mực (12 Files: 3 core + 7 nghiệp vụ + 2 nâng cấp QR/zone)
-Khai báo bằng anonymous class với kiểu dữ liệu chặt chẽ và ràng buộc khóa ngoại rõ ràng (`2026_10_25_000001` đến `000007`, bổ sung `2026_11_12_210058` và `210059`).
-
-#### 3.2. Eloquent Models & Quan hệ Hai Chiều
-8 Models trong `app/Models/` định nghĩa đầy đủ `$fillable`, `casts()`, Accessors, Scopes và Relationships:
-- `Event`: `belongsTo(User, 'organizer_id')`, `belongsTo(Category)`, `belongsTo(Venue)`, `hasMany(TicketType)`, scopes `published()`, `upcoming()`, `notEnded()`, `search()`.
-- `TicketType`: `belongsTo(Event)`, `hasMany(OrderItem)`, Accessor `remaining` (`max(0, quantity - sold)`), `isOnSale()`.
-- `Order`: `belongsTo(User)`, `hasMany(OrderItem)`, `hasManyThrough(Ticket, OrderItem)`.
-- `OrderItem`: `belongsTo(Order)`, `belongsTo(TicketType)`, `hasMany(Ticket)`.
-- `Ticket`: `belongsTo(OrderItem)`, helpers `isValid()`, `isUsed()`, `isCancelled()`.
-- `User`: `hasMany(Event, 'organizer_id')`, `hasMany(Order, 'user_id')`, helpers `isAdmin()`, `isOrganizer()`, `isCustomer()`, `isActive()`.
-- `Category`, `Venue`: `hasMany(Event)`.
-
-#### 3.3. Tối ưu Truy vấn & Khóa Bi Quan (Pessimistic Locking)
-- **Chống N+1 Query**: Sử dụng Eager Loading `with(['category', 'venue'])`, `withCount('ticketTypes')`, `withMin('ticketTypes as min_price', 'price')`, `withSum('ticketTypes as total_sold', 'sold')`.
-- **Khóa bi quan (`lockForUpdate()`)**: Trong `app/Services/OrderService.php`, bản ghi `ticket_types` và `orders` được khóa trong `DB::transaction()` để chống bán vượt tồn kho.
+1. **Migrations (12 files):** 3 core Laravel + 7 nghiệp vụ (`2026_10_25_000001..000007`) + 2 migration nâng cấp (`2026_11_12_210058_add_qr_and_checkin_columns_to_tickets_table.php` và `2026_11_12_210059_add_zone_and_description_to_ticket_types_table.php`).
+2. **8 Eloquent Models & 4 Backed Enums:** Đồng bộ `$fillable`, `casts()` (`UserRole`, `EventStatus`, `OrderStatus`, `TicketStatus`), Accessors (`remaining`, `description_paragraphs`), Scopes (`published()`, `upcoming()`, `notEnded()`, `search()`) và quan hệ hai chiều (gồm `Ticket::checkedInBy()`).
+3. **Tối ưu Truy vấn & Khóa Bi Quan:** Eager Loading `with()`, `withCount()`, `withMin()`, `withSum()`, eager load `tickets.orderItem.ticketType.event.venue` & `tickets.checkedInBy` chống N+1 trên `orders.show`; `lockForUpdate()` trong `DB::transaction()` tại `OrderService`, `TicketCheckinService` và `Admin\EventController::cancel()`.
 
 ---
 
 ### TIÊU CHÍ 4 (MỤC 2 - PLO2): THIẾT KẾ PHÂN QUYỀN, VAI TRÒ NGƯỜI DÙNG
 
-1. **Middleware tầng Route**: `CheckRole` (hỗ trợ đa quyền như `role:admin`, `role:organizer`), `CheckActive` (tự động `Auth::logout()` và hủy session khi tài khoản bị khóa).
-2. **Policies tầng Đối tượng (chống IDOR)**: `EventPolicy`, `TicketTypePolicy`, `OrderPolicy` (kiểm tra quyền sở hữu `organizer_id` / `user_id` và trạng thái hợp lệ).
-3. **Tự vệ Quản trị & Blade**: Chặn Admin tự khóa hoặc tự hạ quyền chính mình trong `Admin\UserController`; giao diện hiển thị điều hướng theo vai trò.
+1. **Middleware:** `CheckRole` (`role:admin`, `role:organizer`), `CheckActive` (ngắt phiên tài khoản bị khóa), `throttle:5,1` trên route đăng nhập.
+2. **Policies chống IDOR:** `EventPolicy`, `TicketTypePolicy`, `OrderPolicy` (kiểm tra quyền xem/thanh toán/hủy đơn và tải vé PDF `/my-tickets/{ticket}/pdf`, chặn truy cập chéo bằng HTTP 403).
+3. **Tự vệ Quản trị:** Chặn Admin tự khóa hoặc tự hạ quyền chính mình tại `Admin\UserController`.
 
 ---
 
 ### TIÊU CHÍ 5 (MỤC 2 - PLO2): TỔ CHỨC ROUTE, CONTROLLER, VIEW RÕ RÀNG, DỄ BẢO TRÌ
 
-- **4 file route tách biệt (57 application routes)**: `routes/auth.php`, `routes/storefront.php`, `routes/organizer.php`, `routes/admin.php` được nạp trong `routes/web.php`, cùng tác vụ định kỳ trong `routes/console.php`.
-- **Controllers & Service Layer**: Phân theo 4 namespace (`Auth`, `Storefront`, `Organizer`, `Admin`), tách nghiệp vụ giao dịch sang `OrderService` và `TicketCheckinService`, tách validation sang 11 FormRequests tiếng Việt.
-- **Blade Views**: 2 Master Layouts (`layouts/app.blade.php`, `layouts/panel.blade.php`), 2 Partials dùng chung (`alerts`, `form-errors`), 4 trang lỗi tùy biến (`403`, `404`, `419`, `500`), Bootstrap 5.3 CDN không cần Node.js.
+- **4 file route tách biệt (58 application routes):** `routes/auth.php`, `routes/storefront.php`, `routes/organizer.php`, `routes/admin.php` + lịch chạy `orders:expire-pending` mỗi phút trong `routes/console.php`.
+- **Controllers, Services, Mail & Requests:** 4 namespaces (`Auth`, `Storefront`, `Organizer`, `Admin`), 4 Services (`OrderService`, `TicketCheckinService`, `QrTicketService`, `TicketPdfService`), Mailable `OrderPaidMail`, 11 FormRequests tiếng Việt.
+- **Blade Views:** 2 Master Layouts (`layouts/app`, `layouts/panel`), template `emails/order-paid` & `pdf/ticket` (khổ A5 font DejaVu Sans), partials dùng chung, 4 trang lỗi tùy biến (`403`, `404`, `419`, `500`), Bootstrap 5.3 CDN Zero-node.
 
 ---
 
-### TIÊU CHÍ 6 (MỤC 2 - PLO2): TÀI LIỆU / SƠ ĐỒ THIẾT KẾ (USE CASE, ERD, SƠ ĐỒ CHỨC NĂNG)
+### TIÊU CHÍ 6 (MỤC 2 - PLO2): TÀI LIỆU / SƠ ĐỒ THIẾT KẾ
 
-Toàn bộ 8 sơ đồ đã được xây dựng bằng PlantUML trong `docs/diagrams/` và kết xuất thành ảnh PNG độ phân giải cao trong `docs/diagrams/images/`:
-- Use Case tổng quan & chi tiết 3 vai trò (`01_usecase_tong_quan.png` .. `04_usecase_quan_tri.png`)
-- Sơ đồ ERD (`05_erd.png`)
-- Sơ đồ phân rã chức năng WBS (`06_so_do_chuc_nang.png`)
-- Sơ đồ hoạt động mua vé (`07_activity_mua_ve.png`)
-- Sơ đồ tuần tự thanh toán (`08_sequence_thanh_toan.png`)
+- Có sẵn 8 sơ đồ PlantUML (`.puml`) + 8 ảnh PNG trong `docs/diagrams/images/` + 6 sơ đồ tuần tự chi tiết (`sequence_01..06.puml`).
+- Đã chuẩn hóa toàn bộ bộ Prompt AI & mã PlantUML cập nhật 5 cột DB mới + luồng QR/PDF/Email/Camera/Cascade tại [`docs/diagrams/DRAWIO_UML_PROMPTS.md`](./diagrams/DRAWIO_UML_PROMPTS.md) để kết xuất sang `.drawio` và `.png`.
 
 ---
 
 ### KẾT QUẢ KIỂM THỬ MINH CHỨNG TOÀN DIỆN
-- **Tổng số Tests**: `37/37 tests PASSED (100%)` (2 Unit tests + 35 Feature tests)
-- **Số Assertions**: `104 assertions, 0 failures`
+- **Tổng số Tests**: `103/103 tests PASSED (100%)` (15 Unit tests + 88 Feature tests)
+- **Số Assertions**: `411 assertions, 0 failures`
+- **Code Style (`pint --test`)**: `PASSED (100%)`
 - **Chi tiết**: Xem tại [`docs/testing/test-cases.md`](./testing/test-cases.md) và [`docs/testing/test-output.txt`](./testing/test-output.txt).

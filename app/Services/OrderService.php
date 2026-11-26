@@ -28,22 +28,39 @@ class OrderService
             throw new BusinessException('Sự kiện này hiện không mở bán vé hoặc đã bắt đầu.');
         }
 
-        // Filter only positive quantities
-        $quantities = array_filter($ticketQuantities, fn ($qty) => (int) $qty > 0);
+        // Normalize positive quantities and sort by ticket_type_id to avoid lock-order deadlocks
+        $quantities = [];
+        foreach ($ticketQuantities as $ticketTypeId => $qty) {
+            $intQty = (int) $qty;
+            if ($intQty > 0) {
+                $intId = (int) $ticketTypeId;
+                $quantities[$intId] = ($quantities[$intId] ?? 0) + $intQty;
+            }
+        }
+
         if (empty($quantities)) {
             throw new BusinessException('Vui lòng chọn ít nhất một loại vé với số lượng lớn hơn 0.');
         }
 
+        ksort($quantities, SORT_NUMERIC);
+
         return DB::transaction(function () use ($user, $event, $quantities, $customerData) {
+            /** @var Event|null $lockedEvent */
+            $lockedEvent = Event::where('id', $event->id)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $lockedEvent || ! $lockedEvent->isPublished() || $lockedEvent->start_time <= now()) {
+                throw new BusinessException('Sự kiện này hiện không mở bán vé hoặc đã bắt đầu.');
+            }
+
             $totalAmount = 0;
             $itemsToCreate = [];
 
             foreach ($quantities as $ticketTypeId => $qty) {
-                $qty = (int) $qty;
-
                 /** @var TicketType|null $ticketType */
                 $ticketType = TicketType::where('id', $ticketTypeId)
-                    ->where('event_id', $event->id)
+                    ->where('event_id', $lockedEvent->id)
                     ->lockForUpdate()
                     ->first();
 
@@ -127,6 +144,14 @@ class OrderService
                 return true;
             }
 
+            $lockedOrder->loadMissing('orderItems.ticketType.event');
+            foreach ($lockedOrder->orderItems as $item) {
+                $event = $item->ticketType?->event;
+                if (! $event || $event->isCancelled()) {
+                    throw new BusinessException('Sự kiện của đơn hàng này đã bị hủy hoặc không còn tồn tại.');
+                }
+            }
+
             $lockedOrder->status = OrderStatus::PAID;
             $lockedOrder->payment_method = $paymentMethod;
             $lockedOrder->paid_at = now();
@@ -179,11 +204,29 @@ class OrderService
                 throw new BusinessException('Chỉ có thể hủy đơn hàng đang ở trạng thái chờ thanh toán.');
             }
 
-            // Restore sold quantities for all ticket types
+            // Restore sold quantities in deterministic ID order and guard against unsigned underflow
+            $restoreByTicketType = [];
             foreach ($lockedOrder->orderItems as $item) {
-                TicketType::where('id', $item->ticket_type_id)
+                $restoreByTicketType[$item->ticket_type_id] = ($restoreByTicketType[$item->ticket_type_id] ?? 0) + $item->quantity;
+            }
+
+            if (! empty($restoreByTicketType)) {
+                ksort($restoreByTicketType, SORT_NUMERIC);
+
+                $lockedTicketTypes = TicketType::whereIn('id', array_keys($restoreByTicketType))
+                    ->orderBy('id')
                     ->lockForUpdate()
-                    ->decrement('sold', $item->quantity);
+                    ->get()
+                    ->keyBy('id');
+
+                foreach ($restoreByTicketType as $ticketTypeId => $quantityToRestore) {
+                    /** @var TicketType|null $ticketType */
+                    $ticketType = $lockedTicketTypes->get($ticketTypeId);
+                    if ($ticketType) {
+                        $ticketType->sold = max(0, $ticketType->sold - $quantityToRestore);
+                        $ticketType->save();
+                    }
+                }
             }
 
             $lockedOrder->status = OrderStatus::CANCELLED;
@@ -213,6 +256,7 @@ class OrderService
     {
         $expiredOrders = Order::where('status', OrderStatus::PENDING)
             ->where('expires_at', '<', now())
+            ->orderBy('id')
             ->get();
 
         $count = 0;

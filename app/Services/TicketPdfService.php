@@ -17,13 +17,19 @@ class TicketPdfService
     {
         $ticket->loadMissing(['orderItem.order', 'orderItem.ticketType.event.venue', 'checkedInBy']);
 
-        $ticketType = $ticket->orderItem->ticketType;
+        $order = $ticket->orderItem?->order;
+        $ticketType = $ticket->orderItem?->ticketType;
+        $event = $ticketType?->event;
+
+        if (! $order || ! $ticketType || ! $event) {
+            abort(404, 'Không tìm thấy đầy đủ thông tin vé điện tử.');
+        }
 
         return Pdf::loadView('pdf.ticket', [
             'ticket' => $ticket,
-            'order' => $ticket->orderItem->order,
+            'order' => $order,
             'ticketType' => $ticketType,
-            'event' => $ticketType->event,
+            'event' => $event,
             'qrCodeDataUri' => extension_loaded('gd')
                 ? $this->qrTicketService->pngDataUri($ticket)
                 : $this->qrTicketService->svgDataUri($ticket),

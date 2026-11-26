@@ -116,10 +116,6 @@ class EventController extends Controller
             return back()->with('error', 'Chỉ có thể xóa sự kiện khi ở trạng thái Bản nháp.');
         }
 
-        if ($event->banner_path) {
-            Storage::disk('public')->delete($event->banner_path);
-        }
-
         $event->delete();
 
         return redirect()->route('organizer.events.index')

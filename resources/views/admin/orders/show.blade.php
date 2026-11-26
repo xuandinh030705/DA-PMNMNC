@@ -59,21 +59,21 @@
                             <tr class="border-bottom">
                                 <td class="py-3">
                                     <div class="d-flex align-items-center flex-wrap gap-1">
-                                        <span class="fw-bold text-dark">{{ $item->ticketType->name }}</span>
-                                        @if ($item->ticketType->zone)
+                                        <span class="fw-bold text-dark">{{ $item->ticketType?->name ?? 'Loại vé không xác định' }}</span>
+                                        @if ($item->ticketType?->zone)
                                             <span class="badge bg-secondary-subtle text-secondary-emphasis border">
                                                 <i class="bi bi-geo-alt me-1"></i>{{ $item->ticketType->zone }}
                                             </span>
                                         @endif
                                     </div>
-                                    @if ($item->ticketType->description)
+                                    @if ($item->ticketType?->description)
                                         <div class="small text-secondary mt-1">
                                             <i class="bi bi-info-circle me-1 text-primary"></i>{{ $item->ticketType->description }}
                                         </div>
                                     @endif
                                     <small class="text-muted d-block mt-1">
-                                        {{ $item->ticketType->event->title }} ({{ $item->ticketType->event->venue->name }})
-                                        @if ($item->ticketType->event->isCancelled())
+                                        {{ $item->ticketType?->event?->title ?? 'Sự kiện không còn tồn tại' }}@if ($item->ticketType?->event?->venue) ({{ $item->ticketType->event->venue->name }})@endif
+                                        @if ($item->ticketType?->event?->isCancelled())
                                             <span class="badge bg-danger-subtle text-danger border border-danger-subtle ms-1">Sự kiện đã hủy</span>
                                         @endif
                                     </small>

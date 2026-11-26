@@ -371,6 +371,21 @@ class CheckinTest extends TestCase
             ->assertSee('Nhân viên soát vé');
     }
 
+    public function test_checkin_gracefully_fails_if_event_was_soft_deleted(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $ticket = $this->createTicketFor($organizer, 'TKT-SOFTDEL001');
+        $ticket->orderItem->ticketType->event->delete();
+
+        $this->actingAs($organizer)
+            ->post(route('organizer.checkin.store'), [
+                'ticket_code' => $ticket->qr_payload,
+            ])
+            ->assertSessionHas('error');
+
+        $this->assertSame(TicketStatus::VALID, $ticket->fresh()->status);
+    }
+
     private function createTicketFor(User $organizer, string $ticketCode, ?string $zone = null): Ticket
     {
         $event = Event::factory()->create(['organizer_id' => $organizer->id]);

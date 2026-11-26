@@ -49,6 +49,10 @@ class VenueController extends Controller
             return back()->with('error', "Không thể xóa địa điểm '{$venue->name}' vì đang có sự kiện liên kết.");
         }
 
+        if ($venue->events()->withTrashed()->exists()) {
+            return back()->with('error', "Không thể xóa địa điểm '{$venue->name}' vì vẫn còn sự kiện đã xóa mềm đang tham chiếu trong hệ thống.");
+        }
+
         $venue->delete();
 
         return redirect()->route('admin.venues.index')

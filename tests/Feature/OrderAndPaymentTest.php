@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Enums\EventStatus;
 use App\Enums\OrderStatus;
+use App\Enums\TicketStatus;
 use App\Mail\OrderPaidMail;
 use App\Models\Event;
 use App\Models\Order;
@@ -13,6 +15,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use RuntimeException;
 use Tests\TestCase;
 
 class OrderAndPaymentTest extends TestCase
@@ -354,5 +357,265 @@ class OrderAndPaymentTest extends TestCase
         $response->assertSessionHas('error');
         $this->assertSame(OrderStatus::CANCELLED, $expiredOrder->fresh()->status);
         $this->assertEquals(2, $ticketType->fresh()->sold);
+    }
+
+    public function test_mail_transport_failure_does_not_rollback_paid_order(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $ticketType = TicketType::factory()->create(['price' => 250000]);
+        $order = Order::factory()->pending()->create([
+            'user_id' => $customer->id,
+            'customer_email' => $customer->email,
+            'total_amount' => 250000,
+        ]);
+        $orderItem = OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 1,
+            'unit_price' => 250000,
+            'subtotal' => 250000,
+        ]);
+
+        Mail::shouldReceive('to')
+            ->once()
+            ->with($customer->email)
+            ->andThrow(new RuntimeException('SMTP connection refused'));
+
+        $response = $this->actingAs($customer)->post(route('orders.pay', $order->order_code), [
+            'payment_method' => 'momo',
+        ]);
+
+        $response->assertRedirect(route('orders.show', $order->order_code));
+        $response->assertSessionHas('success');
+
+        $freshOrder = $order->fresh();
+        $this->assertSame(OrderStatus::PAID, $freshOrder->status);
+        $this->assertSame('momo', $freshOrder->payment_method);
+
+        $ticket = Ticket::where('order_item_id', $orderItem->id)->first();
+        $this->assertNotNull($ticket);
+        $this->assertTrue($ticket->hasValidQrSignature());
+    }
+
+    public function test_end_to_end_checkout_pay_pdf_and_qr_checkin_flow(): void
+    {
+        Mail::fake();
+
+        $organizer = User::factory()->organizer()->create();
+        $customer = User::factory()->customer()->create();
+        $event = Event::factory()->published()->create([
+            'organizer_id' => $organizer->id,
+            'start_time' => now()->addDays(7),
+            'end_time' => now()->addDays(7)->addHours(3),
+        ]);
+        $ticketType = TicketType::factory()->create([
+            'event_id' => $event->id,
+            'name' => 'Vé VVIP',
+            'zone' => 'Khán đài VVIP',
+            'price' => 500000,
+            'quantity' => 10,
+            'sold' => 0,
+            'sale_start' => now()->subDay(),
+            'sale_end' => now()->addDays(5),
+        ]);
+
+        $this->actingAs($customer)->post(route('checkout.store', $event->slug), [
+            'tickets' => [$ticketType->id => 1],
+            'customer_name' => $customer->name,
+            'customer_email' => $customer->email,
+            'customer_phone' => '0909123456',
+        ])->assertSessionHas('success');
+
+        $order = Order::where('user_id', $customer->id)->latest('id')->firstOrFail();
+
+        $this->actingAs($customer)->post(route('orders.pay', $order->order_code), [
+            'payment_method' => 'momo',
+        ])->assertSessionHas('success');
+
+        $ticket = $order->fresh()->tickets()->firstOrFail();
+        $this->assertTrue($ticket->hasValidQrSignature());
+
+        $pdfResponse = $this->actingAs($customer)->get(route('tickets.pdf', $ticket));
+        $pdfResponse->assertOk();
+        $pdfResponse->assertDownload('ve-'.$ticket->ticket_code.'.pdf');
+        $this->assertStringStartsWith('%PDF-', (string) $pdfResponse->getContent());
+
+        $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => $ticket->qr_payload,
+        ])->assertSessionHas('success');
+
+        $usedTicket = $ticket->fresh();
+        $this->assertSame(TicketStatus::USED, $usedTicket->status);
+        $this->assertSame($organizer->id, $usedTicket->checked_in_by);
+
+        $this->actingAs($organizer)->post(route('organizer.checkin.store'), [
+            'ticket_code' => $ticket->qr_payload,
+        ])->assertSessionHas('error');
+    }
+
+    public function test_checkout_supports_multiple_ticket_types_in_arbitrary_input_order(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $event = Event::factory()->published()->create([
+            'start_time' => now()->addDays(10),
+            'end_time' => now()->addDays(10)->addHours(4),
+        ]);
+
+        $typeFirst = TicketType::factory()->create([
+            'event_id' => $event->id,
+            'price' => 100000,
+            'quantity' => 20,
+            'sold' => 0,
+            'sale_start' => now()->subDay(),
+            'sale_end' => now()->addDays(5),
+        ]);
+        $typeSecond = TicketType::factory()->create([
+            'event_id' => $event->id,
+            'price' => 300000,
+            'quantity' => 20,
+            'sold' => 0,
+            'sale_start' => now()->subDay(),
+            'sale_end' => now()->addDays(5),
+        ]);
+
+        $this->actingAs($customer)->post(route('checkout.store', $event->slug), [
+            'tickets' => [
+                $typeSecond->id => 1,
+                $typeFirst->id => 2,
+            ],
+            'customer_name' => $customer->name,
+            'customer_email' => $customer->email,
+        ])->assertSessionHas('success');
+
+        $this->assertSame(2, $typeFirst->fresh()->sold);
+        $this->assertSame(1, $typeSecond->fresh()->sold);
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $customer->id,
+            'total_amount' => 500000,
+        ]);
+    }
+
+    public function test_cancelling_order_guards_against_sold_underflow(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $ticketType = TicketType::factory()->create([
+            'quantity' => 50,
+            'sold' => 1,
+        ]);
+
+        $order = Order::factory()->pending()->create(['user_id' => $customer->id]);
+        OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 3,
+        ]);
+
+        $this->actingAs($customer)
+            ->post(route('orders.cancel', $order->order_code))
+            ->assertSessionHas('success');
+
+        $this->assertSame(OrderStatus::CANCELLED, $order->fresh()->status);
+        $this->assertSame(0, $ticketType->fresh()->sold);
+    }
+
+    public function test_customer_cannot_pay_order_when_event_was_cancelled(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $event = Event::factory()->published()->create();
+        $ticketType = TicketType::factory()->create(['event_id' => $event->id]);
+
+        $order = Order::factory()->pending()->create(['user_id' => $customer->id]);
+        OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 1,
+        ]);
+
+        $event->update(['status' => EventStatus::CANCELLED]);
+
+        $this->actingAs($customer)
+            ->from(route('orders.show', $order->order_code))
+            ->post(route('orders.pay', $order->order_code), [
+                'payment_method' => 'bank_transfer',
+            ])
+            ->assertRedirect(route('orders.show', $order->order_code))
+            ->assertSessionHas('error');
+
+        $this->assertSame(OrderStatus::PENDING, $order->fresh()->status);
+        $this->assertSame(0, Ticket::count());
+    }
+
+    public function test_cancelled_tickets_do_not_show_ready_to_use_in_customer_views(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $order = Order::factory()->paid()->create(['user_id' => $customer->id]);
+        $ticketType = TicketType::factory()->create();
+        $orderItem = OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 1,
+        ]);
+
+        Ticket::factory()->cancelled()->create([
+            'order_item_id' => $orderItem->id,
+            'ticket_code' => 'TKT-CANCELEDVIEW',
+        ]);
+
+        $this->actingAs($customer)
+            ->get(route('orders.show', $order->order_code))
+            ->assertOk()
+            ->assertSee('TKT-CANCELEDVIEW')
+            ->assertSee('Vé đã bị hủy')
+            ->assertDontSee('Sẵn sàng sử dụng');
+
+        $this->actingAs($customer)
+            ->get(route('tickets.index'))
+            ->assertOk()
+            ->assertSee('TKT-CANCELEDVIEW')
+            ->assertSee('Vé đã bị hủy, không còn hiệu lực sử dụng')
+            ->assertDontSee('Sẵn sàng sử dụng');
+    }
+
+    public function test_organizer_order_show_displays_zone_description_and_checked_in_staff(): void
+    {
+        $organizer = User::factory()->organizer()->create([
+            'name' => 'Tống Xuân Định',
+            'email' => 'dinh.staff@example.com',
+        ]);
+        $event = Event::factory()->published()->create(['organizer_id' => $organizer->id]);
+        $ticketType = TicketType::factory()->create([
+            'event_id' => $event->id,
+            'name' => 'Vé Gold',
+            'zone' => 'Khu Gold A',
+            'description' => 'Bao gồm check-in nhanh và quà tặng.',
+        ]);
+
+        $order = Order::factory()->paid()->create();
+        $orderItem = OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 2,
+        ]);
+
+        Ticket::factory()->used()->create([
+            'order_item_id' => $orderItem->id,
+            'ticket_code' => 'TKT-ORGUSED001',
+            'checked_in_by' => $organizer->id,
+        ]);
+        Ticket::factory()->cancelled()->create([
+            'order_item_id' => $orderItem->id,
+            'ticket_code' => 'TKT-ORGVOID002',
+        ]);
+
+        $response = $this->actingAs($organizer)->get(route('organizer.orders.show', $order->order_code));
+
+        $response->assertOk();
+        $response->assertSee('Khu Gold A');
+        $response->assertSee('Bao gồm check-in nhanh và quà tặng.');
+        $response->assertSee('TKT-ORGUSED001');
+        $response->assertSee('Tống Xuân Định');
+        $response->assertSee('dinh.staff@example.com');
+        $response->assertSee('TKT-ORGVOID002');
+        $response->assertSee('Vé đã bị vô hiệu hóa');
     }
 }

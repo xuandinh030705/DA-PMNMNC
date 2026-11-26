@@ -47,11 +47,15 @@ class StorefrontController extends Controller
             $query->whereDate('start_time', '<=', $request->to);
         }
 
-        // Sorting
+        // Sorting (push events without ticket types to the bottom on price sorts across SQLite & MySQL)
         match ($request->sort) {
             'date_desc' => $query->orderBy('start_time', 'desc'),
-            'price_asc' => $query->orderBy('min_price', 'asc'),
-            'price_desc' => $query->orderBy('min_price', 'desc'),
+            'price_asc' => $query
+                ->orderByRaw('(SELECT COUNT(*) FROM ticket_types WHERE ticket_types.event_id = events.id) = 0 ASC')
+                ->orderBy('min_price', 'asc'),
+            'price_desc' => $query
+                ->orderByRaw('(SELECT COUNT(*) FROM ticket_types WHERE ticket_types.event_id = events.id) = 0 ASC')
+                ->orderBy('min_price', 'desc'),
             default => $query->orderBy('start_time', 'asc'),
         };
 
