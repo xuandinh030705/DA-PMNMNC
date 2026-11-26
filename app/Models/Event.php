@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Event extends Model
@@ -46,6 +47,12 @@ class Event extends Model
         static::creating(function (Event $event) {
             if (empty($event->slug)) {
                 $event->slug = static::generateUniqueSlug($event->title);
+            }
+        });
+
+        static::forceDeleting(function (Event $event) {
+            if ($event->banner_path) {
+                Storage::disk('public')->delete($event->banner_path);
             }
         });
     }

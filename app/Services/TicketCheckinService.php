@@ -38,8 +38,12 @@ class TicketCheckinService
                 throw new BusinessException('Chữ ký số của mã QR không hợp lệ. Vé này có thể đã bị chỉnh sửa hoặc làm giả.');
             }
 
-            $order = $ticket->orderItem->order;
-            $event = $ticket->orderItem->ticketType->event;
+            $order = $ticket->orderItem?->order;
+            $event = $ticket->orderItem?->ticketType?->event;
+
+            if (! $order || ! $event) {
+                throw new BusinessException('Không tìm thấy thông tin sự kiện hợp lệ cho vé này.');
+            }
 
             // 3. Order paid check
             if (! $order->isPaid()) {
@@ -51,8 +55,8 @@ class TicketCheckinService
                 throw new BusinessException('Vé này không thuộc bất kỳ sự kiện nào do bạn quản lý.');
             }
 
-            // 5. Ticket cancelled check
-            if ($ticket->isCancelled()) {
+            // 5. Event / ticket cancelled check
+            if ($event->isCancelled() || $ticket->isCancelled()) {
                 throw new BusinessException('Vé này đã bị hủy, không còn giá trị sử dụng.');
             }
 

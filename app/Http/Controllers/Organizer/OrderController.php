@@ -45,6 +45,7 @@ class OrderController extends Controller
         $order->load([
             'orderItems.ticketType.event.venue',
             'tickets.orderItem.ticketType',
+            'tickets.checkedInBy',
         ]);
 
         return view('organizer.orders.show', compact('order'));

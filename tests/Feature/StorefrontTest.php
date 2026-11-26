@@ -108,4 +108,30 @@ class StorefrontTest extends TestCase
         $response->assertSee('Khu A - Tầng 1');
         $response->assertSee('Bao gồm nước uống và quà lưu niệm');
     }
+
+    public function test_storefront_price_sorting_puts_events_without_ticket_types_last(): void
+    {
+        $noTierEvent = Event::factory()->published()->create(['title' => 'Sự Kiện Chưa Có Vé']);
+        $cheapEvent = Event::factory()->published()->create(['title' => 'Sự Kiện Giá Rẻ']);
+        $expensiveEvent = Event::factory()->published()->create(['title' => 'Sự Kiện Giá Cao']);
+
+        TicketType::factory()->create([
+            'event_id' => $cheapEvent->id,
+            'price' => 100000,
+        ]);
+        TicketType::factory()->create([
+            'event_id' => $expensiveEvent->id,
+            'price' => 500000,
+        ]);
+
+        $ascResponse = $this->get(route('home', ['sort' => 'price_asc']));
+        $ascResponse->assertOk();
+        $ascIds = $ascResponse->viewData('events')->pluck('id')->all();
+        $this->assertSame([$cheapEvent->id, $expensiveEvent->id, $noTierEvent->id], $ascIds);
+
+        $descResponse = $this->get(route('home', ['sort' => 'price_desc']));
+        $descResponse->assertOk();
+        $descIds = $descResponse->viewData('events')->pluck('id')->all();
+        $this->assertSame([$expensiveEvent->id, $cheapEvent->id, $noTierEvent->id], $descIds);
+    }
 }

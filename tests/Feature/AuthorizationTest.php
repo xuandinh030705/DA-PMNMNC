@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Enums\UserRole;
 use App\Models\Event;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\TicketType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -76,5 +78,23 @@ class AuthorizationTest extends TestCase
         ]);
         $responseDemote->assertSessionHas('error');
         $this->assertSame(UserRole::ADMIN, $admin->fresh()->role);
+    }
+
+    public function test_organizer_cannot_view_other_organizer_order_returns_403(): void
+    {
+        $org1 = User::factory()->organizer()->create();
+        $org2 = User::factory()->organizer()->create();
+
+        $eventOfOrg2 = Event::factory()->published()->create(['organizer_id' => $org2->id]);
+        $ticketType = TicketType::factory()->create(['event_id' => $eventOfOrg2->id]);
+        $orderOfOrg2 = Order::factory()->paid()->create();
+        OrderItem::factory()->create([
+            'order_id' => $orderOfOrg2->id,
+            'ticket_type_id' => $ticketType->id,
+        ]);
+
+        $this->actingAs($org1)
+            ->get(route('organizer.orders.show', $orderOfOrg2->order_code))
+            ->assertForbidden();
     }
 }

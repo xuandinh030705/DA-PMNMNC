@@ -2,10 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\Event;
 use App\Models\TicketType;
 use App\Models\User;
+use App\Models\Venue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class OrganizerTicketTypeTest extends TestCase
@@ -201,5 +205,63 @@ class OrganizerTicketTypeTest extends TestCase
             'zone' => 'Khu Gốc',
             'description' => 'Quyền lợi gốc.',
         ]);
+    }
+
+    public function test_updating_ticket_type_with_zero_sold_rejects_zero_quantity(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $event = Event::factory()->draft()->create(['organizer_id' => $organizer->id]);
+        $ticketType = TicketType::factory()->create([
+            'event_id' => $event->id,
+            'quantity' => 50,
+            'sold' => 0,
+        ]);
+
+        $this->actingAs($organizer)
+            ->put(route('organizer.ticket-types.update', $ticketType), [
+                'name' => $ticketType->name,
+                'price' => 150000,
+                'quantity' => 0,
+                'sale_start' => now()->subDay()->format('Y-m-d H:i:s'),
+                'sale_end' => now()->addDays(5)->format('Y-m-d H:i:s'),
+                'max_per_order' => 4,
+            ])
+            ->assertSessionHasErrors('quantity');
+
+        $this->assertSame(50, $ticketType->fresh()->quantity);
+    }
+
+    public function test_soft_deleting_draft_event_preserves_banner_until_force_delete(): void
+    {
+        Storage::fake('public');
+
+        $organizer = User::factory()->organizer()->create();
+        $category = Category::factory()->create();
+        $venue = Venue::factory()->create();
+
+        $this->actingAs($organizer)->post(route('organizer.events.store'), [
+            'title' => 'Sự Kiện Có Banner Test',
+            'category_id' => $category->id,
+            'venue_id' => $venue->id,
+            'start_time' => now()->addDays(5)->format('Y-m-d H:i:s'),
+            'end_time' => now()->addDays(5)->addHours(3)->format('Y-m-d H:i:s'),
+            'description' => 'Mô tả sự kiện test banner.',
+            'banner' => UploadedFile::fake()->image('banner.jpg', 600, 400),
+        ])->assertRedirect();
+
+        $event = Event::where('title', 'Sự Kiện Có Banner Test')->firstOrFail();
+        $bannerPath = $event->banner_path;
+        $this->assertNotNull($bannerPath);
+        Storage::disk('public')->assertExists($bannerPath);
+
+        $this->actingAs($organizer)
+            ->delete(route('organizer.events.destroy', $event))
+            ->assertRedirect(route('organizer.events.index'));
+
+        $this->assertSoftDeleted('events', ['id' => $event->id]);
+        Storage::disk('public')->assertExists($bannerPath);
+
+        $event->forceDelete();
+        Storage::disk('public')->assertMissing($bannerPath);
     }
 }

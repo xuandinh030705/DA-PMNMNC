@@ -14,7 +14,7 @@ class TicketTypeRequest extends FormRequest
     public function rules(): array
     {
         $ticketType = $this->route('ticket_type');
-        $minQuantity = $ticketType ? $ticketType->sold : 1;
+        $minQuantity = max(1, (int) ($ticketType?->sold ?? 1));
 
         return [
             'name' => ['required', 'string', 'max:255'],
@@ -44,12 +44,16 @@ class TicketTypeRequest extends FormRequest
 
     public function messages(): array
     {
+        $ticketType = $this->route('ticket_type');
+
         return [
             'name.required' => 'Vui lòng nhập tên loại vé.',
             'price.required' => 'Vui lòng nhập giá vé.',
             'price.min' => 'Giá vé không được âm.',
             'quantity.required' => 'Vui lòng nhập số lượng vé.',
-            'quantity.min' => 'Số lượng vé không được nhỏ hơn số vé đã bán ra (:min vé).',
+            'quantity.min' => $ticketType && $ticketType->sold > 0
+                ? 'Số lượng vé không được nhỏ hơn số vé đã bán ra (:min vé).'
+                : 'Số lượng vé phát hành phải ít nhất là :min vé.',
             'sale_start.required' => 'Vui lòng chọn thời gian mở bán.',
             'sale_end.required' => 'Vui lòng chọn thời gian kết thúc bán.',
             'sale_end.after' => 'Thời gian kết thúc bán phải sau thời gian mở bán.',

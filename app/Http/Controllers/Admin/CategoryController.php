@@ -58,6 +58,10 @@ class CategoryController extends Controller
             return back()->with('error', "Không thể xóa danh mục '{$category->name}' vì đang có sự kiện liên kết.");
         }
 
+        if ($category->events()->withTrashed()->exists()) {
+            return back()->with('error', "Không thể xóa danh mục '{$category->name}' vì vẫn còn sự kiện đã xóa mềm đang tham chiếu trong hệ thống.");
+        }
+
         $category->delete();
 
         return redirect()->route('admin.categories.index')

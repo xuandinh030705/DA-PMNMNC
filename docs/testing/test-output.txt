@@ -1,115 +1,131 @@
-﻿PHPUnit 12.5.40 by Sebastian Bergmann and contributors.
+PHPUnit 12.5.40 by Sebastian Bergmann and contributors.
 
 Runtime:       PHP 8.5.9
 Configuration: C:\Users\Quang\Desktop\DA-PMNMNC\phpunit.xml
 
+Time: 00:06.991, Memory: 118.00 MB
+
 Admin Management (Tests\Feature\AdminManagement)
- [x] Admin can approve pending event
- [x] Admin can reject pending event back to draft
- [x] Admin can cancel event
- [x] Admin cancelling event cascades to pending orders restores sold and cancels valid tickets
- [x] Admin cancelling event blocks checkin and payment and guards sold underflow
- [x] Admin cannot cancel already cancelled event
- [x] Admin event show displays ticket type zone and description
- [x] Admin order show displays zone description and checked in staff
- [x] Admin cannot delete category with existing events
- [x] Admin can toggle user lock status
- [x] Admin can access dashboard and manage categories and venues
+ ✔ Admin can approve pending event
+ ✔ Admin can reject pending event back to draft
+ ✔ Admin can cancel event
+ ✔ Admin cancelling event cascades to pending orders restores sold and cancels valid tickets
+ ✔ Admin cancelling event blocks checkin and payment and guards sold underflow
+ ✔ Admin cannot cancel already cancelled event
+ ✔ Admin event show displays ticket type zone and description
+ ✔ Admin order show displays zone description and checked in staff
+ ✔ Admin cannot delete category with existing events
+ ✔ Admin can toggle user lock status
+ ✔ Admin can access dashboard and manage categories and venues
+ ✔ Admin cannot delete category or venue referenced by soft deleted event
+ ✔ Admin dashboard top events ranks events with sold tickets above events without ticket types
 
 Auth (Tests\Feature\Auth)
- [x] User can register successfully
- [x] User can login with valid credentials
- [x] User cannot login with invalid credentials
- [x] Locked user is prevented from login
- [x] Authenticated user can update profile
- [x] User can logout safely
+ ✔ User can register successfully
+ ✔ User can login with valid credentials
+ ✔ User cannot login with invalid credentials
+ ✔ Locked user is prevented from login
+ ✔ Authenticated user can update profile
+ ✔ User can logout safely
 
 Authorization (Tests\Feature\Authorization)
- [x] Customer cannot access admin dashboard returns 403
- [x] Customer cannot access organizer dashboard returns 403
- [x] Organizer cannot edit other organizer event returns 403
- [x] Customer cannot view other customer order returns 403
- [x] Admin cannot self lock or self demote
+ ✔ Customer cannot access admin dashboard returns 403
+ ✔ Customer cannot access organizer dashboard returns 403
+ ✔ Organizer cannot edit other organizer event returns 403
+ ✔ Customer cannot view other customer order returns 403
+ ✔ Admin cannot self lock or self demote
+ ✔ Organizer cannot view other organizer order returns 403
 
 Checkin (Tests\Feature\Checkin)
- [x] Organizer can checkin valid paid ticket successfully
- [x] Checkin fails when ticket code does not exist
- [x] Checkin fails when order is not paid
- [x] Checkin fails when ticket is already used
- [x] Checkin fails when ticket belongs to another organizer
- [x] Checkin accepts a signed qr payload
- [x] Checkin rejects a qr payload with tampered signature
- [x] Checkin rejects malformed qr json
- [x] Checkin fails when ticket is cancelled via manual code and qr payload
- [x] Checkin with qr payload fails when order is not paid
- [x] Checkin with qr payload fails when ticket is already used
- [x] Checkin with qr payload fails when ticket belongs to another organizer
- [x] Checkin with qr payload fails when stored signature is corrupted
- [x] Checkin with qr payload fails when ticket does not exist
- [x] Checkin rejects empty and whitespace only input
- [x] Customer cannot access organizer checkin routes
- [x] Checkin accepts lowercase typed ticket code
- [x] Checkin form provides camera scanner and manual input
- [x] Checkin success card renders the flashed summary
+ ✔ Organizer can checkin valid paid ticket successfully
+ ✔ Checkin fails when ticket code does not exist
+ ✔ Checkin fails when order is not paid
+ ✔ Checkin fails when ticket is already used
+ ✔ Checkin fails when ticket belongs to another organizer
+ ✔ Checkin accepts a signed qr payload
+ ✔ Checkin rejects a qr payload with tampered signature
+ ✔ Checkin rejects malformed qr json
+ ✔ Checkin fails when ticket is cancelled via manual code and qr payload
+ ✔ Checkin with qr payload fails when order is not paid
+ ✔ Checkin with qr payload fails when ticket is already used
+ ✔ Checkin with qr payload fails when ticket belongs to another organizer
+ ✔ Checkin with qr payload fails when stored signature is corrupted
+ ✔ Checkin with qr payload fails when ticket does not exist
+ ✔ Checkin rejects empty and whitespace only input
+ ✔ Customer cannot access organizer checkin routes
+ ✔ Checkin accepts lowercase typed ticket code
+ ✔ Checkin form provides camera scanner and manual input
+ ✔ Checkin success card renders the flashed summary
+ ✔ Checkin gracefully fails if event was soft deleted
 
 Domain Models (Tests\Unit\DomainModels)
- [x] Ticket type remaining accessor never returns negative
- [x] User role helpers and enum alignment
+ ✔ Ticket type remaining accessor never returns negative
+ ✔ User role helpers and enum alignment
 
 Order And Payment (Tests\Feature\OrderAndPayment)
- [x] Customer can checkout tickets and create pending order
- [x] Checkout fails when no tickets selected
- [x] Checkout fails when quantity exceeds max per order
- [x] Checkout fails when quantity exceeds available remaining
- [x] Customer can pay order and tickets are generated
- [x] Order paid mail builds attachments and content
- [x] Storefront tickets and order show render qr code and pdf download
- [x] Storefront order show avoids n plus one queries on multiple tickets
- [x] Customer can cancel pending order and tickets are returned
- [x] Customer cannot cancel paid order
- [x] Artisan command expires pending orders and returns sold tickets
- [x] Paying expired order cancels order and restores tickets
+ ✔ Customer can checkout tickets and create pending order
+ ✔ Checkout fails when no tickets selected
+ ✔ Checkout fails when quantity exceeds max per order
+ ✔ Checkout fails when quantity exceeds available remaining
+ ✔ Customer can pay order and tickets are generated
+ ✔ Order paid mail builds attachments and content
+ ✔ Storefront tickets and order show render qr code and pdf download
+ ✔ Storefront order show avoids n plus one queries on multiple tickets
+ ✔ Customer can cancel pending order and tickets are returned
+ ✔ Customer cannot cancel paid order
+ ✔ Artisan command expires pending orders and returns sold tickets
+ ✔ Paying expired order cancels order and restores tickets
+ ✔ Mail transport failure does not rollback paid order
+ ✔ End to end checkout pay pdf and qr checkin flow
+ ✔ Checkout supports multiple ticket types in arbitrary input order
+ ✔ Cancelling order guards against sold underflow
+ ✔ Customer cannot pay order when event was cancelled
+ ✔ Cancelled tickets do not show ready to use in customer views
+ ✔ Organizer order show displays zone description and checked in staff
 
 Organizer Ticket Type (Tests\Feature\OrganizerTicketType)
- [x] Create form contains zone and description inputs
- [x] Organizer can store zone and description
- [x] Event page displays zone and description of each ticket type
- [x] Edit form prefills zone and description
- [x] Organizer can update and clear zone and description
- [x] Validation rejects overlong zone and description
- [x] Another organizer cannot update ticket type zone or description
+ ✔ Create form contains zone and description inputs
+ ✔ Organizer can store zone and description
+ ✔ Event page displays zone and description of each ticket type
+ ✔ Edit form prefills zone and description
+ ✔ Organizer can update and clear zone and description
+ ✔ Validation rejects overlong zone and description
+ ✔ Another organizer cannot update ticket type zone or description
+ ✔ Updating ticket type with zero sold rejects zero quantity
+ ✔ Soft deleting draft event preserves banner until force delete
 
 Qr Ticket Service (Tests\Unit\QrTicketService)
- [x] Payload is built from ticket code when missing
- [x] Png data uri contains a valid png image
- [x] Svg output contains svg markup
- [x] Signature is valid for untampered payload
- [x] Signature is rejected when payload is tampered
- [x] Signature is rejected when empty
- [x] Ticket signature helper matches service verification
- [x] Decode payload rejects plain ticket code
- [x] Payload uses existing stored qr payload when present
- [x] Png and svg data uri outputs are valid
- [x] Signature is rejected when app key changes
- [x] Has valid signature returns false when payload or signature is missing
- [x] Decode payload handles whitespace and rejects non string ticket code
+ ✔ Payload is built from ticket code when missing
+ ✔ Png data uri contains a valid png image
+ ✔ Svg output contains svg markup
+ ✔ Signature is valid for untampered payload
+ ✔ Signature is rejected when payload is tampered
+ ✔ Signature is rejected when empty
+ ✔ Ticket signature helper matches service verification
+ ✔ Decode payload rejects plain ticket code
+ ✔ Payload uses existing stored qr payload when present
+ ✔ Png and svg data uri outputs are valid
+ ✔ Signature is rejected when app key changes
+ ✔ Has valid signature returns false when payload or signature is missing
+ ✔ Decode payload handles whitespace and rejects non string ticket code
 
 Storefront (Tests\Feature\Storefront)
- [x] Can browse published events on home page
- [x] Can search events by title keyword
- [x] Can filter events by category and city
- [x] Unpublished event returns 404 on storefront
- [x] Can view published event details and displays ticket type zone and description
+ ✔ Can browse published events on home page
+ ✔ Can search events by title keyword
+ ✔ Can filter events by category and city
+ ✔ Unpublished event returns 404 on storefront
+ ✔ Can view published event details and displays ticket type zone and description
+ ✔ Storefront price sorting puts events without ticket types last
 
 Ticket Pdf (Tests\Feature\TicketPdf)
- [x] Ticket pdf is rendered in memory
- [x] Pdf filename uses ticket code
- [x] Ticket owner can download the ticket pdf
- [x] Customer cannot download someone elses ticket pdf
- [x] Guest is redirected to login when downloading ticket pdf
- [x] Ticket pdf renders in memory without persisting files on disk
- [x] Pdf view renders vietnamese unicode zone description qr and checkin metadata
- [x] Event organizer and admin can download pdf while other organizer is forbidden
- [x] Ticket owner can download pdf when legacy qr payload is null
+ ✔ Ticket pdf is rendered in memory
+ ✔ Pdf filename uses ticket code
+ ✔ Ticket owner can download the ticket pdf
+ ✔ Customer cannot download someone elses ticket pdf
+ ✔ Guest is redirected to login when downloading ticket pdf
+ ✔ Ticket pdf renders in memory without persisting files on disk
+ ✔ Pdf view renders vietnamese unicode zone description qr and checkin metadata
+ ✔ Event organizer and admin can download pdf while other organizer is forbidden
+ ✔ Ticket owner can download pdf when legacy qr payload is null
 
-OK (89 tests, 333 assertions)
+OK (103 tests, 411 assertions)

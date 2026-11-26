@@ -80,11 +80,11 @@
                                 @foreach ($order->orderItems as $item)
                                     <tr class="border-bottom">
                                         <td class="py-3">
-                                            <div class="fw-bold text-dark">{{ $item->ticketType->name }}</div>
-                                            @if ($item->ticketType->zone)
+                                            <div class="fw-bold text-dark">{{ $item->ticketType?->name ?? 'Loại vé không xác định' }}</div>
+                                            @if ($item->ticketType?->zone)
                                                 <span class="badge bg-secondary-subtle text-secondary-emphasis border me-1 small">{{ $item->ticketType->zone }}</span>
                                             @endif
-                                            <small class="text-muted">{{ $item->ticketType->event->title }}</small>
+                                            <small class="text-muted">{{ $item->ticketType?->event?->title ?? 'Sự kiện không còn tồn tại' }}</small>
                                         </td>
                                         <td class="text-center py-3 fw-semibold">x{{ $item->quantity }}</td>
                                         <td class="text-end py-3 text-muted">{{ number_format($item->unit_price, 0, ',', '.') }} đ</td>
@@ -193,7 +193,8 @@
                     @foreach ($order->tickets as $ticket)
                         @php
                             $ticketItem = $ticket->orderItem;
-                            $ticketEvent = $ticketItem->ticketType->event;
+                            $ticketType = $ticketItem?->ticketType;
+                            $ticketEvent = $ticketType?->event;
                         @endphp
                         <div class="col-md-6">
                             <div class="card card-ticket border border-2 rounded-3 p-3 bg-light shadow-sm position-relative">
@@ -214,24 +215,28 @@
                                     </span>
                                 </div>
 
-                                <h6 class="fw-bold text-dark mb-1 text-truncate">{{ $ticketEvent->title }}</h6>
+                                <h6 class="fw-bold text-dark mb-1 text-truncate">{{ $ticketEvent?->title ?? 'Sự kiện không còn tồn tại' }}</h6>
                                 <div class="small text-secondary mb-1">
-                                    <strong>Loại vé:</strong> {{ $ticketItem->ticketType->name }}
-                                    @if ($ticketItem->ticketType->zone)
-                                        <span class="badge bg-secondary-subtle text-secondary-emphasis border ms-1">{{ $ticketItem->ticketType->zone }}</span>
+                                    <strong>Loại vé:</strong> {{ $ticketType?->name ?? 'Không xác định' }}
+                                    @if ($ticketType?->zone)
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis border ms-1">{{ $ticketType->zone }}</span>
                                     @endif
                                 </div>
                                 <div class="small text-muted mb-2">
-                                    <i class="bi bi-clock me-1"></i> {{ $ticketEvent->start_time->format('H:i - d/m/Y') }}
+                                    <i class="bi bi-clock me-1"></i> {{ $ticketEvent?->start_time?->format('H:i - d/m/Y') ?? 'Chưa xác định' }}
                                 </div>
                                 <div class="small text-muted">
-                                    <i class="bi bi-geo-alt me-1 text-danger"></i> {{ $ticketEvent->venue->name }}
+                                    <i class="bi bi-geo-alt me-1 text-danger"></i> {{ $ticketEvent?->venue?->name ?? 'Không xác định' }}
                                 </div>
 
                                 <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
                                     @if ($ticket->isUsed())
                                         <small class="text-info fw-semibold">
                                             <i class="bi bi-check-all me-1"></i> Đã soát vé lúc: {{ $ticket->checked_in_at?->format('H:i d/m/Y') }}
+                                        </small>
+                                    @elseif ($ticket->isCancelled())
+                                        <small class="text-danger fw-semibold">
+                                            <i class="bi bi-x-circle me-1"></i> Vé đã bị hủy
                                         </small>
                                     @else
                                         <small class="text-success fw-semibold">

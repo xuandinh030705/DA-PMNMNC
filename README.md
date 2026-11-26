@@ -18,7 +18,7 @@
 6. [Cổng soát vé Camera QR & Kiểm thử ngoại tuyến](#6-cổng-soát-vé-camera-qr--kiểm-thử-ngoại-tuyến)
 7. [Danh sách tài khoản dùng thử (Demo Accounts)](#7-danh-sách-tài-khoản-dùng-thử-demo-accounts)
 8. [Cấu trúc thư mục dự án](#8-cấu-trúc-thư-mục-dự-án)
-9. [Kiểm thử tự động (PHPUnit - 89 Tests) & GitHub Actions CI](#9-kiểm-thử-tự-động-phpunit---89-tests--github-actions-ci)
+9. [Kiểm thử tự động (PHPUnit - 103 Tests) & GitHub Actions CI](#9-kiểm-thử-tự-động-phpunit---103-tests--github-actions-ci)
 10. [Tác vụ định kỳ (Background Command & Scheduler)](#10-tác-vụ-định-kỳ-background-command--scheduler)
 11. [Hệ thống tài liệu dự án](#11-hệ-thống-tài-liệu-dự-án)
 
@@ -249,9 +249,9 @@ DA_PMNM_NC/
 
 ---
 
-## 9. KIỂM THỬ TỰ ĐỘNG (PHPUNIT - 89 TESTS) & GITHUB ACTIONS CI
+## 9. KIỂM THỬ TỰ ĐỘNG (PHPUNIT - 103 TESTS) & GITHUB ACTIONS CI
 
-### 9.1 Bộ kiểm thử tự động toàn diện (89 Tests — 333 Assertions)
+### 9.1 Bộ kiểm thử tự động toàn diện (103 Tests — 411 Assertions)
 
 Dự án đạt độ phủ kiểm thử cao, kiểm chứng tự động toàn bộ các luồng nghiệp vụ cốt lõi:
 
@@ -260,14 +260,14 @@ Dự án đạt độ phủ kiểm thử cao, kiểm chứng tự động toàn 
 | `DomainModelsTest` | Unit | 2 | 29 | Logic accessor `remaining`, ánh xạ Enum và helper vai trò User. |
 | `QrTicketServiceTest` | Unit | 13 | 27 | Tạo ảnh SVG/PNG QR, tạo chữ ký số HMAC-SHA256, phát hiện payload giả mạo hoặc đổi `APP_KEY`. |
 | `AuthTest` | Feature | 6 | 26 | Đăng ký, đăng nhập, sai mật khẩu, chặn user bị khóa, cập nhật profile, đăng xuất. |
-| `AuthorizationTest` | Feature | 5 | 8 | Phân quyền vai trò, chặn truy cập chéo IDOR, chặn admin tự khóa/hạ quyền. |
-| `StorefrontTest` | Feature | 5 | 14 | Duyệt sự kiện, tìm kiếm từ khóa, lọc danh mục/thành phố, hiển thị `zone`/`description`, 404 sự kiện nháp. |
-| `OrderAndPaymentTest` | Feature | 12 | 47 | Đặt vé giữ chỗ 15p (`lockForUpdate`), thanh toán giả lập, `Mail::fake()`, hiển thị QR & nút tải PDF, chống N+1 query ở `orders.show`, hủy đơn hoàn vé, tự động hủy đơn quá hạn. |
-| `OrganizerTicketTypeTest` | Feature | 7 | 26 | Form tạo/sửa loại vé hỗ trợ `zone` & `description`, kiểm tra độ dài & phân quyền sửa xóa, hiển thị trong trang sự kiện BTC. |
-| `CheckinTest` | Feature | 19 | 61 | Soát vé 6 bước bằng mã tay & JSON QR có chữ ký HMAC, chặn mã giả mạo/sai cú pháp/hủy/hết hạn/chéo BTC, quét camera offline, hiển thị nhân viên soát vé. |
+| `AuthorizationTest` | Feature | 6 | 9 | Phân quyền vai trò, chặn truy cập chéo IDOR (Event/Order/Organizer Order), chặn admin tự khóa/hạ quyền. |
+| `StorefrontTest` | Feature | 6 | 18 | Duyệt sự kiện, tìm kiếm từ khóa, lọc danh mục/thành phố, sắp xếp giá (`price_asc`/`price_desc`), hiển thị `zone`/`description`, 404 sự kiện nháp. |
+| `OrderAndPaymentTest` | Feature | 19 | 93 | Đặt vé giữ chỗ 15p (`lockForUpdate`), thanh toán giả lập, chặn thanh toán khi sự kiện đã hủy, `Mail::fake()`, chịu lỗi mail transport khi offline, luồng E2E Checkout→PDF→QR Check-in, hiển thị QR/PDF & vé hủy ở Customer/Organizer, chống N+1 query ở `orders.show`, hủy đơn hoàn vé (bảo vệ không âm `sold`), tự động hủy đơn quá hạn. |
+| `OrganizerTicketTypeTest` | Feature | 9 | 37 | Form tạo/sửa loại vé hỗ trợ `zone` & `description`, kiểm tra độ dài/số lượng `min:1`, giữ banner khi xóa mềm draft & xóa file khi `forceDelete`, phân quyền sửa xóa. |
+| `CheckinTest` | Feature | 20 | 63 | Soát vé 6 bước bằng mã tay & JSON QR có chữ ký HMAC, chặn mã giả mạo/sai cú pháp/hủy/hết hạn/chéo BTC/sự kiện bị xóa mềm, quét camera offline, hiển thị nhân viên soát vé. |
 | `TicketPdfTest` | Feature | 9 | 27 | Render PDF trong RAM không ghi đĩa, font tiếng Việt Unicode, tên file chuẩn mã vé, kiểm tra quyền qua `OrderPolicy` (chặn tải trộm vé). |
-| `AdminManagementTest` | Feature | 11 | 68 | Phê duyệt/từ chối sự kiện, **Admin hủy sự kiện cascade** tự hủy đơn `pending` hoàn vé & hủy vé `valid`, hiển thị người soát vé, CRUD danh mục/địa điểm ràng buộc `RESTRICT`. |
-| **TỔNG CỘNG** | — | **89 tests** | **333 assertions** | **Passed 100% (0 failures, 0 errors)** |
+| `AdminManagementTest` | Feature | 13 | 82 | Phê duyệt/từ chối sự kiện, **Admin hủy sự kiện cascade** tự hủy đơn `pending` hoàn vé & hủy vé `valid`, hiển thị người soát vé, Top bán chạy, CRUD danh mục/địa điểm ràng buộc `RESTRICT` (kể cả sự kiện đã xóa mềm). |
+| **TỔNG CỘNG** | — | **103 tests** | **411 assertions** | **Passed 100% (0 failures, 0 errors)** |
 
 Chạy toàn bộ kiểm thử bằng lệnh:
 ```bash
@@ -289,7 +289,7 @@ File cấu hình [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) đư�
 - Cài đặt môi trường PHP 8.5 cùng các extension (`pdo_mysql`, `gd`,...).
 - Chạy kiểm tra chuẩn định dạng code `vendor/bin/pint --test`.
 - Chạy kiểm tra thực thi `php artisan migrate:fresh --seed` trên MySQL 8 thật.
-- Chạy toàn bộ 89 test case qua `php artisan test`.
+- Chạy toàn bộ 103 test case qua `php artisan test`.
 
 ---
 
@@ -319,5 +319,5 @@ php artisan schedule:work
 7. **[Kế hoạch nâng cấp 1 tháng (4 tuần)](./KE_HOACH_NANG_CAP_1_THANG.md)**
 8. **[Kịch bản Thuyết trình & Phản biện](./docs/DEMO_SCRIPT.md)**
 9. **[Thư viện Sơ đồ Thiết kế (PlantUML, PNG & Draw.io)](./docs/diagrams/README.md)** ([Bộ Prompt UML cho Draw.io](./docs/diagrams/DRAWIO_UML_PROMPTS.md))
-10. **[Tài liệu Kiểm thử Phần mềm](./docs/testing/test-cases.md)** (89 tests / 333 assertions)
+10. **[Tài liệu Kiểm thử Phần mềm](./docs/testing/test-cases.md)** (103 tests / 411 assertions)
 11. **[Nhật ký Dự án & Phân công Công việc](./docs/WORKLOG.md)**

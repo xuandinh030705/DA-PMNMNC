@@ -200,7 +200,7 @@ Lưu trữ vé điện tử với mã vé duy nhất phục vụ Check-in tại 
 | `order_item_id` | BIGINT UNSIGNED | FK | No | - | Khóa ngoại trỏ về `order_items.id`. |
 | `ticket_code` | VARCHAR(50) | UK | No | - | Mã tra cứu vé độc nhất (`TKT-XXXXXXXXXX`). |
 | `qr_payload` | TEXT | - | Yes | NULL | Chuỗi JSON sinh mã QR `{"v":1,"ticket_code":"TKT-..."}`. |
-| `qr_signature` | VARCHAR(64) | - | Yes | NULL | Chữ ký số HMAC-SHA256 ký payload bằng APP_KEY để chống giả mạo mã QR. |
+| `qr_signature` | VARCHAR(255) | - | Yes | NULL | Chữ ký số HMAC-SHA256 ký payload bằng APP_KEY để chống giả mạo mã QR. |
 | `status` | VARCHAR(50) | - | No | 'valid' | Trạng thái: `valid` (hợp lệ), `used` (đã dùng), `cancelled`. |
 | `checked_in_at` | DATETIME | - | Yes | NULL | Thời điểm quét mã check-in vào cửa. |
 | `checked_in_by` | BIGINT UNSIGNED | FK | Yes | NULL | Khóa ngoại trỏ về `users.id` (nhân viên đã soát vé). |

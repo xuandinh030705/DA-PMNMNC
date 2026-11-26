@@ -52,7 +52,7 @@
 
                     <div class="col-md-6">
                         <label for="quantity" class="form-label fw-semibold">Tổng số lượng phát hành <span class="text-danger">*</span></label>
-                        <input type="number" min="{{ $ticketType->sold }}" class="form-control @error('quantity') is-invalid @enderror" id="quantity" name="quantity" value="{{ old('quantity', $ticketType->quantity) }}" required>
+                        <input type="number" min="{{ max(1, $ticketType->sold) }}" class="form-control @error('quantity') is-invalid @enderror" id="quantity" name="quantity" value="{{ old('quantity', $ticketType->quantity) }}" required>
                         <div class="form-text small text-muted">Đã bán ra {{ $ticketType->sold }} vé (số lượng không thể nhỏ hơn mức này).</div>
                     </div>
                 </div>

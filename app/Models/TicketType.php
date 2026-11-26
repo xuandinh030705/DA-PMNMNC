@@ -47,6 +47,10 @@ class TicketType extends Model
 
     public function isOnSale(): bool
     {
+        if (! $this->event) {
+            return false;
+        }
+
         $now = now();
 
         return $this->event->isPublished()

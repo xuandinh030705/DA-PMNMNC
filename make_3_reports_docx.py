@@ -211,8 +211,8 @@ def generate_report_1(output_path):
         ("Nhóm thực hiện:", "Nhóm 8 - Lớp 68PM2 (Hồ Đăng Quang, Tống Xuân Định, Nguyễn Hữu Quý)"),
         ("Chuyên đề báo cáo:", "Mục 3: Xây Dựng Chức Năng Hệ Thống (PLO3)"),
         ("Số tiêu chí nghiệm thu:", "7/7 tiêu chí hoàn thành"),
-        ("Công nghệ sử dụng:", "Laravel 13, Blade, Bootstrap 5.3 CDN, Eloquent ORM"),
-        ("Trạng thái chức năng:", "Hoạt động ổn định, 37/37 tests pass (104 assertions)"),
+        ("Công nghệ sử dụng:", "Laravel 13, Blade, Bootstrap 5.3 CDN, MySQL 8, Endroid QR, DomPDF, html5-qrcode"),
+        ("Trạng thái chức năng:", "Hoạt động ổn định, 103/103 tests pass (411 assertions), Pint passed"),
     ]
     doc = create_base_document(
         "BÁO CÁO NGHIỆM THU KỸ THUẬT PHẦN MỀM",
@@ -226,13 +226,13 @@ def generate_report_1(output_path):
     
     headers = ["Tiêu Chí", "Nội Dung Tiêu Chí", "Mức Độ", "Minh Chứng Kỹ Thuật"]
     data = [
-        ["Tiêu chí 3.1", "Hoàn thành các chức năng CRUD chính", "100%", "CRUD Events, Ticket Types, Orders, Categories, Venues, Users"],
-        ["Tiêu chí 3.2", "Tìm kiếm, lọc, sắp xếp hoặc phân trang dữ liệu", "100%", "Storefront search/filter/sort, Admin filters, Pagination 9/10/12"],
-        ["Tiêu chí 3.3", "Áp dụng Laravel MVC: route, controller, model, blade", "100%", "4 Route files (57 app routes), Service Layer, 8 Models, 2 Master layouts"],
-        ["Tiêu chí 3.4", "Validation form nhập liệu", "100%", "11 FormRequests tiếng Việt có dấu, kiểm tra ngày, giá, số lượng"],
-        ["Tiêu chí 3.5", "Đăng nhập, đăng xuất, xác thực người dùng nếu phù hợp", "100%", "AuthController, throttle:5,1, Bcrypt hash, remember_token"],
-        ["Tiêu chí 3.6", "Giao diện Blade rõ ràng, dễ sử dụng, có layout/template", "100%", "layouts.app, layouts.panel, partials alerts/errors, Bootstrap 5 CDN"],
-        ["Tiêu chí 3.7", "Chức năng hoạt động ổn định, ít lỗi khi thao tác", "100%", "Khóa bi quan lockForUpdate, 5-step check-in, 37 Unit/Feature tests pass"],
+        ["Tiêu chí 3.1", "Hoàn thành các chức năng CRUD chính", "100%", "CRUD Events, Ticket Types (zone, description), Orders, Categories, Venues, Users"],
+        ["Tiêu chí 3.2", "Tìm kiếm, lọc, sắp xếp hoặc phân trang dữ liệu", "100%", "Storefront search/filter/sort, Admin/Org filters, Pagination 9/10/12"],
+        ["Tiêu chí 3.3", "Áp dụng Laravel MVC: route, controller, model, blade", "100%", "4 Route files (58 app routes), 4 Services, OrderPaidMail, 8 Models + 4 Enums"],
+        ["Tiêu chí 3.4", "Validation form nhập liệu", "100%", "11 FormRequests tiếng Việt có dấu, kiểm tra ngày, giá, số lượng, zone, QR payload"],
+        ["Tiêu chí 3.5", "Đăng nhập, đăng xuất, xác thực người dùng nếu phù hợp", "100%", "AuthController, throttle:5,1, Bcrypt hash, CheckActive, remember_token"],
+        ["Tiêu chí 3.6", "Giao diện Blade rõ ràng, dễ sử dụng, có layout/template", "100%", "layouts.app, layouts.panel, pdf.ticket, emails.order-paid, Bootstrap 5 CDN"],
+        ["Tiêu chí 3.7", "Chức năng hoạt động ổn định, ít lỗi khi thao tác", "100%", "lockForUpdate, QR HMAC, PDF RAM, Camera Check-in 6 bước, Admin cancel cascade, 103 tests"],
     ]
     add_styled_table(doc, headers, data, col_widths=[Inches(1.0), Inches(2.7), Inches(0.8), Inches(2.2)])
 
@@ -241,12 +241,12 @@ def generate_report_1(output_path):
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
         "Hệ thống triển khai trọn vẹn các cụm chức năng CRUD (Create - Read - Update - Delete) trên 6 phân hệ cốt lõi:\n"
-        "1. Quản lý Sự kiện (Events CRUD - Ban tổ chức & Admin): Tạo mới sự kiện, tải ảnh banner lưu storage, xem chi tiết, cập nhật nội dung, chuyển đổi trạng thái (draft -> pending -> published/cancelled), xóa sự kiện (xóa mềm qua softDeletes khi đã có đơn hàng).\n"
-        "2. Quản lý Hạng vé (Ticket Types CRUD - Ban tổ chức): Tạo các loại vé (VIP, Standard, Early Bird) lồng trong sự kiện, cập nhật giá, điều chỉnh số lượng phát hành, giới hạn vé mỗi đơn và thời gian mở/đóng bán.\n"
-        "3. Quản lý Đặt vé & Đơn hàng (Orders CRUD - Khách hàng & Admin): Đặt vé (Create), xem lịch sử đơn hàng cá nhân (Read), thanh toán/hủy đơn (Update status), tra cứu danh sách toàn sàn cho Admin.\n"
-        "4. Quản lý Danh mục (Categories CRUD - Admin): Thêm mới danh mục, tạo slug tự động, sửa mô tả, xóa danh mục (có cơ chế RESTRICT chặn xóa khi đang có sự kiện).\n"
-        "5. Quản lý Địa điểm (Venues CRUD - Admin): Thêm mới địa điểm, cập nhật sức chứa (capacity), sửa địa chỉ, chặn xóa khi có sự kiện liên kết.\n"
-        "6. Quản lý Người dùng (Users CRUD - Admin): Xem danh sách, tìm kiếm, chỉnh sửa vai trò (Role), kích hoạt hoặc khóa tài khoản (`is_active`)."
+        "1. Quản lý Sự kiện (Events CRUD - Ban tổ chức & Admin): Tạo mới sự kiện, tải ảnh banner lưu storage, xem chi tiết, cập nhật khi ở trạng thái `draft`, gửi duyệt (`pending`), Admin duyệt (`published`), từ chối (`draft`) hoặc hủy (`cancelled` với cascade hủy đơn pending hoàn vé & hủy vé valid), xóa mềm qua `SoftDeletes`.\n"
+        "2. Quản lý Hạng vé (Ticket Types CRUD - Ban tổ chức): Tạo/sửa/xóa các loại vé lồng trong sự kiện, hỗ trợ thêm khu vực (`zone`) và quyền lợi (`description`), cập nhật giá VNĐ, số lượng phát hành (không nhỏ hơn `sold`), giới hạn mỗi đơn và thời gian mở/đóng bán.\n"
+        "3. Quản lý Đặt vé, Đơn hàng & Vé điện tử (Orders & Tickets): Đặt vé giữ chỗ 15 phút, thanh toán giả lập, gửi email `OrderPaidMail` kèm PDF đính kèm, hiển thị mã QR ký HMAC-SHA256, tải vé PDF khổ A5 (`/my-tickets/{ticket}/pdf`), hủy đơn `pending`, tra cứu đơn hàng cho Organizer và Admin (đều hiển thị `zone`, `description` & nhân viên soát vé `checkedInBy`).\n"
+        "4. Quản lý Danh mục (Categories CRUD - Admin): Thêm mới danh mục, tạo slug tự động, sửa mô tả, xóa danh mục (cơ chế `RESTRICT` chặn xóa khi đang có sự kiện).\n"
+        "5. Quản lý Địa điểm (Venues CRUD - Admin): Thêm mới địa điểm, cập nhật sức chứa (`capacity`), sửa địa chỉ, chặn xóa khi có sự kiện liên kết.\n"
+        "6. Quản lý Người dùng (Users CRUD - Admin): Xem danh sách, tìm kiếm, chỉnh sửa vai trò (`UserRole`), kích hoạt hoặc khóa tài khoản (`is_active`)."
     )
 
     # 3.2
@@ -263,10 +263,10 @@ def generate_report_1(output_path):
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
         "Mô hình Model - View - Controller được hiện thực hóa với kiến trúc sạch (Clean Architecture):\n"
-        "• Routes (57 Application Routes): Tách thành 4 tệp độc lập `auth.php`, `storefront.php`, `organizer.php`, `admin.php`.\n"
-        "• Controllers: Tổ chức theo namespace `App\\Http\\Controllers\\Auth`, `Storefront`, `Organizer`, `Admin`. Áp dụng tư tưởng Skinny Controller, trích xuất logic giao dịch phức tạp sang Service Layer (`OrderService`, `TicketCheckinService`).\n"
-        "• Models: 8 Eloquent models trong `app/Models/` định nghĩa quan hệ 2 chiều (`belongsTo`, `hasMany`, `hasManyThrough`), scopes truy vấn cục bộ và accessors.\n"
-        "• Views: Hệ thống Blade template kế thừa phân cấp, tái sử dụng partials."
+        "• Routes (58 Application Routes): Tách thành 4 tệp độc lập `auth.php`, `storefront.php`, `organizer.php`, `admin.php`.\n"
+        "• Controllers, Services & Mailable: Tổ chức theo namespace `App\\Http\\Controllers\\Auth`, `Storefront`, `Organizer`, `Admin`; tách nghiệp vụ sang 4 Services (`OrderService`, `TicketCheckinService`, `QrTicketService`, `TicketPdfService`) và `OrderPaidMail`.\n"
+        "• Models & Enums: 8 Eloquent models trong `app/Models/` đồng bộ 4 Backed Enums (`UserRole`, `EventStatus`, `OrderStatus`, `TicketStatus`), quan hệ 2 chiều, scopes truy vấn cục bộ và accessors.\n"
+        "• Views: Hệ thống Blade template kế thừa phân cấp, tái sử dụng partials, kèm view `pdf/ticket.blade.php` và `emails/order-paid.blade.php`."
     )
 
     # 3.4
@@ -317,10 +317,11 @@ def generate_report_1(output_path):
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
         "Hệ thống đạt tính ổn định tối đa nhờ các cơ chế phòng thủ sâu:\n"
-        "1. Khóa bi quan (`lockForUpdate`): Ngăn ngừa 100% xung đột bán vé đồng thời (Race Condition).\n"
-        "2. Tự động thu hồi vé: Đơn hàng quá 15 phút chưa thanh toán được tự động hủy và hoàn trả vé vào kho (`orders:expire-pending`).\n"
-        "3. Soát vé 5 bước chặt chẽ: `TicketCheckinService` ngăn chặn vé giả, vé chưa trả tiền, vé bị hủy hoặc vé của sự kiện khác.\n"
-        "4. Bắt lỗi nghiệp vụ: Lớp ngoại lệ tùy biến `BusinessException` hiển thị thông báo lỗi thân thiện thay vì làm sập ứng dụng (500 Error)."
+        "1. Khóa bi quan (`lockForUpdate()`): Ngăn ngừa 100% xung đột bán vé đồng thời (Race Condition), check-in trùng và đảm bảo Admin hủy sự kiện cascade nhất quán.\n"
+        "2. Tự động thu hồi vé: Đơn hàng quá 15 phút chưa thanh toán được tự động hủy và hoàn trả vé vào kho (`orders:expire-pending` và Lazy Check).\n"
+        "3. Soát vé 6 bước & QR HMAC-SHA256: `TicketCheckinService` hỗ trợ quét Camera (`html5-qrcode.min.js` offline) lẫn nhập tay, xác thực chữ ký HMAC-SHA256 bằng `hash_equals()`, ngăn vé giả, vé chưa thanh toán, vé hủy hoặc vé BTC khác, và lưu `checked_in_by`.\n"
+        "4. Xuất PDF trong RAM & Chịu lỗi Mail: `TicketPdfService` tạo PDF khổ A5 bằng font DejaVu Sans không ghi đĩa; `OrderController@pay` bọc `try/catch` khi gửi `OrderPaidMail`.\n"
+        "5. Bắt lỗi nghiệp vụ: Lớp ngoại lệ tùy biến `BusinessException` hiển thị thông báo lỗi thân thiện thay vì làm sập ứng dụng."
     )
 
     doc.save(output_path)
@@ -335,8 +336,8 @@ def generate_report_2(output_path):
         ("Nhóm thực hiện:", "Nhóm 8 - Lớp 68PM2 (Hồ Đăng Quang, Tống Xuân Định, Nguyễn Hữu Quý)"),
         ("Chuyên đề báo cáo:", "Mục 4: Kiểm Thử & Bảo Mật + Mục 5: Triển Khai (PLO3)"),
         ("Số tiêu chí nghiệm thu:", "8/8 tiêu chí hoàn thành"),
-        ("Bộ kiểm thử tự động:", "37/37 Unit & Feature Tests Passed (104 Assertions, 0 Failures)"),
-        ("Tiêu chuẩn bảo mật:", "CSRF Token, Role/Active Middleware, Policies chống IDOR"),
+        ("Bộ kiểm thử tự động:", "103/103 Unit & Feature Tests Passed (411 Assertions, 0 Failures)"),
+        ("Tiêu chuẩn bảo mật:", "CSRF Token, Role/Active Middleware, Policies chống IDOR, QR HMAC-SHA256"),
     ]
     doc = create_base_document(
         "BÁO CÁO NGHIỆM THU KỸ THUẬT PHẦN MỀM",
@@ -350,14 +351,14 @@ def generate_report_2(output_path):
     
     headers = ["Nhóm", "Nội Dung Tiêu Chí Đánh Giá", "Mức Độ", "Minh Chứng Kỹ Thuật"]
     data = [
-        ["Kiểm thử", "Kiểm tra dữ liệu đầu vào và thông báo lỗi rõ ràng", "100%", "11 FormRequests, hiển thị lỗi dưới từng input form"],
-        ["Kiểm thử", "Xử lý lỗi: trống, sai định dạng, trùng mã, không tìm thấy", "100%", "Unique validation, ModelNotFound 404, BusinessException"],
-        ["Bảo mật", "Áp dụng CSRF, middleware, auth, phân quyền", "100%", "100% @csrf, CheckRole, CheckActive, EventPolicy, TicketTypePolicy, OrderPolicy"],
-        ["Kiểm thử", "Minh chứng kiểm thử chức năng", "100%", "37 Unit & Feature tests passed (104 assertions), docs/testing/*"],
-        ["Triển khai", "Project chạy được trên môi trường Laravel chuẩn", "100%", "PHP 8.5.9, Laravel 13, zero-node build CDN"],
-        ["Triển khai", "Database, migration, seed/script dữ liệu mẫu", "100%", "10 migrations (7 nghiệp vụ), DatabaseSeeder nạp 8 users, 4 venues, 8 events, 4 orders"],
-        ["Triển khai", "Hướng dẫn cài đặt và chạy hệ thống", "100%", "README.md hướng dẫn Windows, Linux, macOS, switch MySQL"],
-        ["Triển khai", "Mã nguồn tổ chức rõ, nộp đầy đủ, không thiếu file quan trọng", "100%", "Cây thư mục chuẩn Laravel, .env, .env.example, vendor/, database.sqlite"],
+        ["Kiểm thử", "Kiểm tra dữ liệu đầu vào và thông báo lỗi rõ ràng", "100%", "11 FormRequests, hiển thị lỗi tiếng Việt dưới từng input form"],
+        ["Kiểm thử", "Xử lý lỗi: trống, sai định dạng, trùng mã, không tìm thấy", "100%", "Unique validation, ModelNotFound 404, BusinessException, chịu lỗi mail offline"],
+        ["Bảo mật", "Áp dụng CSRF, middleware, auth, phân quyền & chữ ký QR", "100%", "100% @csrf, CheckRole, CheckActive, 3 Policies (cả PDF), QR HMAC-SHA256"],
+        ["Kiểm thử", "Minh chứng kiểm thử chức năng", "100%", "103 Unit & Feature tests passed (411 assertions), Pint passed, GitHub Actions CI"],
+        ["Triển khai", "Project chạy được trên môi trường Laravel chuẩn", "100%", "PHP 8.5.9 (gd, pdo_mysql), Laravel 13, zero-node build CDN, html5-qrcode local"],
+        ["Triển khai", "Database, migration, seed/script dữ liệu mẫu", "100%", "12 migrations (7 nghiệp vụ + 2 nâng cấp), DatabaseSeeder + TicketboxEventSeeder"],
+        ["Triển khai", "Hướng dẫn cài đặt và chạy hệ thống", "100%", "README.md hướng dẫn MySQL 8, XAMPP/Laragon, SQLite dự phòng, ext-gd, Mailpit"],
+        ["Triển khai", "Mã nguồn tổ chức rõ, nộp đầy đủ, không thiếu file quan trọng", "100%", "Cây thư mục chuẩn Laravel, .github/workflows/ci.yml, .env.example, docs & sơ đồ"],
     ]
     add_styled_table(doc, headers, data, col_widths=[Inches(1.0), Inches(2.7), Inches(0.8), Inches(2.2)])
 
@@ -369,46 +370,48 @@ def generate_report_2(output_path):
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
         "Mọi dữ liệu gửi lên từ người dùng qua phương thức POST/PUT đều được kiểm tra nghiêm ngặt:\n"
-        "• Kiểm tra dữ liệu tại Form Request trước khi vào Controller.\n"
-        "• Khi có lỗi, hệ thống tự động redirect về form cũ kèm dữ liệu nhập trước đó (`old()`) và danh sách lỗi (`$errors`).\n"
-        "• Tầng View hiển thị thông báo lỗi chi tiết ngay dưới từng trường nhập liệu bằng lớp CSS `.is-invalid` và `.invalid-feedback` của Bootstrap 5, giúp người dùng dễ dàng nhận diện và sửa lỗi."
+        "• Kiểm tra dữ liệu tại 11 Form Request trước khi vào Controller (bao gồm `zone`, `description` và dữ liệu quét QR).\n"
+        "• Khi có lỗi, hệ thống tự động redirect về form cũ kèm dữ liệu nhập trước đó (`old()`) và danh sách lỗi (`$errors`); riêng chuỗi JSON quét QR lỗi không điền ngược lại vào ô nhập tay.\n"
+        "• Tầng View hiển thị thông báo lỗi chi tiết ngay dưới từng trường nhập liệu bằng lớp CSS `.is-invalid` và `.invalid-feedback` của Bootstrap 5."
     )
 
-    h2 = doc.add_heading("4.2. Xử Lý Các Trường Hợp Ngoại Lệ & Lỗi Thường Gặp", level=2)
+    h2 = doc.add_heading("4.2. Xử Lý Các Trường Hợp Ngoại Lệ & Vận Hành Offline", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "• Lỗi để trống / sai định dạng: Bắt buộc thông qua các rules `required`, `email`, `numeric`, `date`, `min`, `max`.\n"
-        "• Lỗi trùng lặp dữ liệu: Rule `unique:users,email` chặn trùng email đăng ký; slug sự kiện tự động thêm hậu tố số tăng dần nếu trùng tiêu đề; mã đơn `ORD-` và mã vé `TKT-` sinh ngẫu nhiên và kiểm tra tồn tại qua vòng lặp `while`.\n"
-        "• Lỗi không tìm thấy dữ liệu: Route Model Binding tự động ném ngoại lệ `ModelNotFoundException` và chuyển hướng đến trang lỗi 404 thân thiện (`resources/views/errors/404.blade.php`).\n"
-        "• Lỗi vi phạm ràng buộc nghiệp vụ: Được ném thông qua `BusinessException` (ví dụ: mua quá số lượng vé khả dụng, đơn hàng đã hết hạn) và hiển thị thông báo flash màu đỏ trên giao diện."
+        "• Lỗi để trống / sai định dạng: Bắt buộc thông qua các rules `required`, `email`, `numeric`, `date`, `min`, `max`, `mimes`, `in`.\n"
+        "• Lỗi trùng lặp dữ liệu: Rule `unique:users,email` chặn trùng email đăng ký; slug sự kiện tự động thêm hậu tố số tăng dần nếu trùng tiêu đề; mã đơn `ORD-` và mã vé `TKT-` sinh ngẫu nhiên và kiểm tra tồn tại qua vòng lặp `do ... while`.\n"
+        "• Lỗi không tìm thấy dữ liệu: Route Model Binding tự động chuyển hướng đến trang lỗi 404 thân thiện (`resources/views/errors/404.blade.php`).\n"
+        "• Lỗi nghiệp vụ & Lỗi Mail Transport: Ném qua `BusinessException` hiển thị flash đỏ; bước gửi `OrderPaidMail` bọc `try/catch` + `report()` để lỗi SMTP khi chạy offline không làm rollback đơn hàng đã thanh toán."
     )
 
-    h2 = doc.add_heading("4.3. Bảo Mật Toàn Diện: CSRF, Middleware, Auth & Phân Quyền", level=2)
+    h2 = doc.add_heading("4.3. Bảo Mật Toàn Diện: CSRF, XSS, Chữ ký số QR, Middleware & Policies", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "• Bảo vệ CSRF: 100% các thẻ `<form>` thực hiện hành động POST, PUT, DELETE đều nhúng directive `@csrf` để chống tấn công Cross-Site Request Forgery.\n"
-        "• Middleware tầng Route:\n"
-        "  - `CheckRole`: Ngăn chặn khách hàng truy cập vào `/organizer/*` hoặc `/admin/*` (trả về lỗi `403 Forbidden`).\n"
-        "  - `CheckActive`: Kiểm tra ngay lập tức trạng thái tài khoản. Nếu bị Admin khóa, hệ thống tự động hủy phiên và đẩy về màn hình đăng nhập.\n"
-        "• Policies tầng Resource (Chống tấn công IDOR): `EventPolicy` và `OrderPolicy` đảm bảo mỗi người dùng chỉ thao tác đúng trên tài nguyên thuộc quyền sở hữu của mình."
+        "• Bảo vệ CSRF & XSS: 100% các thẻ `<form>` thực hiện POST/PUT/DELETE đều nhúng `@csrf`; 100% output Blade dùng `{{ ... }}` (không dùng `{!! !!}`).\n"
+        "• Bảo vệ mã vé QR bằng HMAC-SHA256: Payload JSON `{\"v\":1,\"ticket_code\":\"TKT-...\"}` ký bằng `APP_KEY` và kiểm tra hằng thời gian qua `hash_equals()` trong `QrTicketService`.\n"
+        "• Middleware tầng Route: `CheckRole` chặn truy cập trái vai trò (403); `CheckActive` tự động đăng xuất khi tài khoản bị khóa; `throttle:5,1` chống brute-force đăng nhập.\n"
+        "• Policies tầng Resource (Chống IDOR): `EventPolicy`, `TicketTypePolicy`, `OrderPolicy` bảo vệ cả route tải vé PDF `/my-tickets/{ticket}/pdf` và đơn hàng của Organizer."
     )
 
-    h2 = doc.add_heading("4.4. Minh Chứng Kiểm Thử Chức Năng (37 Unit & Feature Tests)", level=2)
+    h2 = doc.add_heading("4.4. Minh Chứng Kiểm Thử Chức Năng (103 Unit & Feature Tests / 411 Assertions)", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "Dự án được trang bị bộ kiểm thử tự động hoàn chỉnh gồm 37 ca kiểm thử (2 Unit + 35 Feature), "
-        "chạy thực tế qua lệnh `php artisan test` và đạt tỉ lệ thành công 100% (104 assertions, 0 failures):"
+        "Dự án được trang bị bộ kiểm thử tự động hoàn chỉnh gồm 103 ca kiểm thử (15 Unit + 88 Feature) trên 10 test suites, "
+        "chạy thực tế qua lệnh `php artisan test` đạt tỉ lệ thành công 100% (411 assertions, 0 failures) và `vendor/bin/pint --test` sạch 100%:"
     )
 
     test_summary_headers = ["Nhóm Kiểm Thử (Test Class)", "Số Test", "Số Assertions", "Mục Tiêu Kiểm Định"]
     test_summary_data = [
-        ["DomainModelsTest (Unit)", "2 tests", "9 assertions", "Accessor remaining của TicketType, role helpers & đối chiếu Enum"],
-        ["AuthTest", "6 tests", "24 assertions", "Đăng ký, đăng nhập đúng/sai, chặn tài khoản bị khóa, profile, đăng xuất"],
-        ["AuthorizationTest", "5 tests", "8 assertions", "Chặn trái quyền Admin/Organizer, bảo vệ IDOR Event/Order, chặn admin tự khóa/hạ quyền"],
-        ["StorefrontTest", "4 tests", "9 assertions", "Duyệt sự kiện công khai, tìm kiếm từ khóa, lọc danh mục/thành phố, 404 bản nháp"],
-        ["OrderAndPaymentTest", "9 tests", "26 assertions", "Đặt vé giữ chỗ 15p, giới hạn vé/tồn kho, thanh toán giả lập, hủy đơn, quá hạn command & pay"],
-        ["CheckinTest", "5 tests", "9 assertions", "Soát vé hợp lệ, không tồn tại, chưa trả tiền, đã dùng, thuộc sự kiện Organizer khác"],
-        ["AdminManagementTest", "6 tests", "19 assertions", "Duyệt/từ chối/hủy sự kiện, chặn xóa danh mục có sự kiện, khóa/mở user, dashboard & CRUD"],
+        ["DomainModelsTest (Unit)", "2 tests", "29 assertions", "Accessor remaining của TicketType, role helpers & đối chiếu Enum"],
+        ["QrTicketServiceTest (Unit)", "13 tests", "27 assertions", "Payload QR, PNG/SVG Data URI, ký & verify HMAC-SHA256, đổi APP_KEY"],
+        ["AuthTest", "6 tests", "26 assertions", "Đăng ký, đăng nhập đúng/sai, chặn tài khoản bị khóa, profile, đăng xuất"],
+        ["AuthorizationTest", "6 tests", "9 assertions", "Chặn trái quyền Admin/Organizer, chống IDOR Event/Order/Organizer Order, chặn tự khóa"],
+        ["StorefrontTest", "6 tests", "18 assertions", "Duyệt sự kiện, tìm/lọc, sort giá NULL cuối, 404 bản nháp, hiển thị zone/description"],
+        ["OrderAndPaymentTest", "19 tests", "93 assertions", "Giữ chỗ 15p, chặn pay event hủy, OrderPaidMail, chịu lỗi mail, chống N+1, chống âm sold, E2E & checkedInBy"],
+        ["OrganizerTicketTypeTest", "9 tests", "37 assertions", "Form tạo/sửa zone & description, validate độ dài/min 1, giữ banner soft-delete, chặn BTC khác"],
+        ["CheckinTest", "20 tests", "63 assertions", "Soát vé 6 bước bằng mã tay & JSON QR HMAC, chặn mã giả/hủy/chéo BTC/xóa mềm, camera offline"],
+        ["TicketPdfTest", "9 tests", "27 assertions", "Render PDF khổ A5 trong RAM không ghi đĩa, tiếng Việt Unicode, quyền tải PDF qua OrderPolicy"],
+        ["AdminManagementTest", "13 tests", "82 assertions", "Duyệt/từ chối sự kiện, hủy cascade, Top bán chạy, RESTRICT kể cả soft-deleted, khóa user, checkedInBy"],
     ]
     add_styled_table(doc, test_summary_headers, test_summary_data, col_widths=[Inches(1.8), Inches(0.9), Inches(1.3), Inches(2.7)])
 
@@ -416,37 +419,33 @@ def generate_report_2(output_path):
     h1 = doc.add_heading("MỤC 5: TRIỂN KHAI DỰ ÁN", level=1)
     h1.runs[0].font.color.rgb = RGBColor(30, 58, 138)
 
-    h2 = doc.add_heading("5.1. Môi Trường Chạy Chuẩn & Triển Khai Không Cần Node.js", level=2)
+    h2 = doc.add_heading("5.1. Môi Trường Chạy Chuẩn, Zero-Node & Offline", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "• Yêu cầu môi trường: PHP >= 8.3 (đã kiểm thử trên PHP 8.5.9), Composer 2.x, SQLite 3 hoặc MySQL 8.0+.\n"
-        "• Triển khai Zero-Node: Toàn bộ CSS và Javascript được nhúng qua mạng phân phối nội dung CDN (Bootstrap 5.3 và Bootstrap Icons), "
-        "loại bỏ hoàn toàn bước biên dịch tài nguyên nặng nề (`npm install` hay `npm run build`), cho phép khởi chạy ngay lập tức trên bất kỳ máy tính nào."
+        "• Yêu cầu môi trường: PHP >= 8.3 (đã kiểm thử trên PHP 8.5.9) kèm extension `pdo_mysql`, `gd`, `mbstring`, `openssl`, `fileinfo`, `zip`; Composer 2.x; MySQL 8.0+ Community Server (mặc định) hoặc SQLite dự phòng.\n"
+        "• Triển khai Zero-Node & Offline: Giao diện dùng Bootstrap 5.3 CDN & Bootstrap Icons CDN (không cần Node.js / `npm run build`); thư viện camera quét QR `html5-qrcode.min.js` lưu cục bộ trong `public/js/`; QR và PDF sinh hoàn toàn cục bộ trong RAM."
     )
 
     h2 = doc.add_heading("5.2. Cơ Sở Dữ Liệu & Kịch Bản Nạp Dữ Liệu Mẫu (Seed Data)", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "Hệ thống đi kèm trọn bộ 10 migration (7 nghiệp vụ) và 5 seeder classes nạp sẵn dữ liệu phong phú để demo ngay:\n"
+        "Hệ thống đi kèm trọn bộ 12 migrations (3 core + 7 nghiệp vụ + 2 nâng cấp) và 6 seeder classes trong `DatabaseSeeder`:\n"
         "• Lệnh khởi tạo một bước: `php artisan migrate:fresh --seed --force` và `php artisan storage:link`\n"
-        "• Dữ liệu mẫu khởi tạo: 8 tài khoản (1 Admin, 2 Organizer, 5 Customer dùng email @example.com), 5 danh mục, 4 địa điểm tổ chức, 8 sự kiện (5 published, 1 draft, 1 pending, 1 cancelled) với 16 loại vé, 4 đơn hàng và 3 vé điện tử."
+        "• Dữ liệu mẫu khởi tạo: 8 tài khoản mẫu (`@example.com`), 6 danh mục, 4 địa điểm, 8 sự kiện mẫu + 14 sự kiện thật từ `TicketboxEventSeeder` (kèm ảnh banner & 14 BTC `@ticketbox.local`), 4 đơn hàng và 3 vé điện tử."
     )
 
-    h2 = doc.add_heading("5.3. Hướng Dẫn Cài Đặt & Chuyển Đổi Hệ Quản Trị CSDL", level=2)
+    h2 = doc.add_heading("5.3. Hướng Dẫn Cài Đặt, Mailpit & GitHub Actions CI", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "Tệp `README.md` hướng dẫn chi tiết từng câu lệnh khởi chạy trên Windows (PowerShell/CMD), Linux và macOS. "
-        "Ngoài ra, dự án cung cấp tài liệu chi tiết cách chuyển đổi từ SQLite sang MySQL (XAMPP/Laragon) chỉ bằng việc thay đổi biến môi trường trong `.env`:\n"
-        "`DB_CONNECTION=mysql`\n"
-        "`DB_HOST=127.0.0.1`\n"
-        "`DB_DATABASE=event_ticket`"
+        "Tệp `README.md` và `.env.example` hướng dẫn chi tiết cài đặt MySQL 8.0 (DB `event_ticket`, `utf8mb4_unicode_ci`), XAMPP/Laragon, chuyển sang SQLite dự phòng, cấu hình Mailpit (`127.0.0.1:1025`, web `8025`) hoặc `MAIL_MAILER=log` khi offline.\n"
+        "Đồng thời, workflow `.github/workflows/ci.yml` tự động chạy `vendor/bin/pint --test`, `php artisan migrate:fresh --seed --force` và toàn bộ 103 test cases trên container `mysql:8.0` mỗi khi push/PR."
     )
 
     h2 = doc.add_heading("5.4. Tổ Chức Mã Nguồn & Tính Đầy Đủ", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "Dự án được bàn giao đầy đủ tệp mã nguồn, cấu hình `.env` / `.env.example`, thư viện `vendor/`, CSDL SQLite đã seed, "
-        "liên kết `public/storage`, bộ kiểm thử tự động và toàn bộ tài liệu thiết kế/sơ đồ."
+        "Dự án được bàn giao đầy đủ mã nguồn Laravel, cấu hình `.env.example`, workflow CI `.github/workflows/ci.yml`, "
+        "thư viện `public/js/html5-qrcode.min.js`, liên kết `public/storage`, bộ 103 kiểm thử tự động và toàn bộ tài liệu thiết kế/sơ đồ."
     )
 
     doc.save(output_path)
@@ -460,14 +459,14 @@ def generate_report_3(output_path):
         ("Tên dự án:", "Hệ Thống Quản Lý Bán Vé Sự Kiện Trực Tuyến"),
         ("Nhóm thực hiện:", "Nhóm 8 - Lớp 68PM2"),
         ("Danh sách thành viên:", "Hồ Đăng Quang (0021568), Tống Xuân Định (0008268), Nguyễn Hữu Quý (0022968)"),
+        ("Repository GitHub:", "https://github.com/xuandinh030705/DA-PMNMNC"),
         ("Chuyên đề báo cáo:", "Mục 6: Làm Việc Nhóm (PLO6) + Mục 7: Trình Bày & Bảo Vệ (PLO1, PLO2, PLO3)"),
-        ("Quản lý tiến độ:", "Phân công 3 thành viên theo docs/WORKLOG.md & docs/PROGRESS.md"),
-        ("Kịch bản Demo & Q&A:", "Kịch bản demo 8-10 phút cho 3 người & 15 câu hỏi phản biện"),
+        ("Quản lý tiến độ:", "GitHub Flow (PR + CI/CD MySQL 8), docs/WORKLOG.md & docs/PROGRESS.md"),
     ]
     doc = create_base_document(
         "BÁO CÁO NGHIỆM THU KỸ THUẬT PHẦN MỀM",
         "HỆ THỐNG QUẢN LÝ BÁN VÉ SỰ KIỆN\n(EVENT TICKET MANAGEMENT SYSTEM)",
-        "BÁO CÁO MỤC 6 & 7: LÀM VIỆC NHÓM & BẢO VỆ ĐỒ ÁN (PLO6, PLO1, PLO2, PLO3)\n(PHÂN CÔNG TIẾN ĐỘ, NHẬT KÝ LÀM VIỆC, KỊCH BẢN DEMO & PHẢN BIỆN)",
+        "BÁO CÁO MỤC 6 & 7: LÀM VIỆC NHÓM & BẢO VỆ ĐỒ ÁN (PLO6, PLO1, PLO2, PLO3)\n(PHÂN CÔNG TIẾN ĐỘ, GITHUB FLOW, KỊCH BẢN DEMO & PHẢN BIỆN)",
         meta
     )
 
@@ -476,11 +475,11 @@ def generate_report_3(output_path):
     
     headers = ["Nhóm", "Nội Dung Tiêu Chí Đánh Giá", "Trạng Thái", "Minh Chứng & Lưu Ý"]
     data = [
-        ["Nhóm", "Phân công nhiệm vụ rõ ràng giữa thành viên", "Hoàn thành", "Bảng phân chia 3 thành viên Nhóm 8 - Lớp 68PM2 trong docs/WORKLOG.md"],
-        ["Nhóm", "Các thành viên có đóng góp phù hợp", "Hoàn thành", "Phân chia đồng đều (34% / 33% / 33%) gắn trách nhiệm từng phân hệ"],
-        ["Nhóm", "Nhật ký làm việc, commit Git hoặc minh chứng tiến độ", "Có nhật ký MD", "docs/WORKLOG.md, docs/PROGRESS.md (khuyến nghị git init & push repo thật)"],
-        ["Nhóm", "Phối hợp, giải quyết vấn đề, hoàn thành đúng hạn", "Hoàn thành", "Giải quyết lockForUpdate, giữ chỗ 15p + scheduler, chống N+1, soft delete"],
-        ["Bảo vệ", "Demo sản phẩm và trả lời câu hỏi về phân tích, thiết kế, code", "Sẵn sàng", "docs/DEMO_SCRIPT.md (8-10 phút demo theo 3 thành viên + 15 câu Q&A)"],
+        ["Nhóm", "Phân công nhiệm vụ rõ ràng giữa thành viên", "100% Hoàn thành", "Bảng phân chia 3 thành viên trong docs/WORKLOG.md & KE_HOACH_NANG_CAP_1_THANG.md"],
+        ["Nhóm", "Các thành viên có đóng góp phù hợp", "100% Hoàn thành", "Phân chia đồng đều (34% / 33% / 33%) gắn trách nhiệm từng phân hệ & PR"],
+        ["Nhóm", "Nhật ký làm việc, commit Git hoặc minh chứng tiến độ", "100% Hoàn thành", "Repository GitHub (xuandinh030705/DA-PMNMNC), GitHub Flow, CI/CD, WORKLOG.md"],
+        ["Nhóm", "Phối hợp, giải quyết vấn đề, hoàn thành đúng hạn", "100% Hoàn thành", "Giải quyết lockForUpdate, QR HMAC, PDF RAM, Camera offline, N+1, Admin cascade"],
+        ["Bảo vệ", "Demo sản phẩm và trả lời câu hỏi về phân tích, thiết kế, code", "Sẵn sàng", "docs/DEMO_SCRIPT.md (8-10 phút demo 3 chặng + 15 câu Q&A cập nhật mới nhất)"],
     ]
     add_styled_table(doc, headers, data, col_widths=[Inches(0.9), Inches(2.7), Inches(0.9), Inches(2.2)])
 
@@ -491,33 +490,34 @@ def generate_report_3(output_path):
     h2 = doc.add_heading("6.1. Phân Công Nhiệm Vụ Rõ Ràng Giữa Các Thành Viên (Nhóm 8 - Lớp 68PM2)", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "Nhóm 8 (Lớp 68PM2) gồm 3 thành viên được phân công nhiệm vụ cụ thể, đồng bộ với docs/WORKLOG.md:"
+        "Nhóm 8 (Lớp 68PM2) gồm 3 thành viên được phân công nhiệm vụ cụ thể qua cả giai đoạn nền tảng và kế hoạch nâng cấp 4 tuần:"
     )
 
     team_headers = ["Thành Viên & MSSV", "Vai Trò Trong Nhóm", "Mảng Phụ Trách", "Tỷ Lệ"]
     team_data = [
-        ["Hồ Đăng Quang\n(MSSV: 0021568)", "Trưởng nhóm / Architect & Storefront", "Phân tích yêu cầu (SRS), SPEC.md, Layouts (app/panel), Storefront lọc/tìm, OrderService (lockForUpdate), Thanh toán giả lập, Vé của tôi, Demo Chặng 1", "34%"],
-        ["Tống Xuân Định\n(MSSV: 0008268)", "Backend, DB & Organizer Dev", "Thiết kế CSDL 3NF, 10 Migrations, 8 Models, Seeders, Auth & Profile, Middleware, 3 Policies, Phân hệ Organizer & Check-in 5 bước, Scheduler, Demo Chặng 2", "33%"],
-        ["Nguyễn Hữu Quý\n(MSSV: 0022968)", "Admin Dev, QA & Architecture", "Phân hệ Admin (Dashboard, Danh mục, Địa điểm, Người dùng, Duyệt sự kiện, Đơn hàng), 37 Unit/Feature Tests, test-cases.md, 8 Sơ đồ PlantUML + PNG, Báo cáo, Demo Chặng 3", "33%"],
+        ["Hồ Đăng Quang\n(MSSV: 0021568)", "Trưởng nhóm / Architect & Storefront", "SRS, SPEC.md, GitHub Flow/PR, MySQL 8 (.env.example), Layouts, Storefront (zone/description), OrderService, OrderPaidMail + Mailpit, tối ưu N+1, README.md, Demo Chặng 1", "34%"],
+        ["Tống Xuân Định\n(MSSV: 0008268)", "Backend, DB, QR/PDF & Organizer Dev", "CSDL 3NF, 12 Migrations, 8 Models, Seeders (kèm Ticketbox), Auth/Middleware/3 Policies, QrTicketService (HMAC), TicketPdfService, Camera Check-in 6 bước (html5-qrcode), zone Organizer, Demo Chặng 2", "33%"],
+        ["Nguyễn Hữu Quý\n(MSSV: 0022968)", "Admin Dev, QA, CI/CD & Architecture", "Admin Dashboard/CRUD RESTRICT/Users/Duyệt & Hủy sự kiện cascade (checkedInBy), đồng bộ 4 Enums, GitHub Actions CI (MySQL 8), 103 Unit/Feature Tests, tài liệu testing & báo cáo, Demo Chặng 3", "33%"],
     ]
     add_styled_table(doc, team_headers, team_data, col_widths=[Inches(1.5), Inches(1.5), Inches(3.0), Inches(0.7)])
 
-    h2 = doc.add_heading("6.2. Nhật Ký Tiến Độ & Lưu Ý Quản Lý Mã Nguồn Git", level=2)
+    h2 = doc.add_heading("6.2. Quy trình Quản lý Mã nguồn Git & GitHub Actions CI/CD", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "Toàn bộ tiến độ phát triển qua 7 Phase (Phase 0 đến Phase 6) được ghi nhận chi tiết tại [docs/WORKLOG.md] và [docs/PROGRESS.md].\n"
-        "Lưu ý quan trọng: Trong thư mục dự án hiện tại chưa khởi tạo thư mục `.git`. Để đạt điểm tối đa cho Tiêu chí 6.3, "
-        "nhóm cần thực hiện `git init`, đẩy mã nguồn lên GitHub/GitLab và phân công các thành viên tạo commit theo phân hệ phụ trách."
+        "Toàn bộ mã nguồn được quản lý trên GitHub (`https://github.com/xuandinh030705/DA-PMNMNC`) theo quy trình GitHub Flow:\n"
+        "• Mỗi thành viên tạo nhánh riêng theo đầu việc (`chore/mysql8-setup`, `feat/qr-and-pdf-services`, `chore/github-actions-and-enums`, `feat/camera-checkin-and-organizer-zone`, `feat/storefront-qr-pdf-and-email`, `feat/admin-cancel-cascade-and-views`, `test/...`, `fix/...`), mở Pull Request vào `develop` / `main` và review chéo.\n"
+        "• Workflow `.github/workflows/ci.yml` tự động chạy `pint --test`, `migrate:fresh --seed` và `php artisan test` trên container MySQL 8.0.\n"
+        "• Nhật ký chi tiết qua từng ngày và 4 tuần nâng cấp được ghi nhận đầy đủ tại `docs/WORKLOG.md` và `docs/PROGRESS.md`."
     )
 
     h2 = doc.add_heading("6.3. Phối Hợp & Giải Quyết Các Vấn Đề Kỹ Thuật Phức Tạp", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
         "Trong quá trình phát triển và rà soát kiểm thử, các vấn đề kỹ thuật trọng yếu đã được xử lý triệt để:\n"
-        "1. Chống Race Condition khi mua vé: Áp dụng Khóa bi quan (`lockForUpdate`) trong `DB::transaction()` tại `OrderService`.\n"
-        "2. Thu hồi vé giữ chỗ quá hạn 15 phút: Kết hợp Lazy Check khi xem/thanh toán đơn quá hạn và Scheduler `orders:expire-pending` chạy mỗi phút trong `routes/console.php`.\n"
-        "3. Tối ưu truy vấn chống N+1: Áp dụng Eager Loading `with()`, `withCount()`, `withMin()`, `withSum()`.\n"
-        "4. Toàn vẹn dữ liệu & đồng bộ giao diện: `RESTRICT` cho Danh mục/Địa điểm, `SoftDeletes` cho Sự kiện, đồng bộ CSS giữa `layouts/app` và `layouts/panel`."
+        "1. Chống Race Condition: Áp dụng Khóa bi quan (`lockForUpdate()`) trong `DB::transaction()` tại `OrderService`, `TicketCheckinService` và `Admin\\EventController::cancel()` trên MySQL 8 InnoDB.\n"
+        "2. Bảo mật QR & chống IDOR tải PDF: Ký `qr_payload` bằng HMAC-SHA256 (`hash_equals()`), bảo vệ `/my-tickets/{ticket}/pdf` qua `OrderPolicy`.\n"
+        "3. Tối ưu truy vấn chống N+1: Áp dụng `with()`, `withCount()`, `withMin()`, `withSum()` và eager load `tickets.orderItem.ticketType.event.venue` + `tickets.checkedInBy` trên `orders.show`.\n"
+        "4. Chạy Offline ổn định: `html5-qrcode.min.js` lưu nội bộ, PDF render trong RAM không ghi đĩa, gửi email bọc `try/catch` với mặc định `MAIL_MAILER=log`."
     )
 
     # Section 7: Presentation
@@ -527,22 +527,22 @@ def generate_report_3(output_path):
     h2 = doc.add_heading("7.1. Kịch Bản Trình Diễn Sản Phẩm (Demo Script 8-10 Phút)", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "Nhóm đã chuẩn bị kịch bản demo trực tiếp theo từng phút (chi tiết tại [docs/DEMO_SCRIPT.md]) với tài khoản demo thống nhất (`admin@example.com`, `organizer1@example.com`, `customer1@example.com`, mật khẩu `password`):\n"
-        "• Chặng 1 (~3.5 phút): Duyệt/tìm kiếm/lọc sự kiện phía Storefront -> Đặt vé giữ chỗ 15 phút -> Thanh toán giả lập -> Xem thẻ vé điện tử mã monospace (TKT-XXXXXXXXXX) & in vé.\n"
-        "• Chặng 2 (~3.5 phút): Đăng nhập Ban tổ chức, xem Dashboard doanh thu, tạo sự kiện mới, thêm hạng vé, gửi duyệt và thao tác soát vé Check-in 5 bước.\n"
-        "• Chặng 3 (~2 phút): Đăng nhập Quản trị viên (Admin), duyệt sự kiện, kiểm tra chặn xóa danh mục có sự kiện, khóa/mở tài khoản người dùng và trình chiếu kết quả 37/37 tests pass."
+        "Nhóm đã chuẩn bị kịch bản demo trực tiếp theo từng phút (chi tiết tại `docs/DEMO_SCRIPT.md`) với tài khoản demo thống nhất (`admin@example.com`, `organizer1@example.com`, `customer1@example.com`, mật khẩu `password`):\n"
+        "• Chặng 1 (~3.5 phút — Hồ Đăng Quang): Duyệt/tìm/lọc Storefront kèm `zone` & `description` -> Đặt vé giữ chỗ 15 phút -> Thanh toán giả lập -> Mở Mailpit xem email `OrderPaidMail` kèm PDF đính kèm -> Xem mã QR và tải vé PDF khổ A5.\n"
+        "• Chặng 2 (~3.5 phút — Tống Xuân Định): Dashboard Ban tổ chức -> Tạo sự kiện & loại vé có `zone`/`description` -> Gửi duyệt -> Quét Camera QR (`html5-qrcode` offline) tại `/organizer/checkin`, hiển thị thẻ xanh HMAC-SHA256 & nhân viên soát vé, test chặn vé đã dùng / QR giả mạo.\n"
+        "• Chặng 3 (~2-3 phút — Nguyễn Hữu Quý): Dashboard Admin -> Duyệt sự kiện -> Hủy sự kiện Cascade (hủy đơn `pending` hoàn vé & hủy vé `valid`) -> Xem chi tiết đơn có `checkedInBy` -> Chạy `php artisan test` (103/103 tests pass, 411 assertions) & mở GitHub Actions CI xanh trên MySQL 8."
     )
 
     h2 = doc.add_heading("7.2. Bộ 15 Câu Hỏi & Đáp Án Phản Biện Chuyên Sâu Của Hội Đồng", level=2)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
     doc.add_paragraph(
-        "Nhóm đã chuẩn bị sẵn câu trả lời chuyên sâu bám sát mã nguồn dự án cho 15 câu hỏi phản biện thường gặp của Giảng viên chấm thi:\n"
-        "1. Hệ thống giải quyết bài toán Race Condition khi mở bán vé như thế nào? -> Trả lời bám sát `DB::transaction()` và `TicketType::lockForUpdate()`.\n"
-        "2. Cơ chế giữ chỗ 15 phút hoạt động ra sao nếu khách không trả tiền? -> Trả lời bám sát Lazy Check và command `orders:expire-pending`.\n"
-        "3. Làm sao để Ban tổ chức không xem được sự kiện của đơn vị khác? -> Trả lời bám sát `EventPolicy` và kiểm tra `$user->id === $event->organizer_id`.\n"
-        "4. Middleware CheckActive bảo vệ hệ thống như thế nào khi tài khoản bị khóa? -> Trả lời bám sát cơ chế kiểm tra `is_active` và tự động `Auth::logout()`.\n"
-        "5. Quy trình soát vé Check-in kiểm tra những điều kiện gì? -> Trả lời 5 bước xác thực của `TicketCheckinService`.\n"
-        "6. Tại sao không dùng npm build trong dự án này? -> Trả lời về tính linh hoạt, tốc độ triển khai và CDN Bootstrap 5.3.\n"
+        "Nhóm đã chuẩn bị sẵn câu trả lời chuyên sâu bám sát mã nguồn dự án cho 15 câu hỏi phản biện trọng tâm tại `docs/DEMO_SCRIPT.md`:\n"
+        "1. Cơ chế `DB::transaction()` + `lockForUpdate()` trên MySQL 8 InnoDB chống overselling.\n"
+        "2. Giữ chỗ 15 phút với Lazy Check + Scheduler `orders:expire-pending`.\n"
+        "3. Bảo mật mã QR bằng chữ ký số HMAC-SHA256 (`hash_equals`) và chống IDOR tải vé PDF qua `OrderPolicy`.\n"
+        "4. Quy trình soát vé Check-in 6 bước và quét Camera offline bằng `public/js/html5-qrcode.min.js`.\n"
+        "5. Xuất PDF khổ A5 trong RAM qua `barryvdh/laravel-dompdf` (`extension=gd` & font DejaVu Sans) + `OrderPaidMail` qua Mailpit/`log`.\n"
+        "6. Admin hủy sự kiện cascade trong transaction, tối ưu N+1 trên `orders.show`, kiến trúc Zero-node Bootstrap 5 và GitHub Actions CI.\n"
         "*(Chi tiết trọn vẹn 15 câu hỏi và câu trả lời mẫu được lưu trữ tại file docs/DEMO_SCRIPT.md)*."
     )
 

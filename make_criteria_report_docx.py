@@ -171,9 +171,9 @@ def generate_report(output_path):
     meta_data = [
         ("Tên dự án:", "Hệ Thống Quản Lý Bán Vé Sự Kiện Trực Tuyến"),
         ("Nhóm thực hiện:", "Nhóm 8 - Lớp 68PM2 (Hồ Đăng Quang, Tống Xuân Định, Nguyễn Hữu Quý)"),
-        ("Công nghệ cốt lõi:", "PHP 8.3+ / Laravel 13 Framework / Blade / Bootstrap 5.3 CDN"),
-        ("Cơ sở dữ liệu:", "SQLite 3 (Mặc định) / MySQL 8.0+ (Chuẩn 3NF, Pessimistic Locking)"),
-        ("Kiểm thử chất lượng:", "37/37 Unit & Feature Tests Passed (104 Assertions, 0 Failures)"),
+        ("Công nghệ cốt lõi:", "PHP 8.3+ (8.5.9) / Laravel 13 / Blade / Bootstrap 5.3 CDN / Endroid QR / DomPDF"),
+        ("Cơ sở dữ liệu:", "MySQL 8.0+ Community Server (InnoDB - Mặc định) / SQLite dự phòng"),
+        ("Kiểm thử chất lượng:", "103/103 Unit & Feature Tests Passed (411 Assertions, 0 Failures) + Pint Passed"),
         ("Tài liệu đối chiếu:", "SRS 01_phan_tich_yeu_cau.md, 02_thiet_ke_co_so_du_lieu.md, tailieu/1.jpg"),
     ]
     for idx, (label, val) in enumerate(meta_data):
@@ -206,37 +206,37 @@ def generate_report(output_path):
             "Tiêu chí 1",
             "Xác định đối tượng người dùng, vai trò, dữ liệu cần quản lý, quy trình nghiệp vụ, phạm vi và ràng buộc",
             "100% Hoàn thành",
-            "docs/01_phan_tich_yeu_cau.md, docs/SPEC.md, User::ROLE_*, BR-01..04"
+            "docs/01_phan_tich_yeu_cau.md, docs/SPEC.md, UserRole Enum, BR-01..05"
         ],
         [
             "Tiêu chí 2",
             "Thiết kế CSDL hợp lý, có ERD và quan hệ giữa các bảng",
             "100% Hoàn thành",
-            "docs/diagrams/05_erd.puml & 05_erd.png, docs/02_thiet_ke_co_so_du_lieu.md"
+            "docs/diagrams/05_erd.puml & DRAWIO_UML_PROMPTS.md, docs/02_thiet_ke_co_so_du_lieu.md"
         ],
         [
             "Tiêu chí 3",
             "Sử dụng migration, model và relationship đúng chuẩn Laravel",
             "100% Hoàn thành",
-            "database/migrations/* (10 files: 7 nghiệp vụ), app/Models/* (8 models), Eager Loading"
+            "database/migrations/* (12 files: 7 nghiệp vụ + 2 nâng cấp), 8 Models, 4 Enums, lockForUpdate"
         ],
         [
             "Tiêu chí 4",
             "Thiết kế phân quyền, vai trò người dùng nếu hệ thống cần",
             "100% Hoàn thành",
-            "CheckRole & CheckActive Middleware, EventPolicy, TicketTypePolicy, OrderPolicy"
+            "CheckRole & CheckActive Middleware, EventPolicy, TicketTypePolicy, OrderPolicy (cả tải PDF)"
         ],
         [
             "Tiêu chí 5",
             "Tổ chức route, controller, view rõ ràng, dễ bảo trì",
             "100% Hoàn thành",
-            "4 tệp route (57 app routes), Service Layer, 11 FormRequests, Blade Bootstrap CDN"
+            "4 tệp route (58 app routes), 4 Services, OrderPaidMail, 11 FormRequests, Blade Zero-Node"
         ],
         [
             "Tiêu chí 6",
             "Tài liệu/sơ đồ thiết kế: use case, ERD, sơ đồ chức năng",
-            "100% Hoàn thành",
-            "8 file PlantUML (.puml) & 8 ảnh PNG trong docs/diagrams/images/"
+            "Đầy đủ mã nguồn UML",
+            "8 file PlantUML + 6 sequence + 8 PNG & DRAWIO_UML_PROMPTS.md (chờ xuất .drawio)"
         ],
     ]
     add_styled_table(doc, overview_headers, overview_data, col_widths=[Inches(1.0), Inches(2.8), Inches(1.2), Inches(1.8)])
@@ -255,10 +255,10 @@ def generate_report(output_path):
     doc.add_paragraph(
         "Hệ thống xác định rõ 4 đối tượng tác tử tham gia vào quy trình vận hành, được định nghĩa chặt chẽ bằng PHP Enum "
         "tại `app/Enums/UserRole.php`:\n"
-        "1. Khách vãng lai (Guest): Người chưa đăng nhập; có quyền duyệt xem danh sách sự kiện đang mở bán, tìm kiếm từ khóa, lọc theo danh mục, xem chi tiết sự kiện và bảng giá các loại vé.\n"
-        "2. Khách hàng (Customer - vai trò 'customer'): Người tham gia sự kiện; có tài khoản cá nhân, thực hiện đặt vé giữ chỗ 15 phút, thanh toán giả lập, tra cứu lịch sử đơn hàng, nhận thẻ vé điện tử với mã vé monospace (TKT-XXXXXXXXXX) và nút in vé.\n"
-        "3. Ban tổ chức (Organizer - vai trò 'organizer'): Đơn vị chủ trì sự kiện; có Dashboard thống kê doanh thu, quản lý vòng đời sự kiện (Tạo nháp -> Gửi duyệt -> Quản lý loại vé), theo dõi danh sách đơn hàng thuộc sự kiện của mình và soát vé (Check-in) tại cổng.\n"
-        "4. Quản trị viên (Admin - vai trò 'admin'): Người quản trị toàn sàn; có Dashboard tổng quan tài chính và tăng trưởng, quản lý danh mục (Categories), địa điểm (Venues), quản lý người dùng (khóa/mở khóa tài khoản), phê duyệt hoặc hủy bỏ sự kiện vi phạm."
+        "1. Khách vãng lai (Guest): Duyệt danh sách sự kiện đang mở bán, tìm kiếm từ khóa, lọc theo danh mục/thành phố/ngày, xem chi tiết sự kiện kèm khu vực (`zone`) & quyền lợi (`description`).\n"
+        "2. Khách hàng (Customer - vai trò 'customer'): Đặt vé giữ chỗ 15 phút, thanh toán giả lập, nhận email xác nhận (`OrderPaidMail`) đính kèm PDF, xem lịch sử đơn hàng, nhận vé điện tử kèm mã QR ký số HMAC-SHA256 và tải vé PDF khổ A5.\n"
+        "3. Ban tổ chức (Organizer - vai trò 'organizer'): Dashboard thống kê doanh thu, quản lý vòng đời sự kiện (Tạo nháp -> Thêm vé kèm `zone` & `description` -> Gửi duyệt), theo dõi đơn hàng và soát vé tại cổng bằng Camera quét QR (`html5-qrcode` offline) hoặc nhập tay.\n"
+        "4. Quản trị viên (Admin - vai trò 'admin'): Dashboard toàn sàn, quản lý danh mục (Categories) & địa điểm (Venues) ràng buộc `RESTRICT`, quản lý người dùng, duyệt/từ chối và hủy sự kiện cascade (tự hủy đơn pending hoàn vé & hủy vé valid)."
     )
 
     h2 = doc.add_heading("1.2. Dữ liệu cần Quản lý (Core Business Entities)", level=2)
@@ -267,14 +267,14 @@ def generate_report(output_path):
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
 
     entities_data = [
-        ("Người dùng (users)", "Tên, email duy nhất, mật khẩu mã hóa Bcrypt, số điện thoại, vai trò (admin/organizer/customer), trạng thái kích hoạt (is_active)."),
+        ("Người dùng (users)", "Tên, email duy nhất, mật khẩu mã hóa Bcrypt, số điện thoại, vai trò (UserRole Enum), trạng thái kích hoạt (is_active)."),
         ("Danh mục sự kiện (categories)", "Tên danh mục duy nhất, đường dẫn tĩnh thân thiện SEO (slug duy nhất), mô tả phạm vi chủ đề."),
         ("Địa điểm tổ chức (venues)", "Tên địa điểm, địa chỉ cụ thể, tỉnh/thành phố trực thuộc, sức chứa tối đa phục vụ kiểm soát quy mô."),
-        ("Sự kiện (events)", "Tiêu đề, slug URL duy nhất, mô tả, ảnh banner, thời điểm bắt đầu/kết thúc, trạng thái (draft, pending, published, cancelled), soft delete."),
-        ("Loại vé (ticket_types)", "Tên hạng vé, đơn giá VNĐ, tổng số lượng phát hành, số lượng đã bán/giữ chỗ (sold), thời gian mở/đóng bán, giới hạn vé mỗi đơn."),
-        ("Đơn hàng (orders)", "Mã đơn duy nhất (ORD-XXXXXXXX), thông tin người nhận vé, tổng tiền, phương thức thanh toán, trạng thái (pending, paid, cancelled), thời hạn giữ chỗ 15 phút (expires_at)."),
+        ("Sự kiện (events)", "Tiêu đề, slug URL duy nhất, mô tả, ảnh banner, thời điểm bắt đầu/kết thúc, trạng thái (EventStatus Enum), soft delete."),
+        ("Loại vé (ticket_types)", "Tên hạng vé, khu vực (`zone`), mô tả quyền lợi (`description`), đơn giá VNĐ, tổng số lượng, số đã bán/giữ chỗ (`sold`), thời gian mở/đóng bán, giới hạn mỗi đơn."),
+        ("Đơn hàng (orders)", "Mã đơn duy nhất (ORD-XXXXXXXX), thông tin người nhận vé, tổng tiền, phương thức thanh toán, trạng thái (OrderStatus Enum), thời hạn giữ chỗ 15 phút (expires_at)."),
         ("Chi tiết đơn hàng (order_items)", "Khóa ngoại đơn hàng và loại vé, số lượng đặt, đơn giá tại thời điểm đặt (đóng băng giá), thành tiền."),
-        ("Vé điện tử (tickets)", "Mã vé duy nhất (TKT-XXXXXXXXXX), trạng thái (valid, used, cancelled), thời điểm soát vé check-in tại cổng."),
+        ("Vé điện tử (tickets)", "Mã vé duy nhất (TKT-XXXXXXXXXX), payload JSON `qr_payload`, chữ ký số HMAC-SHA256 `qr_signature`, trạng thái (TicketStatus Enum), thời điểm check-in và nhân viên soát vé (`checked_in_by`)."),
     ]
     for name, desc in entities_data:
         p = doc.add_paragraph()
@@ -291,9 +291,9 @@ def generate_report(output_path):
 
     doc.add_paragraph(
         "Dự án triển khai hoàn chỉnh 3 quy trình nghiệp vụ trọng yếu:\n"
-        "• Quy trình 1 - Tạo và Phê duyệt Sự kiện: Ban tổ chức tạo bản nháp (draft) -> Thêm các loại vé tương ứng -> Nhấn gửi duyệt (pending) -> Admin kiểm duyệt: nếu đạt tiêu chuẩn thì phê duyệt (published) để hiển thị lên Storefront, nếu chưa đạt thì từ chối (draft) kèm lý do.\n"
-        "• Quy trình 2 - Đặt vé, Giữ chỗ và Thanh toán: Khách hàng chọn số lượng vé -> Hệ thống thực thi giao dịch Database Transaction kết hợp Khóa bi quan (`lockForUpdate()`) trên `ticket_types` -> Nếu đủ số lượng, sinh mã đơn `ORD-XXXXXXXX`, tăng tạm thời số `sold` và cho giữ chỗ 15 phút (`expires_at = now()->addMinutes(15)`) -> Khách chọn cổng thanh toán (Chuyển khoản, MoMo, Thẻ) -> Khi thanh toán thành công, đơn chuyển sang `paid`, hệ thống tự động sinh các vé điện tử độc nhất `TKT-XXXXXXXXXX`.\n"
-        "• Quy trình 3 - Soát vé (Check-in) 5 bước tại cổng: Ban tổ chức truy cập màn hình `/organizer/checkin` -> Nhập mã vé `TKT-XXXXXXXXXX` -> Hệ thống thực thi 5 bước xác thực nghiêm ngặt qua `TicketCheckinService`: (1) Vé có tồn tại không? (2) Đơn hàng đã thanh toán chưa? (3) Vé có đúng thuộc sự kiện do Organizer này quản lý không? (4) Vé đã bị hủy chưa? (5) Vé đã được sử dụng trước đó chưa? -> Khi thỏa mãn, cập nhật `status = 'used'` và ghi nhận `checked_in_at = now()`."
+        "• Quy trình 1 - Tạo, Phê duyệt & Hủy Cascade Sự kiện: Ban tổ chức tạo bản nháp (draft) -> Thêm các loại vé (kèm `zone`, `description`) -> Gửi duyệt (pending) -> Admin duyệt (published), từ chối (draft) hoặc hủy (cancelled - cascade hủy đơn pending hoàn vé & hủy vé valid).\n"
+        "• Quy trình 2 - Đặt vé, Giữ chỗ, Thanh toán, QR, PDF & Email: Khách chọn vé -> `DB::transaction()` + `lockForUpdate()` trên `ticket_types` -> Sinh mã đơn `ORD-XXXXXXXX`, giữ chỗ 15 phút -> Thanh toán -> Đơn chuyển `paid`, sinh vé `TKT-XXXXXXXXXX` kèm `qr_payload` JSON và chữ ký HMAC-SHA256 -> Gửi email `OrderPaidMail` đính kèm vé PDF khổ A5 tạo trong RAM -> Khách xem QR và tải PDF qua `/my-tickets/{ticket}/pdf`.\n"
+        "• Quy trình 3 - Soát vé (Check-in) 6 bước tại cổng: Ban tổ chức quét Camera QR (`html5-qrcode.min.js` offline) hoặc nhập tay mã vé tại `/organizer/checkin` -> `TicketCheckinService` khóa dòng vé (`lockForUpdate()`) và kiểm tra 6 tầng: (1) tồn tại mã vé, (2) chữ ký HMAC-SHA256 hợp lệ qua `hash_equals()` khi quét QR, (3) đơn đã thanh toán `paid`, (4) thuộc sự kiện của Organizer, (5) vé chưa `cancelled`, (6) vé chưa `used` -> Cập nhật `used`, `checked_in_at` và lưu nhân viên soát vé `checked_in_by`."
     )
 
     h2 = doc.add_heading("1.4. Phạm vi & Ràng buộc Nghiệp vụ (Scope & Business Rules)", level=2)
@@ -302,12 +302,13 @@ def generate_report(output_path):
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
 
     doc.add_paragraph(
-        "• Phạm vi (Scope): Trong phạm vi (In-Scope) tập trung hoàn chỉnh quy trình quản trị, vòng đời sự kiện, kiểm soát tồn kho đồng thời và soát vé điện tử. Ngoài phạm vi (Out-of-Scope) là liên kết trực tiếp cổng thanh toán tiền thật của ngân hàng (được thay thế bằng Mock Payment Gateway chuẩn mực).\n"
-        "• Các ràng buộc cốt lõi (Business Rules):\n"
-        "  - BR-01 (Định danh): Email, slug sự kiện/danh mục, mã đơn hàng `ORD-` và mã vé `TKT-` bắt buộc duy nhất 100% trên toàn hệ thống.\n"
-        "  - BR-02 (Thời gian): Thời gian bắt đầu sự kiện phải trong tương lai, `end_time > start_time`, thời gian mở bán phải trước thời gian đóng bán, thời gian giữ chỗ cố định 15 phút.\n"
-        "  - BR-03 (Toàn vẹn xóa): Chặn xóa danh mục và địa điểm đang có sự kiện (Restrict); Sự kiện đã phát sinh vé bán chỉ cho phép xóa mềm (Soft Delete); Admin không được tự khóa tài khoản hoặc hạ quyền của chính mình.\n"
-        "  - BR-04 (Tiền tệ & Ngôn ngữ): Đơn vị tiền tệ chính thức là Việt Nam Đồng (VNĐ, phân cách hàng nghìn dấu chấm), múi giờ chuẩn `Asia/Ho_Chi_Minh`, toàn bộ thông báo tiếng Việt có dấu."
+        "• Phạm vi (Scope): Hoàn chỉnh nghiệp vụ quản trị, kiểm soát tồn kho đồng thời, phát hành vé QR HMAC-SHA256, xuất vé PDF A5 động trong RAM, gửi email Mailpit/Log và quét camera offline; thay thế cổng ngân hàng thật bằng Mock Payment Gateway để demo an toàn.\n"
+        "• Các ràng buộc cốt lõi (Business Rules BR-01..05):\n"
+        "  - BR-01 (Định danh & Chữ ký): Email, slug, mã đơn `ORD-` và mã vé `TKT-` duy nhất 100%; mã QR ký HMAC-SHA256 bằng `APP_KEY`.\n"
+        "  - BR-02 (Thời gian): `end_time > start_time > now()`, mở bán trước đóng bán, giữ chỗ cố định 15 phút.\n"
+        "  - BR-03 (Toàn vẹn xóa & hủy): Chặn xóa danh mục/địa điểm có sự kiện (`RESTRICT`); sự kiện dùng `SoftDeletes`; Admin hủy sự kiện phải cascade xử lý đơn `pending` & vé `valid`; Admin không tự khóa/hạ quyền chính mình.\n"
+        "  - BR-04 (Tiền tệ & Ngôn ngữ): VNĐ phân cách dấu chấm, múi giờ `Asia/Ho_Chi_Minh`, thông báo tiếng Việt UTF-8.\n"
+        "  - BR-05 (Check-in & Zone): Chống check-in trùng bằng `lockForUpdate()`, ghi nhận `checked_in_by`; `zone` <= 100 ký tự, `description` <= 1000 ký tự."
     )
 
     # ==================== TIÊU CHÍ 2 ====================
@@ -340,6 +341,7 @@ def generate_report(output_path):
         ["orders", "1 - N", "order_items", "order_items.order_id -> orders.id", "CASCADE (Xóa đơn xóa dòng sản phẩm)"],
         ["ticket_types", "1 - N", "order_items", "order_items.ticket_type_id -> ticket_types.id", "CASCADE"],
         ["order_items", "1 - N", "tickets", "tickets.order_item_id -> order_items.id", "CASCADE (Xóa đơn xóa vé phát hành)"],
+        ["users", "1 - N", "tickets", "tickets.checked_in_by -> users.id", "SET NULL (Lưu nhân viên soát vé)"],
     ]
     add_styled_table(doc, erd_summary_headers, erd_summary_data, col_widths=[Inches(1.2), Inches(0.8), Inches(1.2), Inches(2.0), Inches(1.6)])
 
@@ -368,8 +370,8 @@ def generate_report(output_path):
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
 
     doc.add_paragraph(
-        "Hệ thống có 7 tệp di chuyển cơ sở dữ liệu độc lập trong `database/migrations/`. "
-        "Tất cả đều tuân thủ cú pháp mới nhất của Laravel 11/12/13 với anonymous migration class, kiểu dữ liệu chặt chẽ và cơ chế cascade/restrict an toàn:"
+        "Hệ thống có 12 tệp di chuyển cơ sở dữ liệu trong `database/migrations/` (3 core Laravel, 7 bảng nghiệp vụ và 2 migration nâng cấp thêm cột QR/checked_in_by/zone/description). "
+        "Tất cả đều tuân thủ cú pháp Laravel 11/12/13 với anonymous migration class và ràng buộc khóa ngoại an toàn:"
     )
 
     mig_code = (
@@ -399,17 +401,17 @@ def generate_report(output_path):
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
 
     doc.add_paragraph(
-        "Cả 8 Model nghiệp vụ trong thư mục `app/Models/` đều được khai báo đầy đủ thuộc tính `$fillable`, "
-        "ép kiểu dữ liệu `casts()` và thiết lập đầy đủ quan hệ hai chiều:"
+        "Cả 8 Model nghiệp vụ trong thư mục `app/Models/` đều khai báo `$fillable`, `casts()` (đồng bộ 4 Backed Enums: "
+        "`UserRole`, `EventStatus`, `OrderStatus`, `TicketStatus`) và quan hệ hai chiều:"
     )
 
     models_data = [
-        ("Event.php", "belongsTo(User, 'organizer_id'), belongsTo(Category), belongsTo(Venue), hasMany(TicketType), scopes: published(), upcoming(), notEnded(), search()"),
-        ("TicketType.php", "belongsTo(Event), hasMany(OrderItem), Accessor: remaining (quantity - sold), isOnSale()"),
-        ("Order.php", "belongsTo(User), hasMany(OrderItem), hasManyThrough(Ticket, OrderItem), helpers: isPending(), isPaid(), isCancelled(), isExpired()"),
+        ("Event.php", "belongsTo(User, 'organizer_id'), belongsTo(Category), belongsTo(Venue), hasMany(TicketType), cast EventStatus, scopes: published(), upcoming(), notEnded(), search()"),
+        ("TicketType.php", "belongsTo(Event), hasMany(OrderItem), hỗ trợ zone & description, Accessor: remaining, isOnSale()"),
+        ("Order.php", "belongsTo(User), hasMany(OrderItem), hasManyThrough(Ticket, OrderItem), cast OrderStatus, helpers: isPending(), isPaid(), isCancelled(), isExpired()"),
         ("OrderItem.php", "belongsTo(Order), belongsTo(TicketType), hasMany(Ticket)"),
-        ("Ticket.php", "belongsTo(OrderItem), helpers: isValid(), isUsed(), isCancelled()"),
-        ("User.php", "hasMany(Event, 'organizer_id'), hasMany(Order, 'user_id'), helpers: isAdmin(), isOrganizer(), isCustomer(), isActive()"),
+        ("Ticket.php", "belongsTo(OrderItem), belongsTo(User, 'checked_in_by'), cast TicketStatus, QR payload & HMAC helpers (hasValidQrSignature)"),
+        ("User.php", "hasMany(Event, 'organizer_id'), hasMany(Order, 'user_id'), cast UserRole, helpers: isAdmin(), isOrganizer(), isCustomer(), isActive()"),
         ("Category.php", "hasMany(Event), generateUniqueSlug()"),
         ("Venue.php", "hasMany(Event)"),
     ]
@@ -444,12 +446,9 @@ def generate_report(output_path):
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
 
     doc.add_paragraph(
-        "• Triệt tiêu lỗi N+1 Query: Khi truy vấn danh sách sự kiện trên Storefront và Admin Dashboard, "
-        "hệ thống luôn sử dụng Eager Loading `with(['category', 'venue', 'ticketTypes'])` và `withCount('ticketTypes')`, "
-        "giảm số lượng câu lệnh SQL từ hàng trăm truy vấn xuống chỉ còn 2-3 truy vấn cố định.\n"
-        "• Khóa bi quan (`lockForUpdate`): Trong `app/Services/OrderService.php`, khi khách hàng nhấn thanh toán, "
-        "dòng bản ghi của loại vé được khóa độc quyền trong `DB::transaction()` để kiểm tra `sold + requested <= quantity`. "
-        "Cơ chế này ngăn chặn tuyệt đối tình trạng bán vượt số lượng vé (overselling) khi tải cao."
+        "• Triệt tiêu lỗi N+1 Query: Danh sách sự kiện và đơn hàng luôn sử dụng Eager Loading `with(['category', 'venue'])`, `withCount('ticketTypes')`, `withMin()` và `withSum()`. "
+        "Tại chi tiết đơn hàng (`orders.show`), hệ thống eager load đầy đủ `tickets.orderItem.ticketType.event.venue` và `tickets.checkedInBy` (được kiểm chứng tự động bằng test hồi quy).\n"
+        "• Khóa bi quan (`lockForUpdate`): Được áp dụng trong `DB::transaction()` tại `OrderService`, `TicketCheckinService` và `Admin\\EventController::cancel()` trên MySQL 8 InnoDB để chống overselling, chống check-in trùng và đảm bảo hủy sự kiện cascade nhất quán."
     )
 
     # ==================== TIÊU CHÍ 4 ====================
@@ -497,9 +496,9 @@ def generate_report(output_path):
     doc.add_paragraph(
         "Để ngăn chặn triệt để lỗ hổng Insecure Direct Object References (IDOR - người dùng thay đổi ID trên URL để xem/sửa dữ liệu của người khác), "
         "hệ thống áp dụng 3 Laravel Policies trong `app/Policies/`:\n"
-        "• `EventPolicy`: Organizer chỉ có quyền cập nhật, thêm vé, xóa hoặc gửi duyệt các sự kiện do chính mình tạo ra (`$user->id === $event->organizer_id`). Admin có quyền phê duyệt toàn quyền.\n"
-        "• `TicketTypePolicy`: Chỉ cho phép chỉnh sửa loại vé khi sự kiện thuộc sở hữu của người dùng đang đăng nhập.\n"
-        "• `OrderPolicy`: Khách hàng chỉ được phép xem chi tiết, thanh toán hoặc hủy các đơn hàng của chính tài khoản mình sở hữu."
+        "• `EventPolicy`: Organizer chỉ có quyền xem, cập nhật, xóa hoặc gửi duyệt các sự kiện do chính mình tạo ra (`$user->id === $event->organizer_id`); Admin có quyền phê duyệt, từ chối và hủy sự kiện.\n"
+        "• `TicketTypePolicy`: Chỉ cho phép tạo/sửa/xóa loại vé khi sự kiện thuộc sở hữu của người dùng đang đăng nhập (và ở trạng thái `draft`).\n"
+        "• `OrderPolicy`: Bảo vệ cả màn hình đơn hàng và route tải vé PDF `/my-tickets/{ticket}/pdf` (chỉ chủ đơn, Organizer của sự kiện hoặc Admin được phép truy cập; người khác nhận HTTP 403)."
     )
 
     policy_code = (
@@ -530,7 +529,7 @@ def generate_report(output_path):
     h1.paragraph_format.space_after = Pt(8)
     h1.runs[0].font.color.rgb = RGBColor(30, 58, 138)
 
-    h2 = doc.add_heading("5.1. Tổ chức Tuyến đường (Routes) Module hóa & 57 Application Routes", level=2)
+    h2 = doc.add_heading("5.1. Tổ chức Tuyến đường (Routes) Module hóa & 58 Application Routes", level=2)
     h2.paragraph_format.space_before = Pt(10)
     h2.paragraph_format.space_after = Pt(4)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
@@ -539,24 +538,26 @@ def generate_report(output_path):
         "Thay vì dồn toàn bộ mã vào một tệp `web.php` duy nhất gây xung đột mã nguồn và khó bảo trì, "
         "hệ thống tách biệt hoàn toàn thành 4 tệp định tuyến chuyên trách trong thư mục `routes/`:\n"
         "1. `routes/auth.php`: Định tuyến Xác thực (Đăng ký, đăng nhập throttle 5 lần/phút, đăng xuất, cập nhật hồ sơ cá nhân).\n"
-        "2. `routes/storefront.php`: Định tuyến Cửa hàng & Khách hàng (Trang chủ, chi tiết sự kiện, đặt vé checkout, thanh toán giả lập, lịch sử đơn, in vé cá nhân).\n"
-        "3. `routes/organizer.php`: Định tuyến Ban tổ chức có prefix `/organizer` (Dashboard, CRUD sự kiện, quản lý hạng vé, theo dõi đơn hàng, cổng soát vé Check-in).\n"
-        "4. `routes/admin.php`: Định tuyến Quản trị có prefix `/admin` (Dashboard tài chính, quản lý danh mục, quản lý địa điểm, quản lý tài khoản người dùng, duyệt sự kiện, xem tất cả đơn hàng).\n"
-        "Tổng cộng 57 application routes chuẩn RESTful, có tên định danh (`->name()`) rõ ràng, kết nối tự động trong `routes/web.php`."
+        "2. `routes/storefront.php`: Định tuyến Cửa hàng & Khách hàng (Trang chủ, chi tiết sự kiện, đặt vé checkout, thanh toán giả lập, lịch sử đơn, danh sách vé QR và tải vé PDF `/my-tickets/{ticket}/pdf`).\n"
+        "3. `routes/organizer.php`: Định tuyến Ban tổ chức có prefix `/organizer` (Dashboard, CRUD sự kiện, quản lý hạng vé, theo dõi đơn hàng, cổng soát vé Camera QR Check-in).\n"
+        "4. `routes/admin.php`: Định tuyến Quản trị có prefix `/admin` (Dashboard tài chính, quản lý danh mục, quản lý địa điểm, quản lý người dùng, duyệt/từ chối/hủy sự kiện, xem tất cả đơn hàng).\n"
+        "Tổng cộng 58 application routes chuẩn RESTful, có tên định danh (`->name()`) rõ ràng, kết nối tự động trong `routes/web.php` (cùng scheduler `orders:expire-pending` trong `routes/console.php`)."
     )
 
-    h2 = doc.add_heading("5.2. Tổ chức Controllers & Áp dụng Service Pattern", level=2)
+    h2 = doc.add_heading("5.2. Tổ chức Controllers, Service Pattern & Mailable", level=2)
     h2.paragraph_format.space_before = Pt(10)
     h2.paragraph_format.space_after = Pt(4)
     h2.runs[0].font.color.rgb = RGBColor(37, 99, 235)
 
     doc.add_paragraph(
         "• Phân chia Controller theo Namespace chuyên biệt: `App\\Http\\Controllers\\Auth`, `Storefront`, `Organizer`, `Admin`.\n"
-        "• Tách bạch Nghiệp vụ (Skinny Controller, Fat Service): Các logic nghiệp vụ phức tạp liên quan đến giao dịch tài chính, "
-        "khóa đồng thời và soát vé đa bước được tách hoàn toàn sang thư mục `app/Services/`:\n"
-        "  - `OrderService.php`: Chịu trách nhiệm tạo đơn hàng trong `DB::transaction()`, áp dụng `lockForUpdate()`, xử lý thanh toán giả lập, hủy đơn và hoàn trả vé vào kho.\n"
-        "  - `TicketCheckinService.php`: Đảm nhiệm 5 bước xác thực tính hợp lệ của mã vé tại cổng kiểm soát.\n"
-        "• 11 Form Requests độc lập trong `app/Http/Requests/`: Tách toàn bộ logic kiểm tra hợp lệ dữ liệu (validation rules, attributes, error messages) ra khỏi Controller, thông báo 100% bằng tiếng Việt chuẩn có dấu."
+        "• Tách bạch Nghiệp vụ (Skinny Controller, Fat Service) với 4 Service classes trong `app/Services/` và 1 Mailable:\n"
+        "  - `OrderService.php`: Tạo đơn giữ chỗ trong `DB::transaction()` + `lockForUpdate()`, xử lý thanh toán sinh vé kèm QR HMAC, hủy đơn và hết hạn tự động.\n"
+        "  - `QrTicketService.php`: Sinh mã QR PNG/SVG Data URI qua `endroid/qr-code`, giải mã payload JSON và xác thực chữ ký HMAC-SHA256.\n"
+        "  - `TicketPdfService.php`: Kết xuất vé PDF khổ A5 trong RAM qua `barryvdh/laravel-dompdf` (không ghi file lên ổ đĩa).\n"
+        "  - `TicketCheckinService.php`: Đảm nhiệm 6 bước xác thực vé tại cổng (tồn tại, HMAC-SHA256, paid, ownership, chưa hủy, chưa dùng) và lưu `checked_in_by`.\n"
+        "  - `OrderPaidMail.php`: Gửi email xác nhận thanh toán đính kèm toàn bộ vé PDF sinh động trong RAM.\n"
+        "• 11 Form Requests độc lập trong `app/Http/Requests/`: Validation tiếng Việt đầy đủ `rules()`, `attributes()`, `messages()`."
     )
 
     h2 = doc.add_heading("5.3. Tổ chức Giao diện (Views & Blade Templates)", level=2)
@@ -581,8 +582,8 @@ def generate_report(output_path):
     h1.runs[0].font.color.rgb = RGBColor(30, 58, 138)
 
     doc.add_paragraph(
-        "Hệ thống gồm 8 sơ đồ PlantUML trong `docs/diagrams/` và 8 ảnh PNG kết xuất sẵn trong `docs/diagrams/images/` "
-        "(Use Case tổng quan, Use Case 3 vai trò, ERD, Sơ đồ chức năng WBS, Activity mua vé, Sequence thanh toán):"
+        "Hệ thống có 8 sơ đồ PlantUML chính + 6 sơ đồ tuần tự bổ sung trong `docs/diagrams/`, 8 ảnh PNG trong `docs/diagrams/images/`, "
+        "cùng bộ Prompt AI & mã PlantUML cập nhật đầy đủ 5 cột DB mới + luồng QR/PDF/Email/Camera tại `docs/diagrams/DRAWIO_UML_PROMPTS.md` để xuất sang `.drawio`:"
     )
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -611,13 +612,13 @@ def generate_report(output_path):
 
     doc.add_paragraph(
         "Dự án 'Hệ Thống Quản Lý Bán Vé Sự Kiện' đã đáp ứng trọn vẹn cả 6 tiêu chí của Mục 1 & Mục 2:\n"
-        "1. Xác định nghiệp vụ sắc nét: Phân vai 4 tác tử rõ ràng, dữ liệu quản lý đầy đủ, 3 quy trình trọng yếu thông suốt.\n"
-        "2. Thiết kế CSDL mẫu mực: Đạt chuẩn 3NF, ERD quan hệ chặt chẽ, bảo vệ toàn vẹn bằng CASCADE/RESTRICT và đánh chỉ mục tối ưu.\n"
-        "3. Triển khai Laravel chuẩn mực: 10 migrations (7 nghiệp vụ), 8 models đầy đủ quan hệ, loại bỏ N+1 query và có Pessimistic Locking chống race condition.\n"
-        "4. Phân quyền đa tầng bảo mật: Kết hợp Middleware kiểm tra vai trò/khóa tài khoản và 3 Policies chống IDOR dữ liệu.\n"
-        "5. Kiến trúc MVC gọn gàng: 4 tệp route tách biệt (57 app routes), áp dụng Service Pattern và 11 Form Requests, giao diện Blade Bootstrap 5 responsive.\n"
-        "6. Bộ sơ đồ đầy đủ: 8 file PlantUML và ảnh PNG kết xuất sẵn.\n\n"
-        "Hệ thống đã vượt qua kiểm thử tự động toàn diện với 37/37 Unit & Feature Tests passed (104 assertions, 0 failures)."
+        "1. Xác định nghiệp vụ sắc nét: Phân vai 4 tác tử rõ ràng, dữ liệu quản lý đầy đủ, 3 quy trình trọng yếu thông suốt (bao gồm QR HMAC, PDF A5, Email, Camera Check-in 6 bước, Admin hủy cascade).\n"
+        "2. Thiết kế CSDL mẫu mực: Đạt chuẩn 3NF trên MySQL 8.0 (InnoDB), ERD quan hệ chặt chẽ, bảo vệ bằng CASCADE/RESTRICT/SET NULL và đánh chỉ mục tối ưu.\n"
+        "3. Triển khai Laravel chuẩn mực: 12 migrations, 8 models đồng bộ 4 Enums, triệt tiêu N+1 query và áp dụng Pessimistic Locking (`lockForUpdate()`).\n"
+        "4. Phân quyền đa tầng bảo mật: Kết hợp Middleware `CheckRole`/`CheckActive`, 3 Policies chống IDOR (bao gồm route PDF) và chữ ký số HMAC-SHA256.\n"
+        "5. Kiến trúc MVC gọn gàng: 4 tệp route tách biệt (58 app routes), 4 Services, Mailable `OrderPaidMail` và 11 Form Requests tiếng Việt.\n"
+        "6. Bộ sơ đồ đầy đủ: PlantUML/PNG và bộ Prompt UML cho draw.io (`DRAWIO_UML_PROMPTS.md`).\n\n"
+        "Hệ thống đã vượt qua kiểm thử tự động toàn diện với 103/103 Unit & Feature Tests passed (411 assertions, 0 failures) và Laravel Pint sạch 100%."
     )
 
     # Save document
@@ -627,4 +628,3 @@ def generate_report(output_path):
 if __name__ == "__main__":
     docs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
     generate_report(os.path.join(docs_dir, "03_bao_cao_tieu_chi_do_an.docx"))
-    generate_report(os.path.join(docs_dir, "Tuan1_bao_cao_tieu_chi_do_an.docx"))

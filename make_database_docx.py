@@ -144,12 +144,12 @@ def build_database_document(output_path):
     meta_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     set_table_borders(meta_table, color="CBD5E1", sz="6")
     meta_data = [
-        ("Mã tài liệu / Phiên bản:", "DDD-ETMS-v1.1 (Final Release)"),
+        ("Mã tài liệu / Phiên bản:", "DDD-ETMS-v2.0 (Final Release)"),
         ("Nhóm thực hiện:", "Nhóm 8 - Lớp 68PM2 (Hồ Đăng Quang, Tống Xuân Định, Nguyễn Hữu Quý)"),
-        ("Nền tảng Framework:", "PHP 8.3+ / Laravel 13 Framework"),
-        ("Hệ quản trị CSDL:", "SQLite 3 (Mặc định) / Hỗ trợ MySQL 8.0+ (InnoDB)"),
+        ("Nền tảng Framework:", "PHP 8.3+ (8.5.9) / Laravel 13 Framework"),
+        ("Hệ quản trị CSDL:", "MySQL 8.0+ Community Server (InnoDB - Mặc định) / SQLite dự phòng"),
         ("Mã hóa ký tự (Charset):", "UTF-8 Unicode (utf8mb4_unicode_ci)"),
-        ("Quy chuẩn thiết kế:", "Chuẩn hóa dạng 3NF (Third Normal Form)"),
+        ("Quy chuẩn thiết kế:", "Chuẩn hóa dạng 3NF (Third Normal Form) — 12 Migrations"),
     ]
     for idx, (label, val) in enumerate(meta_data):
         row_cells = meta_table.rows[idx].cells
@@ -258,6 +258,7 @@ def build_database_document(output_path):
         ["orders", "1 - N", "order_items", "order_items.order_id -> orders.id", "CASCADE", "Một đơn hàng có thể chứa nhiều dòng sản phẩm loại vé khác nhau."],
         ["ticket_types", "1 - N", "order_items", "order_items.ticket_type_id -> ticket_types.id", "CASCADE", "Một loại vé có thể được đặt trong nhiều đơn hàng."],
         ["order_items", "1 - N", "tickets", "tickets.order_item_id -> order_items.id", "CASCADE", "Mỗi vé điện tử độc nhất gắn liền với dòng đặt vé của đơn hàng đã thanh toán."],
+        ["users", "1 - N", "tickets", "tickets.checked_in_by -> users.id", "SET NULL", "Lưu vết nhân viên / Ban tổ chức đã thực hiện soát vé tại cổng."],
     ]
     col_w = [Inches(1.0), Inches(0.7), Inches(1.0), Inches(1.6), Inches(0.9), Inches(1.8)]
     add_styled_table(doc, erd_headers, erd_data, col_widths=col_w)
@@ -354,11 +355,13 @@ def build_database_document(output_path):
         },
         {
             "name": "ticket_types",
-            "desc": "Bảng lưu các hạng vé của từng sự kiện (Ví dụ: VIP, Khán đài A, Vé Tiêu chuẩn) kèm số lượng và giá bán.",
+            "desc": "Bảng lưu các hạng vé của từng sự kiện (VIP, Khán đài A, Tiêu chuẩn...) kèm khu vực, quyền lợi, số lượng và giá bán.",
             "cols": [
                 ("id", "BIGINT UNSIGNED", "PK", "No", "Auto Increment", "Mã định danh duy nhất của loại vé."),
                 ("event_id", "BIGINT UNSIGNED", "FK", "No", "-", "Khóa ngoại trỏ tới events.id (Thuộc sự kiện nào)."),
                 ("name", "VARCHAR(255)", "-", "No", "-", "Tên hạng vé (Ví dụ: 'Hạng Vé VIP - Vé kèm quà tặng')."),
+                ("zone", "VARCHAR(100)", "-", "Yes", "NULL", "Khu vực khán đài / vị trí ngồi (Ví dụ: 'Khu A', 'Khán đài VIP')."),
+                ("description", "TEXT", "-", "Yes", "NULL", "Quyền lợi và mô tả chi tiết của loại vé."),
                 ("price", "DECIMAL(12,0)", "-", "No", "-", "Đơn giá vé tính bằng VNĐ (Ví dụ: 500.000 đ)."),
                 ("quantity", "INT UNSIGNED", "-", "No", "-", "Tổng số lượng vé phát hành cho hạng vé này."),
                 ("sold", "INT UNSIGNED", "-", "No", "0", "Số lượng vé đã được đặt/bán (Dùng tính vé khả dụng)."),
@@ -404,13 +407,16 @@ def build_database_document(output_path):
         },
         {
             "name": "tickets",
-            "desc": "Bảng lưu trữ vé điện tử cá nhân phát hành sau khi đơn hàng thanh toán thành công, phục vụ soát vé tại cổng.",
+            "desc": "Bảng lưu trữ vé điện tử phát hành sau thanh toán, kèm mã QR payload, chữ ký số HMAC-SHA256 và nhân viên soát vé.",
             "cols": [
                 ("id", "BIGINT UNSIGNED", "PK", "No", "Auto Increment", "Mã định danh duy nhất của vé điện tử."),
                 ("order_item_id", "BIGINT UNSIGNED", "FK", "No", "-", "Khóa ngoại trỏ tới order_items.id (Gắn với dòng đặt vé)."),
                 ("ticket_code", "VARCHAR(50)", "UK", "No", "-", "Mã vé duy nhất để tra cứu / check-in (Ví dụ: 'TKT-82HA9F01BC')."),
+                ("qr_payload", "TEXT", "-", "Yes", "NULL", "Chuỗi JSON sinh mã QR {\"v\":1,\"ticket_code\":\"TKT-...\"}."),
+                ("qr_signature", "VARCHAR(255)", "-", "Yes", "NULL", "Chữ ký số HMAC-SHA256 ký payload bằng APP_KEY chống giả mạo mã QR."),
                 ("status", "VARCHAR(50)", "-", "No", "'valid'", "Trạng thái vé: 'valid' (Hợp lệ), 'used' (Đã dùng), 'cancelled'."),
                 ("checked_in_at", "DATETIME", "-", "Yes", "NULL", "Thời điểm ban tổ chức quét mã check-in tại cổng."),
+                ("checked_in_by", "BIGINT UNSIGNED", "FK", "Yes", "NULL", "Khóa ngoại trỏ tới users.id (nhân viên đã soát vé, ON DELETE SET NULL)."),
                 ("created_at", "TIMESTAMP", "-", "Yes", "CURRENT_TIMESTAMP", "Thời điểm sinh vé điện tử."),
                 ("updated_at", "TIMESTAMP", "-", "Yes", "CURRENT_TIMESTAMP", "Thời điểm cập nhật trạng thái vé."),
             ]
@@ -539,17 +545,18 @@ def build_database_document(output_path):
     seed_headers = ["Seeder Class", "Thực Thể", "Số Lượng Mẫu", "Nội Dung Dữ Liệu Khởi Tạo"]
     seed_data = [
         ["UserSeeder", "users", "8 tài khoản", "1 Admin (admin@example.com), 2 Organizer (organizer1..2@example.com), 5 Customer (customer1..5@example.com)."],
-        ["CategorySeeder", "categories", "5 danh mục", "Âm nhạc & Hòa nhạc, Hội thảo & Workshop, Thể thao & Giải đấu, Nghệ thuật & Sân khấu, Công nghệ & Triển lãm."],
+        ["CategorySeeder", "categories", "6 danh mục", "Âm nhạc & Hòa nhạc, Hội thảo & Workshop, Thể thao & Giải đấu, Nghệ thuật & Sân khấu, Công nghệ & Triển lãm, Tham quan & Trải nghiệm."],
         ["VenueSeeder", "venues", "4 địa điểm", "TT Hội nghị Quốc gia HN, Nhà thi đấu Quân khu 7, Cung Thể thao Tiên Sơn, Nhà hát Hòa Bình."],
-        ["EventSeeder", "events & ticket_types", "8 sự kiện, 16 loại vé", "5 sự kiện published, 1 sự kiện draft, 1 sự kiện pending, 1 sự kiện cancelled."],
-        ["OrderSeeder", "orders, items, tickets", "4 đơn, 3 vé điện tử", "2 đơn đã thanh toán (paid) kèm 3 vé điện tử (1 used, 2 valid), 1 đơn pending, 1 đơn cancelled."],
+        ["EventSeeder", "events & ticket_types", "8 sự kiện, 16 loại vé", "5 sự kiện published, 1 draft, 1 pending, 1 cancelled (hỗ trợ zone & description)."],
+        ["TicketboxEventSeeder", "users, venues, events", "14 sự kiện thật", "Nạp 14 sự kiện Ticketbox kèm ảnh banner và 14 tài khoản BTC (@ticketbox.local)."],
+        ["OrderSeeder", "orders, items, tickets", "4 đơn, 3 vé điện tử", "2 đơn đã thanh toán (paid) kèm 3 vé điện tử (1 used có checked_in_by, 2 valid), 1 đơn pending, 1 đơn cancelled."],
     ]
     col_w_seed = [Inches(1.4), Inches(1.5), Inches(1.2), Inches(2.9)]
     add_styled_table(doc, seed_headers, seed_data, col_widths=col_w_seed)
 
     doc.add_paragraph(
-        "Kết quả kiểm định toàn vẹn: 100% các bảng đều vượt qua 37 bài kiểm thử tự động (2 Unit + 35 Feature Tests) "
-        "đạt 104 assertions thành công, không phát hiện bất kỳ lỗi vi phạm khóa ngoại, mất đồng bộ tồn kho hoặc rò rỉ dữ liệu."
+        "Kết quả kiểm định toàn vẹn: 100% các bảng và dịch vụ đều vượt qua 103 bài kiểm thử tự động (15 Unit + 88 Feature Tests) "
+        "đạt 411 assertions thành công (và GitHub Actions CI chạy trên MySQL 8.0), không phát hiện lỗi vi phạm khóa ngoại, mất đồng bộ tồn kho hoặc rò rỉ dữ liệu."
     )
 
     # Save document
@@ -559,4 +566,3 @@ def build_database_document(output_path):
 if __name__ == "__main__":
     docs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
     build_database_document(os.path.join(docs_dir, "02_thiet_ke_co_so_du_lieu.docx"))
-    build_database_document(os.path.join(docs_dir, "thiet_ke_co_so_du_lieu.docx"))

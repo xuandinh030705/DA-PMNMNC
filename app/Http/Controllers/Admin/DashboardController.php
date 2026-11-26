@@ -32,10 +32,11 @@ class DashboardController extends Controller
         $totalRevenue = Order::where('status', OrderStatus::PAID)->sum('total_amount');
         $totalPaidOrders = Order::where('status', OrderStatus::PAID)->count();
 
-        // Top selling events using withSum to prevent N+1
+        // Top selling events using withSum to prevent N+1 (portable NULL-as-0 ordering across SQLite & MySQL)
         $topEvents = Event::with(['category', 'organizer'])
             ->withSum('ticketTypes as total_sold', 'sold')
-            ->orderBy('total_sold', 'desc')
+            ->orderByRaw('COALESCE((SELECT SUM(sold) FROM ticket_types WHERE ticket_types.event_id = events.id), 0) DESC')
+            ->orderBy('id', 'asc')
             ->take(5)
             ->get();
 

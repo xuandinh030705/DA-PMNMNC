@@ -108,12 +108,21 @@
 - **Kiểm thử, Sửa lỗi & Rà soát hiệu năng**:
   - Rà soát toàn bộ truy vấn Storefront & Organizer, sửa lỗi N+1 query tại `Storefront\OrderController@show`, `Organizer\OrderController@show` và `OrderPaidMail`, đồng thời truyền `$paidOrder` đã cập nhật trạng thái thanh toán vào `OrderPaidMail` tại `OrderController@pay`.
   - Bổ sung Feature Test cho Storefront (`StorefrontTest.php`), chống N+1 trên `orders.show` (`OrderAndPaymentTest.php`), và mở rộng bộ test QR/PDF/Check-in/Loại vé (`QrTicketServiceTest.php`, `TicketPdfTest.php`, `CheckinTest.php`, `OrganizerTicketTypeTest.php`).
-  - Toàn bộ test suite PHPUnit đạt **89 tests, 333 assertions passed 100%**.
+  - Toàn bộ test suite PHPUnit đạt **89 tests, 333 assertions passed 100%** (PR `#12` đã merge vào `develop`).
   - Chạy Laravel Pint định dạng code sạch sẽ 100% (`vendor/bin/pint --test` passed).
 - **Đồng bộ toàn diện tài liệu & Chuẩn bị Prompt Draw.io**:
-  - Cập nhật chi tiết [README.md](../README.md): MySQL 8, bật `extension=gd`, Mailpit, Camera QR offline, bảng thống kê 89 tests và GitHub Actions CI.
+  - Cập nhật chi tiết [README.md](../README.md): MySQL 8, bật `extension=gd`, Mailpit, Camera QR offline, bảng thống kê và GitHub Actions CI.
   - Cập nhật [docs/01_phan_tich_yeu_cau.md](./01_phan_tich_yeu_cau.md), [docs/SPEC.md](./SPEC.md) bổ sung đầy đủ các luồng QR, PDF, Email, Camera, 5 cột DB mới và bỏ ghi chú out-of-scope cũ.
   - Cập nhật [docs/02_thiet_ke_co_so_du_lieu.md](./02_thiet_ke_co_so_du_lieu.md) bổ sung từ điển dữ liệu cho 5 cột mới và cập nhật MySQL 8.
-  - Cập nhật [docs/testing/test-cases.md](./testing/test-cases.md) và [docs/testing/test-output.txt](./testing/test-output.txt) lên đầy đủ 89 ca kiểm thử (333 assertions).
   - Tạo bộ Prompt AI & mã PlantUML chuẩn mới nhất cho `draw.io` tại [docs/diagrams/DRAWIO_UML_PROMPTS.md](./diagrams/DRAWIO_UML_PROMPTS.md) để thành viên tự tạo file `.drawio` và ảnh `.png`.
   - Xóa bỏ các file trùng lặp thừa (`thiet_ke_co_so_du_lieu.docx`, `Tuan1_bao_cao_tieu_chi_do_an.docx`).
+
+### Ngày 26/11/2026 (Triển khai Tuần 4 - Bảo mật/Offline, Đồng bộ Báo cáo & Xuất lại Word `.docx`)
+- **Rà soát Bảo mật, Chế độ Offline & Mở rộng Kiểm thử**:
+  - Rà soát 100% Blade views (`@csrf`, không `{!! !!}`), 11 FormRequests tiếng Việt, 3 Policies (`EventPolicy`, `TicketTypePolicy`, `OrderPolicy`), Middleware `CheckRole`/`CheckActive`.
+  - Bổ sung 3 Feature Tests phòng thủ Tuần 4: chặn Organizer xem chéo đơn hàng sự kiện BTC khác (`AuthorizationTest`), lỗi mail transport không rollback đơn đã thanh toán khi offline, và luồng E2E Checkout → Thanh toán → Tải PDF → Check-in QR → Chặn quét lại (`OrderAndPaymentTest`).
+  - Sửa triệt để các lỗi biên & đồng bộ (kiểm tra `withTrashed()` cho `Category/Venue::destroy`, khóa `Event` & sắp xếp khóa tránh underflow/deadlock trong `OrderService`, chặn thanh toán đơn của sự kiện đã hủy, sort `min_price` `NULL` xuống cuối, hiển thị đúng vé đã hủy ở Storefront & đồng bộ `zone`/`description`/`checkedInBy` ở `organizer/orders/show`), bổ sung 11 test hồi quy: đạt **103/103 tests PASSED (411 assertions, 0 failures)** và Pint sạch 100%.
+- **Đồng bộ Báo cáo, Kịch bản Demo & Tái tạo Tài liệu Word**:
+  - Cập nhật [docs/DEMO_SCRIPT.md](./DEMO_SCRIPT.md) với kịch bản demo 8–10 phút mới (QR, Mailpit, PDF A5, Camera Check-in 6 bước, Admin hủy cascade, GitHub Actions CI) và bộ câu hỏi phản biện nâng cấp.
+  - Cập nhật đồng bộ [docs/PROGRESS.md](./PROGRESS.md), [docs/03_bao_cao_tieu_chi_do_an.md](./03_bao_cao_tieu_chi_do_an.md), [docs/04_bao_cao_xay_dung_chuc_nang.md](./04_bao_cao_xay_dung_chuc_nang.md), [docs/05_bao_cao_kiem_thu_bao_mat_trien_khai.md](./05_bao_cao_kiem_thu_bao_mat_trien_khai.md), [docs/06_bao_cao_lam_viec_nhom_va_bao_ve.md](./06_bao_cao_lam_viec_nhom_va_bao_ve.md), [docs/testing/test-cases.md](./testing/test-cases.md) và [docs/testing/test-output.txt](./testing/test-output.txt).
+  - Nâng cấp 3 script sinh Word ([make_database_docx.py](../make_database_docx.py), [make_criteria_report_docx.py](../make_criteria_report_docx.py), [make_3_reports_docx.py](../make_3_reports_docx.py)), loại bỏ xuất file trùng và tái tạo toàn bộ 5 file `.docx` mới nhất.
