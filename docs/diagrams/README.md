@@ -3,6 +3,8 @@
 
 Thư mục này chứa toàn bộ các mã nguồn sơ đồ thiết kế hệ thống được viết bằng cú pháp **PlantUML** chuẩn (và đã được kết xuất sẵn sang ảnh PNG độ phân giải cao trong thư mục [`docs/diagrams/images/`](./images/) để chèn trực tiếp vào báo cáo và slide thuyết trình).
 
+> **Cập nhật Tuần 3 (Draw.io):** Bộ Prompt AI & mã PlantUML đã cập nhật đầy đủ 5 cột CSDL mới + luồng QR HMAC, Camera Check-in, PDF A5, Email và Admin Cancel Cascade được lưu tại [**`DRAWIO_UML_PROMPTS.md`**](./DRAWIO_UML_PROMPTS.md).
+
 ---
 
 ### 1. Bảng tra cứu sơ đồ và vị trí tương ứng trong báo cáo

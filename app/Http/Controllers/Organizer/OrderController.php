@@ -42,7 +42,10 @@ class OrderController extends Controller
     {
         $this->authorize('view', $order);
 
-        $order->load(['orderItems.ticketType.event.venue', 'orderItems.tickets']);
+        $order->load([
+            'orderItems.ticketType.event.venue',
+            'tickets.orderItem.ticketType',
+        ]);
 
         return view('organizer.orders.show', compact('order'));
     }

@@ -40,6 +40,14 @@ Checkin (Tests\Feature\Checkin)
  [x] Checkin accepts a signed qr payload
  [x] Checkin rejects a qr payload with tampered signature
  [x] Checkin rejects malformed qr json
+ [x] Checkin fails when ticket is cancelled via manual code and qr payload
+ [x] Checkin with qr payload fails when order is not paid
+ [x] Checkin with qr payload fails when ticket is already used
+ [x] Checkin with qr payload fails when ticket belongs to another organizer
+ [x] Checkin with qr payload fails when stored signature is corrupted
+ [x] Checkin with qr payload fails when ticket does not exist
+ [x] Checkin rejects empty and whitespace only input
+ [x] Customer cannot access organizer checkin routes
  [x] Checkin accepts lowercase typed ticket code
  [x] Checkin form provides camera scanner and manual input
  [x] Checkin success card renders the flashed summary
@@ -56,6 +64,7 @@ Order And Payment (Tests\Feature\OrderAndPayment)
  [x] Customer can pay order and tickets are generated
  [x] Order paid mail builds attachments and content
  [x] Storefront tickets and order show render qr code and pdf download
+ [x] Storefront order show avoids n plus one queries on multiple tickets
  [x] Customer can cancel pending order and tickets are returned
  [x] Customer cannot cancel paid order
  [x] Artisan command expires pending orders and returns sold tickets
@@ -66,6 +75,9 @@ Organizer Ticket Type (Tests\Feature\OrganizerTicketType)
  [x] Organizer can store zone and description
  [x] Event page displays zone and description of each ticket type
  [x] Edit form prefills zone and description
+ [x] Organizer can update and clear zone and description
+ [x] Validation rejects overlong zone and description
+ [x] Another organizer cannot update ticket type zone or description
 
 Qr Ticket Service (Tests\Unit\QrTicketService)
  [x] Payload is built from ticket code when missing
@@ -76,6 +88,11 @@ Qr Ticket Service (Tests\Unit\QrTicketService)
  [x] Signature is rejected when empty
  [x] Ticket signature helper matches service verification
  [x] Decode payload rejects plain ticket code
+ [x] Payload uses existing stored qr payload when present
+ [x] Png and svg data uri outputs are valid
+ [x] Signature is rejected when app key changes
+ [x] Has valid signature returns false when payload or signature is missing
+ [x] Decode payload handles whitespace and rejects non string ticket code
 
 Storefront (Tests\Feature\Storefront)
  [x] Can browse published events on home page
@@ -90,5 +107,9 @@ Ticket Pdf (Tests\Feature\TicketPdf)
  [x] Ticket owner can download the ticket pdf
  [x] Customer cannot download someone elses ticket pdf
  [x] Guest is redirected to login when downloading ticket pdf
+ [x] Ticket pdf renders in memory without persisting files on disk
+ [x] Pdf view renders vietnamese unicode zone description qr and checkin metadata
+ [x] Event organizer and admin can download pdf while other organizer is forbidden
+ [x] Ticket owner can download pdf when legacy qr payload is null
 
-OK (68 tests, 254 assertions)
+OK (89 tests, 333 assertions)

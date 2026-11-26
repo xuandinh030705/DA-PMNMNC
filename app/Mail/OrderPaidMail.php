@@ -52,11 +52,15 @@ class OrderPaidMail extends Mailable
 
         $this->order->loadMissing([
             'orderItems.ticketType.event.venue',
-            'orderItems.tickets',
+            'orderItems.tickets.checkedInBy',
         ]);
 
         foreach ($this->order->orderItems as $item) {
+            $item->setRelation('order', $this->order);
+
             foreach ($item->tickets as $ticket) {
+                $ticket->setRelation('orderItem', $item);
+
                 $attachments[] = Attachment::fromData(
                     fn () => $pdfService->output($ticket),
                     $pdfService->filenameFor($ticket)

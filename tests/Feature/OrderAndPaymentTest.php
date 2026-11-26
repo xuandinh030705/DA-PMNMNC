@@ -11,6 +11,7 @@ use App\Models\Ticket;
 use App\Models\TicketType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -168,6 +169,9 @@ class OrderAndPaymentTest extends TestCase
 
         Mail::assertSent(OrderPaidMail::class, function (OrderPaidMail $mail) use ($order, $customer) {
             return $mail->order->id === $order->id
+                && $mail->order->isPaid()
+                && $mail->order->payment_method === 'bank_transfer'
+                && $mail->order->paid_at !== null
                 && $mail->hasTo($customer->email);
         });
     }
@@ -227,6 +231,40 @@ class OrderAndPaymentTest extends TestCase
         $orderResponse->assertOk();
         $orderResponse->assertSee($ticket->ticket_code);
         $orderResponse->assertSee(route('tickets.pdf', $ticket));
+    }
+
+    public function test_storefront_order_show_avoids_n_plus_one_queries_on_multiple_tickets(): void
+    {
+        $customer = User::factory()->customer()->create();
+        $ticketType = TicketType::factory()->create(['zone' => 'Khu A']);
+
+        $singleOrder = Order::factory()->paid()->create(['user_id' => $customer->id]);
+        $singleItem = OrderItem::factory()->create([
+            'order_id' => $singleOrder->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 1,
+        ]);
+        Ticket::factory()->valid()->create(['order_item_id' => $singleItem->id]);
+
+        $multiOrder = Order::factory()->paid()->create(['user_id' => $customer->id]);
+        $multiItem = OrderItem::factory()->create([
+            'order_id' => $multiOrder->id,
+            'ticket_type_id' => $ticketType->id,
+            'quantity' => 6,
+        ]);
+        Ticket::factory()->count(6)->valid()->create(['order_item_id' => $multiItem->id]);
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $this->actingAs($customer)->get(route('orders.show', $singleOrder->order_code))->assertOk();
+        $singleOrderQueryCount = count(DB::getQueryLog());
+
+        DB::flushQueryLog();
+        $this->actingAs($customer)->get(route('orders.show', $multiOrder->order_code))->assertOk();
+        $multiOrderQueryCount = count(DB::getQueryLog());
+        DB::disableQueryLog();
+
+        $this->assertSame($singleOrderQueryCount, $multiOrderQueryCount);
     }
 
     public function test_customer_can_cancel_pending_order_and_tickets_are_returned(): void

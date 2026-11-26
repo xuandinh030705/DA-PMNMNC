@@ -104,15 +104,16 @@
   - **Định**: Xây dựng route & action `TicketController@downloadPdf` bảo vệ qua `OrderPolicy`; lưu local thư viện `public/js/html5-qrcode.min.js`; tích hợp camera quét QR vào `organizer/checkin/form.blade.php`; nâng cấp `TicketCheckinService` xác thực chữ ký HMAC và lưu `checked_in_by`.
   - **Quý**: Hoàn thiện logic Admin hủy sự kiện cascade trong transaction tự hủy đơn pending hoàn vé và hủy vé valid; cập nhật view Admin hiển thị khu vực, quyền lợi và nhân viên soát vé.
 
-### Ngày 20/11 - 23/11/2026 (Triển khai Tuần 3 - Rà soát, QA & Hoàn thiện tài liệu)
-- **Kiểm thử & Rà soát hiệu năng**:
-  - Rà soát toàn bộ truy vấn Storefront, đảm bảo Eager Loading đầy đủ chống N+1 Query.
-  - Bổ sung Feature Test cho Storefront hiển thị `zone` và `description` trong `tests/Feature/StorefrontTest.php`.
-  - Toàn bộ test suite PHPUnit đạt **68 tests, 254 assertions passed 100%**.
+### Ngày 20/11 - 26/11/2026 (Triển khai Tuần 3 - Rà soát, QA & Hoàn thiện tài liệu)
+- **Kiểm thử, Sửa lỗi & Rà soát hiệu năng**:
+  - Rà soát toàn bộ truy vấn Storefront & Organizer, sửa lỗi N+1 query tại `Storefront\OrderController@show`, `Organizer\OrderController@show` và `OrderPaidMail`, đồng thời truyền `$paidOrder` đã cập nhật trạng thái thanh toán vào `OrderPaidMail` tại `OrderController@pay`.
+  - Bổ sung Feature Test cho Storefront (`StorefrontTest.php`), chống N+1 trên `orders.show` (`OrderAndPaymentTest.php`), và mở rộng bộ test QR/PDF/Check-in/Loại vé (`QrTicketServiceTest.php`, `TicketPdfTest.php`, `CheckinTest.php`, `OrganizerTicketTypeTest.php`).
+  - Toàn bộ test suite PHPUnit đạt **89 tests, 333 assertions passed 100%**.
   - Chạy Laravel Pint định dạng code sạch sẽ 100% (`vendor/bin/pint --test` passed).
-- **Đồng bộ toàn diện tài liệu & Dọn dẹp dự án**:
-  - Cập nhật chi tiết [README.md](../README.md): MySQL 8, bật `extension=gd`, Mailpit, Camera QR offline, bảng thống kê 68 tests và GitHub Actions CI.
+- **Đồng bộ toàn diện tài liệu & Chuẩn bị Prompt Draw.io**:
+  - Cập nhật chi tiết [README.md](../README.md): MySQL 8, bật `extension=gd`, Mailpit, Camera QR offline, bảng thống kê 89 tests và GitHub Actions CI.
   - Cập nhật [docs/01_phan_tich_yeu_cau.md](./01_phan_tich_yeu_cau.md), [docs/SPEC.md](./SPEC.md) bổ sung đầy đủ các luồng QR, PDF, Email, Camera, 5 cột DB mới và bỏ ghi chú out-of-scope cũ.
   - Cập nhật [docs/02_thiet_ke_co_so_du_lieu.md](./02_thiet_ke_co_so_du_lieu.md) bổ sung từ điển dữ liệu cho 5 cột mới và cập nhật MySQL 8.
-  - Cập nhật [docs/testing/test-cases.md](./testing/test-cases.md) và [docs/testing/test-output.txt](./testing/test-output.txt) lên đầy đủ 68 ca kiểm thử.
+  - Cập nhật [docs/testing/test-cases.md](./testing/test-cases.md) và [docs/testing/test-output.txt](./testing/test-output.txt) lên đầy đủ 89 ca kiểm thử (333 assertions).
+  - Tạo bộ Prompt AI & mã PlantUML chuẩn mới nhất cho `draw.io` tại [docs/diagrams/DRAWIO_UML_PROMPTS.md](./diagrams/DRAWIO_UML_PROMPTS.md) để thành viên tự tạo file `.drawio` và ảnh `.png`.
   - Xóa bỏ các file trùng lặp thừa (`thiet_ke_co_so_du_lieu.docx`, `Tuan1_bao_cao_tieu_chi_do_an.docx`).
